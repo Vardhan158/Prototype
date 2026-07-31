@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
-export type AppRole = "Administrator" | "Data Steward" | "Wave Planner" | "Production Manager" | "Inventory Controller" | "Warehouse Supervisor" | "Warehouse Manager";
-export type ModuleKey = "arrival" | "master" | "wave" | "workcraft" | "inventory" | "warehouse" | "navigator";
+export type AppRole = "Administrator" | "Data Steward" | "Wave Planner" | "Production Manager" | "Inventory Controller" | "Warehouse Supervisor" | "Warehouse Manager" | "Receiving Supervisor";
+export type ModuleKey = "arrival" | "master" | "wave" | "workcraft" | "inventory" | "warehouse" | "navigator" | "receiving";
 
 export interface AuthUser {
   id: string;
@@ -20,7 +20,7 @@ export const SEEDED_USERS: SeededUser[] = [
     email: "admin@nexuswms.com",
     password: "Admin@2026",
     role: "Administrator",
-    modules: ["arrival", "master", "wave", "workcraft", "inventory", "warehouse", "navigator"],
+    modules: ["arrival", "master", "wave", "workcraft", "inventory", "warehouse", "navigator", "receiving"],
     dashboard: "/dashboard",
   },
   {
@@ -76,6 +76,15 @@ export const SEEDED_USERS: SeededUser[] = [
     role: "Warehouse Manager",
     modules: ["navigator"],
     dashboard: "/warehouse-navigator",
+  },
+  {
+    id: "RCV-1001",
+    name: "A. Mehta",
+    email: "mehta@nexuswms.com",
+    password: "receiving@2026",
+    role: "Receiving Supervisor",
+    modules: ["receiving"],
+    dashboard: "/receiving-hub",
   },
 ];
 

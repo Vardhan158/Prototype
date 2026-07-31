@@ -26,6 +26,7 @@ import { Route as MasterDataRouteImport } from './routes/master-data'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as PurchaseOrderRouteImport } from './routes/purchase-order'
 import { Route as ReceivingRouteImport } from './routes/receiving'
+import { Route as ReceivingHubRouteImport } from './routes/receiving-hub'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as VehicleQueueRouteImport } from './routes/vehicle-queue'
@@ -45,6 +46,11 @@ import { Route as MasterCoreHelpRouteImport } from './routes/master-core.help'
 import { Route as MasterCoreSettingsRouteImport } from './routes/master-core.settings'
 import { Route as MasterCoreVehiclesRouteImport } from './routes/master-core.vehicles'
 import { Route as MasterCoreWarehousesRouteImport } from './routes/master-core.warehouses'
+import { Route as ReceivingHubIndexRouteImport } from './routes/receiving-hub.index'
+import { Route as ReceivingHubDiscrepanciesRouteImport } from './routes/receiving-hub.discrepancies'
+import { Route as ReceivingHubNonPoReceiptRouteImport } from './routes/receiving-hub.non-po-receipt'
+import { Route as ReceivingHubPutAwayRouteImport } from './routes/receiving-hub.put-away'
+import { Route as ReceivingHubQualityInspectionRouteImport } from './routes/receiving-hub.quality-inspection'
 import { Route as WarehouseFlowIndexRouteImport } from './routes/warehouse-flow.index'
 import { Route as WarehouseFlowApprovalsRouteImport } from './routes/warehouse-flow.approvals'
 import { Route as WarehouseFlowAuditLogsRouteImport } from './routes/warehouse-flow.audit-logs'
@@ -91,6 +97,12 @@ import { Route as MasterCoreItemsIndexRouteImport } from './routes/master-core.i
 import { Route as MasterCoreItemsIdRouteImport } from './routes/master-core.items.$id'
 import { Route as MasterCoreSuppliersIndexRouteImport } from './routes/master-core.suppliers.index'
 import { Route as MasterCoreSuppliersIdRouteImport } from './routes/master-core.suppliers.$id'
+import { Route as ReceivingHubGrnIndexRouteImport } from './routes/receiving-hub.grn.index'
+import { Route as ReceivingHubGrnIdRouteImport } from './routes/receiving-hub.grn.$id'
+import { Route as ReceivingHubGrnNewRouteImport } from './routes/receiving-hub.grn.new'
+import { Route as ReceivingHubKpiDockToStockRouteImport } from './routes/receiving-hub.kpi.dock-to-stock'
+import { Route as ReceivingHubPurchaseOrdersIndexRouteImport } from './routes/receiving-hub.purchase-orders.index'
+import { Route as ReceivingHubPurchaseOrdersPoNumberRouteImport } from './routes/receiving-hub.purchase-orders.$poNumber'
 import { Route as WarehouseFlowRequestsIndexRouteImport } from './routes/warehouse-flow.requests.index'
 import { Route as WarehouseFlowRequestsNewRouteImport } from './routes/warehouse-flow.requests.new'
 import { Route as WarehouseNavigatorWarehousesIndexRouteImport } from './routes/warehouse-navigator.warehouses.index'
@@ -193,6 +205,11 @@ const ReceivingRoute = ReceivingRouteImport.update({
   path: '/receiving',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReceivingHubRoute = ReceivingHubRouteImport.update({
+  id: '/receiving-hub',
+  path: '/receiving-hub',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ReportsRoute = ReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
@@ -289,6 +306,34 @@ const MasterCoreWarehousesRoute = MasterCoreWarehousesRouteImport.update({
   path: '/warehouses',
   getParentRoute: () => MasterCoreRoute,
 } as any)
+const ReceivingHubIndexRoute = ReceivingHubIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ReceivingHubRoute,
+} as any)
+const ReceivingHubDiscrepanciesRoute =
+  ReceivingHubDiscrepanciesRouteImport.update({
+    id: '/discrepancies',
+    path: '/discrepancies',
+    getParentRoute: () => ReceivingHubRoute,
+  } as any)
+const ReceivingHubNonPoReceiptRoute =
+  ReceivingHubNonPoReceiptRouteImport.update({
+    id: '/non-po-receipt',
+    path: '/non-po-receipt',
+    getParentRoute: () => ReceivingHubRoute,
+  } as any)
+const ReceivingHubPutAwayRoute = ReceivingHubPutAwayRouteImport.update({
+  id: '/put-away',
+  path: '/put-away',
+  getParentRoute: () => ReceivingHubRoute,
+} as any)
+const ReceivingHubQualityInspectionRoute =
+  ReceivingHubQualityInspectionRouteImport.update({
+    id: '/quality-inspection',
+    path: '/quality-inspection',
+    getParentRoute: () => ReceivingHubRoute,
+  } as any)
 const WarehouseFlowIndexRoute = WarehouseFlowIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -528,6 +573,39 @@ const MasterCoreSuppliersIdRoute = MasterCoreSuppliersIdRouteImport.update({
   path: '/suppliers/$id',
   getParentRoute: () => MasterCoreRoute,
 } as any)
+const ReceivingHubGrnIndexRoute = ReceivingHubGrnIndexRouteImport.update({
+  id: '/grn/',
+  path: '/grn/',
+  getParentRoute: () => ReceivingHubRoute,
+} as any)
+const ReceivingHubGrnIdRoute = ReceivingHubGrnIdRouteImport.update({
+  id: '/grn/$id',
+  path: '/grn/$id',
+  getParentRoute: () => ReceivingHubRoute,
+} as any)
+const ReceivingHubGrnNewRoute = ReceivingHubGrnNewRouteImport.update({
+  id: '/grn/new',
+  path: '/grn/new',
+  getParentRoute: () => ReceivingHubRoute,
+} as any)
+const ReceivingHubKpiDockToStockRoute =
+  ReceivingHubKpiDockToStockRouteImport.update({
+    id: '/kpi/dock-to-stock',
+    path: '/kpi/dock-to-stock',
+    getParentRoute: () => ReceivingHubRoute,
+  } as any)
+const ReceivingHubPurchaseOrdersIndexRoute =
+  ReceivingHubPurchaseOrdersIndexRouteImport.update({
+    id: '/purchase-orders/',
+    path: '/purchase-orders/',
+    getParentRoute: () => ReceivingHubRoute,
+  } as any)
+const ReceivingHubPurchaseOrdersPoNumberRoute =
+  ReceivingHubPurchaseOrdersPoNumberRouteImport.update({
+    id: '/purchase-orders/$poNumber',
+    path: '/purchase-orders/$poNumber',
+    getParentRoute: () => ReceivingHubRoute,
+  } as any)
 const WarehouseFlowRequestsIndexRoute =
   WarehouseFlowRequestsIndexRouteImport.update({
     id: '/requests/',
@@ -641,6 +719,7 @@ export interface FileRoutesByFullPath {
   '/notifications': typeof NotificationsRoute
   '/purchase-order': typeof PurchaseOrderRoute
   '/receiving': typeof ReceivingRoute
+  '/receiving-hub': typeof ReceivingHubRouteWithChildren
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
   '/vehicle-queue': typeof VehicleQueueRoute
@@ -658,6 +737,10 @@ export interface FileRoutesByFullPath {
   '/master-core/settings': typeof MasterCoreSettingsRoute
   '/master-core/vehicles': typeof MasterCoreVehiclesRoute
   '/master-core/warehouses': typeof MasterCoreWarehousesRoute
+  '/receiving-hub/discrepancies': typeof ReceivingHubDiscrepanciesRoute
+  '/receiving-hub/non-po-receipt': typeof ReceivingHubNonPoReceiptRoute
+  '/receiving-hub/put-away': typeof ReceivingHubPutAwayRoute
+  '/receiving-hub/quality-inspection': typeof ReceivingHubQualityInspectionRoute
   '/warehouse-flow/approvals': typeof WarehouseFlowApprovalsRoute
   '/warehouse-flow/audit-logs': typeof WarehouseFlowAuditLogsRoute
   '/warehouse-flow/inspection': typeof WarehouseFlowInspectionRoute
@@ -694,6 +777,7 @@ export interface FileRoutesByFullPath {
   '/work-craft/rework-scrap': typeof WorkCraftReworkScrapRoute
   '/inventory-flow/': typeof InventoryFlowIndexRoute
   '/master-core/': typeof MasterCoreIndexRoute
+  '/receiving-hub/': typeof ReceivingHubIndexRoute
   '/warehouse-flow/': typeof WarehouseFlowIndexRoute
   '/warehouse-navigator/': typeof WarehouseNavigatorIndexRoute
   '/wave-flow/': typeof WaveFlowIndexRoute
@@ -702,6 +786,10 @@ export interface FileRoutesByFullPath {
   '/master-core/customers/$id': typeof MasterCoreCustomersIdRoute
   '/master-core/items/$id': typeof MasterCoreItemsIdRoute
   '/master-core/suppliers/$id': typeof MasterCoreSuppliersIdRoute
+  '/receiving-hub/grn/$id': typeof ReceivingHubGrnIdRoute
+  '/receiving-hub/grn/new': typeof ReceivingHubGrnNewRoute
+  '/receiving-hub/kpi/dock-to-stock': typeof ReceivingHubKpiDockToStockRoute
+  '/receiving-hub/purchase-orders/$poNumber': typeof ReceivingHubPurchaseOrdersPoNumberRoute
   '/warehouse-flow/requests/new': typeof WarehouseFlowRequestsNewRoute
   '/warehouse-navigator/warehouses/$code': typeof WarehouseNavigatorWarehousesCodeRoute
   '/work-craft/certificates/$number': typeof WorkCraftCertificatesNumberRoute
@@ -711,6 +799,8 @@ export interface FileRoutesByFullPath {
   '/master-core/customers/': typeof MasterCoreCustomersIndexRoute
   '/master-core/items/': typeof MasterCoreItemsIndexRoute
   '/master-core/suppliers/': typeof MasterCoreSuppliersIndexRoute
+  '/receiving-hub/grn/': typeof ReceivingHubGrnIndexRoute
+  '/receiving-hub/purchase-orders/': typeof ReceivingHubPurchaseOrdersIndexRoute
   '/warehouse-flow/requests/': typeof WarehouseFlowRequestsIndexRoute
   '/warehouse-navigator/warehouses/': typeof WarehouseNavigatorWarehousesIndexRoute
   '/work-craft/certificates/': typeof WorkCraftCertificatesIndexRoute
@@ -752,6 +842,10 @@ export interface FileRoutesByTo {
   '/master-core/settings': typeof MasterCoreSettingsRoute
   '/master-core/vehicles': typeof MasterCoreVehiclesRoute
   '/master-core/warehouses': typeof MasterCoreWarehousesRoute
+  '/receiving-hub/discrepancies': typeof ReceivingHubDiscrepanciesRoute
+  '/receiving-hub/non-po-receipt': typeof ReceivingHubNonPoReceiptRoute
+  '/receiving-hub/put-away': typeof ReceivingHubPutAwayRoute
+  '/receiving-hub/quality-inspection': typeof ReceivingHubQualityInspectionRoute
   '/warehouse-flow/approvals': typeof WarehouseFlowApprovalsRoute
   '/warehouse-flow/audit-logs': typeof WarehouseFlowAuditLogsRoute
   '/warehouse-flow/inspection': typeof WarehouseFlowInspectionRoute
@@ -788,6 +882,7 @@ export interface FileRoutesByTo {
   '/work-craft/rework-scrap': typeof WorkCraftReworkScrapRoute
   '/inventory-flow': typeof InventoryFlowIndexRoute
   '/master-core': typeof MasterCoreIndexRoute
+  '/receiving-hub': typeof ReceivingHubIndexRoute
   '/warehouse-flow': typeof WarehouseFlowIndexRoute
   '/warehouse-navigator': typeof WarehouseNavigatorIndexRoute
   '/wave-flow': typeof WaveFlowIndexRoute
@@ -796,6 +891,10 @@ export interface FileRoutesByTo {
   '/master-core/customers/$id': typeof MasterCoreCustomersIdRoute
   '/master-core/items/$id': typeof MasterCoreItemsIdRoute
   '/master-core/suppliers/$id': typeof MasterCoreSuppliersIdRoute
+  '/receiving-hub/grn/$id': typeof ReceivingHubGrnIdRoute
+  '/receiving-hub/grn/new': typeof ReceivingHubGrnNewRoute
+  '/receiving-hub/kpi/dock-to-stock': typeof ReceivingHubKpiDockToStockRoute
+  '/receiving-hub/purchase-orders/$poNumber': typeof ReceivingHubPurchaseOrdersPoNumberRoute
   '/warehouse-flow/requests/new': typeof WarehouseFlowRequestsNewRoute
   '/warehouse-navigator/warehouses/$code': typeof WarehouseNavigatorWarehousesCodeRoute
   '/work-craft/certificates/$number': typeof WorkCraftCertificatesNumberRoute
@@ -804,6 +903,8 @@ export interface FileRoutesByTo {
   '/master-core/customers': typeof MasterCoreCustomersIndexRoute
   '/master-core/items': typeof MasterCoreItemsIndexRoute
   '/master-core/suppliers': typeof MasterCoreSuppliersIndexRoute
+  '/receiving-hub/grn': typeof ReceivingHubGrnIndexRoute
+  '/receiving-hub/purchase-orders': typeof ReceivingHubPurchaseOrdersIndexRoute
   '/warehouse-flow/requests': typeof WarehouseFlowRequestsIndexRoute
   '/warehouse-navigator/warehouses': typeof WarehouseNavigatorWarehousesIndexRoute
   '/work-craft/certificates': typeof WorkCraftCertificatesIndexRoute
@@ -835,6 +936,7 @@ export interface FileRoutesById {
   '/notifications': typeof NotificationsRoute
   '/purchase-order': typeof PurchaseOrderRoute
   '/receiving': typeof ReceivingRoute
+  '/receiving-hub': typeof ReceivingHubRouteWithChildren
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
   '/vehicle-queue': typeof VehicleQueueRoute
@@ -852,6 +954,10 @@ export interface FileRoutesById {
   '/master-core/settings': typeof MasterCoreSettingsRoute
   '/master-core/vehicles': typeof MasterCoreVehiclesRoute
   '/master-core/warehouses': typeof MasterCoreWarehousesRoute
+  '/receiving-hub/discrepancies': typeof ReceivingHubDiscrepanciesRoute
+  '/receiving-hub/non-po-receipt': typeof ReceivingHubNonPoReceiptRoute
+  '/receiving-hub/put-away': typeof ReceivingHubPutAwayRoute
+  '/receiving-hub/quality-inspection': typeof ReceivingHubQualityInspectionRoute
   '/warehouse-flow/approvals': typeof WarehouseFlowApprovalsRoute
   '/warehouse-flow/audit-logs': typeof WarehouseFlowAuditLogsRoute
   '/warehouse-flow/inspection': typeof WarehouseFlowInspectionRoute
@@ -888,6 +994,7 @@ export interface FileRoutesById {
   '/work-craft/rework-scrap': typeof WorkCraftReworkScrapRoute
   '/inventory-flow/': typeof InventoryFlowIndexRoute
   '/master-core/': typeof MasterCoreIndexRoute
+  '/receiving-hub/': typeof ReceivingHubIndexRoute
   '/warehouse-flow/': typeof WarehouseFlowIndexRoute
   '/warehouse-navigator/': typeof WarehouseNavigatorIndexRoute
   '/wave-flow/': typeof WaveFlowIndexRoute
@@ -896,6 +1003,10 @@ export interface FileRoutesById {
   '/master-core/customers/$id': typeof MasterCoreCustomersIdRoute
   '/master-core/items/$id': typeof MasterCoreItemsIdRoute
   '/master-core/suppliers/$id': typeof MasterCoreSuppliersIdRoute
+  '/receiving-hub/grn/$id': typeof ReceivingHubGrnIdRoute
+  '/receiving-hub/grn/new': typeof ReceivingHubGrnNewRoute
+  '/receiving-hub/kpi/dock-to-stock': typeof ReceivingHubKpiDockToStockRoute
+  '/receiving-hub/purchase-orders/$poNumber': typeof ReceivingHubPurchaseOrdersPoNumberRoute
   '/warehouse-flow/requests/new': typeof WarehouseFlowRequestsNewRoute
   '/warehouse-navigator/warehouses/$code': typeof WarehouseNavigatorWarehousesCodeRoute
   '/work-craft/certificates/$number': typeof WorkCraftCertificatesNumberRoute
@@ -905,6 +1016,8 @@ export interface FileRoutesById {
   '/master-core/customers/': typeof MasterCoreCustomersIndexRoute
   '/master-core/items/': typeof MasterCoreItemsIndexRoute
   '/master-core/suppliers/': typeof MasterCoreSuppliersIndexRoute
+  '/receiving-hub/grn/': typeof ReceivingHubGrnIndexRoute
+  '/receiving-hub/purchase-orders/': typeof ReceivingHubPurchaseOrdersIndexRoute
   '/warehouse-flow/requests/': typeof WarehouseFlowRequestsIndexRoute
   '/warehouse-navigator/warehouses/': typeof WarehouseNavigatorWarehousesIndexRoute
   '/work-craft/certificates/': typeof WorkCraftCertificatesIndexRoute
@@ -937,6 +1050,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/purchase-order'
     | '/receiving'
+    | '/receiving-hub'
     | '/reports'
     | '/settings'
     | '/vehicle-queue'
@@ -954,6 +1068,10 @@ export interface FileRouteTypes {
     | '/master-core/settings'
     | '/master-core/vehicles'
     | '/master-core/warehouses'
+    | '/receiving-hub/discrepancies'
+    | '/receiving-hub/non-po-receipt'
+    | '/receiving-hub/put-away'
+    | '/receiving-hub/quality-inspection'
     | '/warehouse-flow/approvals'
     | '/warehouse-flow/audit-logs'
     | '/warehouse-flow/inspection'
@@ -990,6 +1108,7 @@ export interface FileRouteTypes {
     | '/work-craft/rework-scrap'
     | '/inventory-flow/'
     | '/master-core/'
+    | '/receiving-hub/'
     | '/warehouse-flow/'
     | '/warehouse-navigator/'
     | '/wave-flow/'
@@ -998,6 +1117,10 @@ export interface FileRouteTypes {
     | '/master-core/customers/$id'
     | '/master-core/items/$id'
     | '/master-core/suppliers/$id'
+    | '/receiving-hub/grn/$id'
+    | '/receiving-hub/grn/new'
+    | '/receiving-hub/kpi/dock-to-stock'
+    | '/receiving-hub/purchase-orders/$poNumber'
     | '/warehouse-flow/requests/new'
     | '/warehouse-navigator/warehouses/$code'
     | '/work-craft/certificates/$number'
@@ -1007,6 +1130,8 @@ export interface FileRouteTypes {
     | '/master-core/customers/'
     | '/master-core/items/'
     | '/master-core/suppliers/'
+    | '/receiving-hub/grn/'
+    | '/receiving-hub/purchase-orders/'
     | '/warehouse-flow/requests/'
     | '/warehouse-navigator/warehouses/'
     | '/work-craft/certificates/'
@@ -1048,6 +1173,10 @@ export interface FileRouteTypes {
     | '/master-core/settings'
     | '/master-core/vehicles'
     | '/master-core/warehouses'
+    | '/receiving-hub/discrepancies'
+    | '/receiving-hub/non-po-receipt'
+    | '/receiving-hub/put-away'
+    | '/receiving-hub/quality-inspection'
     | '/warehouse-flow/approvals'
     | '/warehouse-flow/audit-logs'
     | '/warehouse-flow/inspection'
@@ -1084,6 +1213,7 @@ export interface FileRouteTypes {
     | '/work-craft/rework-scrap'
     | '/inventory-flow'
     | '/master-core'
+    | '/receiving-hub'
     | '/warehouse-flow'
     | '/warehouse-navigator'
     | '/wave-flow'
@@ -1092,6 +1222,10 @@ export interface FileRouteTypes {
     | '/master-core/customers/$id'
     | '/master-core/items/$id'
     | '/master-core/suppliers/$id'
+    | '/receiving-hub/grn/$id'
+    | '/receiving-hub/grn/new'
+    | '/receiving-hub/kpi/dock-to-stock'
+    | '/receiving-hub/purchase-orders/$poNumber'
     | '/warehouse-flow/requests/new'
     | '/warehouse-navigator/warehouses/$code'
     | '/work-craft/certificates/$number'
@@ -1100,6 +1234,8 @@ export interface FileRouteTypes {
     | '/master-core/customers'
     | '/master-core/items'
     | '/master-core/suppliers'
+    | '/receiving-hub/grn'
+    | '/receiving-hub/purchase-orders'
     | '/warehouse-flow/requests'
     | '/warehouse-navigator/warehouses'
     | '/work-craft/certificates'
@@ -1130,6 +1266,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/purchase-order'
     | '/receiving'
+    | '/receiving-hub'
     | '/reports'
     | '/settings'
     | '/vehicle-queue'
@@ -1147,6 +1284,10 @@ export interface FileRouteTypes {
     | '/master-core/settings'
     | '/master-core/vehicles'
     | '/master-core/warehouses'
+    | '/receiving-hub/discrepancies'
+    | '/receiving-hub/non-po-receipt'
+    | '/receiving-hub/put-away'
+    | '/receiving-hub/quality-inspection'
     | '/warehouse-flow/approvals'
     | '/warehouse-flow/audit-logs'
     | '/warehouse-flow/inspection'
@@ -1183,6 +1324,7 @@ export interface FileRouteTypes {
     | '/work-craft/rework-scrap'
     | '/inventory-flow/'
     | '/master-core/'
+    | '/receiving-hub/'
     | '/warehouse-flow/'
     | '/warehouse-navigator/'
     | '/wave-flow/'
@@ -1191,6 +1333,10 @@ export interface FileRouteTypes {
     | '/master-core/customers/$id'
     | '/master-core/items/$id'
     | '/master-core/suppliers/$id'
+    | '/receiving-hub/grn/$id'
+    | '/receiving-hub/grn/new'
+    | '/receiving-hub/kpi/dock-to-stock'
+    | '/receiving-hub/purchase-orders/$poNumber'
     | '/warehouse-flow/requests/new'
     | '/warehouse-navigator/warehouses/$code'
     | '/work-craft/certificates/$number'
@@ -1200,6 +1346,8 @@ export interface FileRouteTypes {
     | '/master-core/customers/'
     | '/master-core/items/'
     | '/master-core/suppliers/'
+    | '/receiving-hub/grn/'
+    | '/receiving-hub/purchase-orders/'
     | '/warehouse-flow/requests/'
     | '/warehouse-navigator/warehouses/'
     | '/work-craft/certificates/'
@@ -1231,6 +1379,7 @@ export interface RootRouteChildren {
   NotificationsRoute: typeof NotificationsRoute
   PurchaseOrderRoute: typeof PurchaseOrderRoute
   ReceivingRoute: typeof ReceivingRoute
+  ReceivingHubRoute: typeof ReceivingHubRouteWithChildren
   ReportsRoute: typeof ReportsRoute
   SettingsRoute: typeof SettingsRoute
   VehicleQueueRoute: typeof VehicleQueueRoute
@@ -1360,6 +1509,13 @@ declare module '@tanstack/react-router' {
       path: '/receiving'
       fullPath: '/receiving'
       preLoaderRoute: typeof ReceivingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/receiving-hub': {
+      id: '/receiving-hub'
+      path: '/receiving-hub'
+      fullPath: '/receiving-hub'
+      preLoaderRoute: typeof ReceivingHubRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reports': {
@@ -1494,6 +1650,41 @@ declare module '@tanstack/react-router' {
       fullPath: '/master-core/warehouses'
       preLoaderRoute: typeof MasterCoreWarehousesRouteImport
       parentRoute: typeof MasterCoreRoute
+    }
+    '/receiving-hub/': {
+      id: '/receiving-hub/'
+      path: '/'
+      fullPath: '/receiving-hub/'
+      preLoaderRoute: typeof ReceivingHubIndexRouteImport
+      parentRoute: typeof ReceivingHubRoute
+    }
+    '/receiving-hub/discrepancies': {
+      id: '/receiving-hub/discrepancies'
+      path: '/discrepancies'
+      fullPath: '/receiving-hub/discrepancies'
+      preLoaderRoute: typeof ReceivingHubDiscrepanciesRouteImport
+      parentRoute: typeof ReceivingHubRoute
+    }
+    '/receiving-hub/non-po-receipt': {
+      id: '/receiving-hub/non-po-receipt'
+      path: '/non-po-receipt'
+      fullPath: '/receiving-hub/non-po-receipt'
+      preLoaderRoute: typeof ReceivingHubNonPoReceiptRouteImport
+      parentRoute: typeof ReceivingHubRoute
+    }
+    '/receiving-hub/put-away': {
+      id: '/receiving-hub/put-away'
+      path: '/put-away'
+      fullPath: '/receiving-hub/put-away'
+      preLoaderRoute: typeof ReceivingHubPutAwayRouteImport
+      parentRoute: typeof ReceivingHubRoute
+    }
+    '/receiving-hub/quality-inspection': {
+      id: '/receiving-hub/quality-inspection'
+      path: '/quality-inspection'
+      fullPath: '/receiving-hub/quality-inspection'
+      preLoaderRoute: typeof ReceivingHubQualityInspectionRouteImport
+      parentRoute: typeof ReceivingHubRoute
     }
     '/warehouse-flow/': {
       id: '/warehouse-flow/'
@@ -1817,6 +2008,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MasterCoreSuppliersIdRouteImport
       parentRoute: typeof MasterCoreRoute
     }
+    '/receiving-hub/grn/': {
+      id: '/receiving-hub/grn/'
+      path: '/grn'
+      fullPath: '/receiving-hub/grn/'
+      preLoaderRoute: typeof ReceivingHubGrnIndexRouteImport
+      parentRoute: typeof ReceivingHubRoute
+    }
+    '/receiving-hub/grn/$id': {
+      id: '/receiving-hub/grn/$id'
+      path: '/grn/$id'
+      fullPath: '/receiving-hub/grn/$id'
+      preLoaderRoute: typeof ReceivingHubGrnIdRouteImport
+      parentRoute: typeof ReceivingHubRoute
+    }
+    '/receiving-hub/grn/new': {
+      id: '/receiving-hub/grn/new'
+      path: '/grn/new'
+      fullPath: '/receiving-hub/grn/new'
+      preLoaderRoute: typeof ReceivingHubGrnNewRouteImport
+      parentRoute: typeof ReceivingHubRoute
+    }
+    '/receiving-hub/kpi/dock-to-stock': {
+      id: '/receiving-hub/kpi/dock-to-stock'
+      path: '/kpi/dock-to-stock'
+      fullPath: '/receiving-hub/kpi/dock-to-stock'
+      preLoaderRoute: typeof ReceivingHubKpiDockToStockRouteImport
+      parentRoute: typeof ReceivingHubRoute
+    }
+    '/receiving-hub/purchase-orders/': {
+      id: '/receiving-hub/purchase-orders/'
+      path: '/purchase-orders'
+      fullPath: '/receiving-hub/purchase-orders/'
+      preLoaderRoute: typeof ReceivingHubPurchaseOrdersIndexRouteImport
+      parentRoute: typeof ReceivingHubRoute
+    }
+    '/receiving-hub/purchase-orders/$poNumber': {
+      id: '/receiving-hub/purchase-orders/$poNumber'
+      path: '/purchase-orders/$poNumber'
+      fullPath: '/receiving-hub/purchase-orders/$poNumber'
+      preLoaderRoute: typeof ReceivingHubPurchaseOrdersPoNumberRouteImport
+      parentRoute: typeof ReceivingHubRoute
+    }
     '/warehouse-flow/requests/': {
       id: '/warehouse-flow/requests/'
       path: '/requests'
@@ -1988,6 +2221,39 @@ const MasterCoreRouteChildren: MasterCoreRouteChildren = {
 
 const MasterCoreRouteWithChildren = MasterCoreRoute._addFileChildren(
   MasterCoreRouteChildren,
+)
+
+interface ReceivingHubRouteChildren {
+  ReceivingHubDiscrepanciesRoute: typeof ReceivingHubDiscrepanciesRoute
+  ReceivingHubNonPoReceiptRoute: typeof ReceivingHubNonPoReceiptRoute
+  ReceivingHubPutAwayRoute: typeof ReceivingHubPutAwayRoute
+  ReceivingHubQualityInspectionRoute: typeof ReceivingHubQualityInspectionRoute
+  ReceivingHubIndexRoute: typeof ReceivingHubIndexRoute
+  ReceivingHubGrnIdRoute: typeof ReceivingHubGrnIdRoute
+  ReceivingHubGrnNewRoute: typeof ReceivingHubGrnNewRoute
+  ReceivingHubKpiDockToStockRoute: typeof ReceivingHubKpiDockToStockRoute
+  ReceivingHubPurchaseOrdersPoNumberRoute: typeof ReceivingHubPurchaseOrdersPoNumberRoute
+  ReceivingHubGrnIndexRoute: typeof ReceivingHubGrnIndexRoute
+  ReceivingHubPurchaseOrdersIndexRoute: typeof ReceivingHubPurchaseOrdersIndexRoute
+}
+
+const ReceivingHubRouteChildren: ReceivingHubRouteChildren = {
+  ReceivingHubDiscrepanciesRoute: ReceivingHubDiscrepanciesRoute,
+  ReceivingHubNonPoReceiptRoute: ReceivingHubNonPoReceiptRoute,
+  ReceivingHubPutAwayRoute: ReceivingHubPutAwayRoute,
+  ReceivingHubQualityInspectionRoute: ReceivingHubQualityInspectionRoute,
+  ReceivingHubIndexRoute: ReceivingHubIndexRoute,
+  ReceivingHubGrnIdRoute: ReceivingHubGrnIdRoute,
+  ReceivingHubGrnNewRoute: ReceivingHubGrnNewRoute,
+  ReceivingHubKpiDockToStockRoute: ReceivingHubKpiDockToStockRoute,
+  ReceivingHubPurchaseOrdersPoNumberRoute:
+    ReceivingHubPurchaseOrdersPoNumberRoute,
+  ReceivingHubGrnIndexRoute: ReceivingHubGrnIndexRoute,
+  ReceivingHubPurchaseOrdersIndexRoute: ReceivingHubPurchaseOrdersIndexRoute,
+}
+
+const ReceivingHubRouteWithChildren = ReceivingHubRoute._addFileChildren(
+  ReceivingHubRouteChildren,
 )
 
 interface WarehouseFlowRouteChildren {
@@ -2168,6 +2434,7 @@ const rootRouteChildren: RootRouteChildren = {
   NotificationsRoute: NotificationsRoute,
   PurchaseOrderRoute: PurchaseOrderRoute,
   ReceivingRoute: ReceivingRoute,
+  ReceivingHubRoute: ReceivingHubRouteWithChildren,
   ReportsRoute: ReportsRoute,
   SettingsRoute: SettingsRoute,
   VehicleQueueRoute: VehicleQueueRoute,
