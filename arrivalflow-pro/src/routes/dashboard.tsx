@@ -13,6 +13,7 @@ import {
   Database,
   Waves,
   Factory,
+  Boxes,
   LockKeyhole,
 } from "lucide-react";
 import {
@@ -50,10 +51,11 @@ const quickActions = [
   { label: "Reports", to: "/reports", icon: BarChart3 },
 ];
 
-const modules: Array<{ key: ModuleKey; title: string; description: string; href: "/master-core" | "/wave-flow" | "/work-craft"; icon: typeof Database }> = [
+const modules: Array<{ key: ModuleKey; title: string; description: string; href: "/master-core" | "/wave-flow" | "/work-craft" | "/inventory-flow"; icon: typeof Database }> = [
   { key: "master", title: "Master Core", description: "Suppliers, customers, items, warehouses and enterprise records.", href: "/master-core", icon: Database },
   { key: "wave", title: "Wave Flow", description: "Outbound allocation, wave planning, picking, packing and dispatch.", href: "/wave-flow", icon: Waves },
   { key: "workcraft", title: "Work Craft Flow", description: "Assembly work orders, BOM consumption, quality and completion.", href: "/work-craft", icon: Factory },
+  { key: "inventory", title: "Inventory Flow", description: "Stock visibility, inventory explorer, cycle counts and adjustments.", href: "/inventory-flow", icon: Boxes },
 ];
 
 function Dashboard() {
@@ -80,7 +82,7 @@ function Dashboard() {
       }
     >
       <SectionCard title="Nexus modules" description="Your role-based application access" icon={LayoutDashboard}>
-        <div className="grid gap-3 md:grid-cols-3">
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           {modules.map((module) => {
             const allowed = canAccess(module.key);
             return allowed ? (

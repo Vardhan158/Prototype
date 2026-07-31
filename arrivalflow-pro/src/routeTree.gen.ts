@@ -19,6 +19,7 @@ import { Route as EmployeesRouteImport } from './routes/employees'
 import { Route as GateEntryRouteImport } from './routes/gate-entry'
 import { Route as GrnRouteImport } from './routes/grn'
 import { Route as InventoryRouteImport } from './routes/inventory'
+import { Route as InventoryFlowRouteImport } from './routes/inventory-flow'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MasterCoreRouteImport } from './routes/master-core'
 import { Route as MasterDataRouteImport } from './routes/master-data'
@@ -31,6 +32,10 @@ import { Route as VehicleQueueRouteImport } from './routes/vehicle-queue'
 import { Route as VehicleVerificationRouteImport } from './routes/vehicle-verification'
 import { Route as WaveFlowRouteImport } from './routes/wave-flow'
 import { Route as WorkCraftRouteImport } from './routes/work-craft'
+import { Route as InventoryFlowIndexRouteImport } from './routes/inventory-flow.index'
+import { Route as InventoryFlowAdjustmentsRouteImport } from './routes/inventory-flow.adjustments'
+import { Route as InventoryFlowCycleCountRouteImport } from './routes/inventory-flow.cycle-count'
+import { Route as InventoryFlowExplorerRouteImport } from './routes/inventory-flow.explorer'
 import { Route as MasterCoreIndexRouteImport } from './routes/master-core.index'
 import { Route as MasterCoreEmployeesRouteImport } from './routes/master-core.employees'
 import { Route as MasterCoreGeographyRouteImport } from './routes/master-core.geography'
@@ -59,6 +64,8 @@ import { Route as WorkCraftIndexRouteImport } from './routes/work-craft.index'
 import { Route as WorkCraftExceptionsRouteImport } from './routes/work-craft.exceptions'
 import { Route as WorkCraftFinishedGoodsRouteImport } from './routes/work-craft.finished-goods'
 import { Route as WorkCraftReworkScrapRouteImport } from './routes/work-craft.rework-scrap'
+import { Route as InventoryFlowInventoryIndexRouteImport } from './routes/inventory-flow.inventory.index'
+import { Route as InventoryFlowInventoryItemIdRouteImport } from './routes/inventory-flow.inventory.$itemId'
 import { Route as MasterCoreCustomersIndexRouteImport } from './routes/master-core.customers.index'
 import { Route as MasterCoreCustomersIdRouteImport } from './routes/master-core.customers.$id'
 import { Route as MasterCoreItemsIndexRouteImport } from './routes/master-core.items.index'
@@ -128,6 +135,11 @@ const InventoryRoute = InventoryRouteImport.update({
   path: '/inventory',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InventoryFlowRoute = InventoryFlowRouteImport.update({
+  id: '/inventory-flow',
+  path: '/inventory-flow',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -187,6 +199,27 @@ const WorkCraftRoute = WorkCraftRouteImport.update({
   id: '/work-craft',
   path: '/work-craft',
   getParentRoute: () => rootRouteImport,
+} as any)
+const InventoryFlowIndexRoute = InventoryFlowIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => InventoryFlowRoute,
+} as any)
+const InventoryFlowAdjustmentsRoute =
+  InventoryFlowAdjustmentsRouteImport.update({
+    id: '/adjustments',
+    path: '/adjustments',
+    getParentRoute: () => InventoryFlowRoute,
+  } as any)
+const InventoryFlowCycleCountRoute = InventoryFlowCycleCountRouteImport.update({
+  id: '/cycle-count',
+  path: '/cycle-count',
+  getParentRoute: () => InventoryFlowRoute,
+} as any)
+const InventoryFlowExplorerRoute = InventoryFlowExplorerRouteImport.update({
+  id: '/explorer',
+  path: '/explorer',
+  getParentRoute: () => InventoryFlowRoute,
 } as any)
 const MasterCoreIndexRoute = MasterCoreIndexRouteImport.update({
   id: '/',
@@ -329,6 +362,18 @@ const WorkCraftReworkScrapRoute = WorkCraftReworkScrapRouteImport.update({
   path: '/rework-scrap',
   getParentRoute: () => WorkCraftRoute,
 } as any)
+const InventoryFlowInventoryIndexRoute =
+  InventoryFlowInventoryIndexRouteImport.update({
+    id: '/inventory/',
+    path: '/inventory/',
+    getParentRoute: () => InventoryFlowRoute,
+  } as any)
+const InventoryFlowInventoryItemIdRoute =
+  InventoryFlowInventoryItemIdRouteImport.update({
+    id: '/inventory/$itemId',
+    path: '/inventory/$itemId',
+    getParentRoute: () => InventoryFlowRoute,
+  } as any)
 const MasterCoreCustomersIndexRoute =
   MasterCoreCustomersIndexRouteImport.update({
     id: '/customers/',
@@ -443,6 +488,7 @@ export interface FileRoutesByFullPath {
   '/gate-entry': typeof GateEntryRoute
   '/grn': typeof GrnRoute
   '/inventory': typeof InventoryRoute
+  '/inventory-flow': typeof InventoryFlowRouteWithChildren
   '/login': typeof LoginRoute
   '/master-core': typeof MasterCoreRouteWithChildren
   '/master-data': typeof MasterDataRoute
@@ -455,6 +501,9 @@ export interface FileRoutesByFullPath {
   '/vehicle-verification': typeof VehicleVerificationRoute
   '/wave-flow': typeof WaveFlowRouteWithChildren
   '/work-craft': typeof WorkCraftRouteWithChildren
+  '/inventory-flow/adjustments': typeof InventoryFlowAdjustmentsRoute
+  '/inventory-flow/cycle-count': typeof InventoryFlowCycleCountRoute
+  '/inventory-flow/explorer': typeof InventoryFlowExplorerRoute
   '/master-core/employees': typeof MasterCoreEmployeesRoute
   '/master-core/geography': typeof MasterCoreGeographyRoute
   '/master-core/help': typeof MasterCoreHelpRoute
@@ -480,15 +529,18 @@ export interface FileRoutesByFullPath {
   '/work-craft/exceptions': typeof WorkCraftExceptionsRoute
   '/work-craft/finished-goods': typeof WorkCraftFinishedGoodsRoute
   '/work-craft/rework-scrap': typeof WorkCraftReworkScrapRoute
+  '/inventory-flow/': typeof InventoryFlowIndexRoute
   '/master-core/': typeof MasterCoreIndexRoute
   '/wave-flow/': typeof WaveFlowIndexRoute
   '/work-craft/': typeof WorkCraftIndexRoute
+  '/inventory-flow/inventory/$itemId': typeof InventoryFlowInventoryItemIdRoute
   '/master-core/customers/$id': typeof MasterCoreCustomersIdRoute
   '/master-core/items/$id': typeof MasterCoreItemsIdRoute
   '/master-core/suppliers/$id': typeof MasterCoreSuppliersIdRoute
   '/work-craft/certificates/$number': typeof WorkCraftCertificatesNumberRoute
   '/work-craft/work-orders/$id': typeof WorkCraftWorkOrdersIdRouteWithChildren
   '/work-craft/work-orders/new': typeof WorkCraftWorkOrdersNewRoute
+  '/inventory-flow/inventory/': typeof InventoryFlowInventoryIndexRoute
   '/master-core/customers/': typeof MasterCoreCustomersIndexRoute
   '/master-core/items/': typeof MasterCoreItemsIndexRoute
   '/master-core/suppliers/': typeof MasterCoreSuppliersIndexRoute
@@ -522,6 +574,9 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/vehicle-queue': typeof VehicleQueueRoute
   '/vehicle-verification': typeof VehicleVerificationRoute
+  '/inventory-flow/adjustments': typeof InventoryFlowAdjustmentsRoute
+  '/inventory-flow/cycle-count': typeof InventoryFlowCycleCountRoute
+  '/inventory-flow/explorer': typeof InventoryFlowExplorerRoute
   '/master-core/employees': typeof MasterCoreEmployeesRoute
   '/master-core/geography': typeof MasterCoreGeographyRoute
   '/master-core/help': typeof MasterCoreHelpRoute
@@ -547,14 +602,17 @@ export interface FileRoutesByTo {
   '/work-craft/exceptions': typeof WorkCraftExceptionsRoute
   '/work-craft/finished-goods': typeof WorkCraftFinishedGoodsRoute
   '/work-craft/rework-scrap': typeof WorkCraftReworkScrapRoute
+  '/inventory-flow': typeof InventoryFlowIndexRoute
   '/master-core': typeof MasterCoreIndexRoute
   '/wave-flow': typeof WaveFlowIndexRoute
   '/work-craft': typeof WorkCraftIndexRoute
+  '/inventory-flow/inventory/$itemId': typeof InventoryFlowInventoryItemIdRoute
   '/master-core/customers/$id': typeof MasterCoreCustomersIdRoute
   '/master-core/items/$id': typeof MasterCoreItemsIdRoute
   '/master-core/suppliers/$id': typeof MasterCoreSuppliersIdRoute
   '/work-craft/certificates/$number': typeof WorkCraftCertificatesNumberRoute
   '/work-craft/work-orders/new': typeof WorkCraftWorkOrdersNewRoute
+  '/inventory-flow/inventory': typeof InventoryFlowInventoryIndexRoute
   '/master-core/customers': typeof MasterCoreCustomersIndexRoute
   '/master-core/items': typeof MasterCoreItemsIndexRoute
   '/master-core/suppliers': typeof MasterCoreSuppliersIndexRoute
@@ -580,6 +638,7 @@ export interface FileRoutesById {
   '/gate-entry': typeof GateEntryRoute
   '/grn': typeof GrnRoute
   '/inventory': typeof InventoryRoute
+  '/inventory-flow': typeof InventoryFlowRouteWithChildren
   '/login': typeof LoginRoute
   '/master-core': typeof MasterCoreRouteWithChildren
   '/master-data': typeof MasterDataRoute
@@ -592,6 +651,9 @@ export interface FileRoutesById {
   '/vehicle-verification': typeof VehicleVerificationRoute
   '/wave-flow': typeof WaveFlowRouteWithChildren
   '/work-craft': typeof WorkCraftRouteWithChildren
+  '/inventory-flow/adjustments': typeof InventoryFlowAdjustmentsRoute
+  '/inventory-flow/cycle-count': typeof InventoryFlowCycleCountRoute
+  '/inventory-flow/explorer': typeof InventoryFlowExplorerRoute
   '/master-core/employees': typeof MasterCoreEmployeesRoute
   '/master-core/geography': typeof MasterCoreGeographyRoute
   '/master-core/help': typeof MasterCoreHelpRoute
@@ -617,15 +679,18 @@ export interface FileRoutesById {
   '/work-craft/exceptions': typeof WorkCraftExceptionsRoute
   '/work-craft/finished-goods': typeof WorkCraftFinishedGoodsRoute
   '/work-craft/rework-scrap': typeof WorkCraftReworkScrapRoute
+  '/inventory-flow/': typeof InventoryFlowIndexRoute
   '/master-core/': typeof MasterCoreIndexRoute
   '/wave-flow/': typeof WaveFlowIndexRoute
   '/work-craft/': typeof WorkCraftIndexRoute
+  '/inventory-flow/inventory/$itemId': typeof InventoryFlowInventoryItemIdRoute
   '/master-core/customers/$id': typeof MasterCoreCustomersIdRoute
   '/master-core/items/$id': typeof MasterCoreItemsIdRoute
   '/master-core/suppliers/$id': typeof MasterCoreSuppliersIdRoute
   '/work-craft/certificates/$number': typeof WorkCraftCertificatesNumberRoute
   '/work-craft/work-orders/$id': typeof WorkCraftWorkOrdersIdRouteWithChildren
   '/work-craft/work-orders/new': typeof WorkCraftWorkOrdersNewRoute
+  '/inventory-flow/inventory/': typeof InventoryFlowInventoryIndexRoute
   '/master-core/customers/': typeof MasterCoreCustomersIndexRoute
   '/master-core/items/': typeof MasterCoreItemsIndexRoute
   '/master-core/suppliers/': typeof MasterCoreSuppliersIndexRoute
@@ -652,6 +717,7 @@ export interface FileRouteTypes {
     | '/gate-entry'
     | '/grn'
     | '/inventory'
+    | '/inventory-flow'
     | '/login'
     | '/master-core'
     | '/master-data'
@@ -664,6 +730,9 @@ export interface FileRouteTypes {
     | '/vehicle-verification'
     | '/wave-flow'
     | '/work-craft'
+    | '/inventory-flow/adjustments'
+    | '/inventory-flow/cycle-count'
+    | '/inventory-flow/explorer'
     | '/master-core/employees'
     | '/master-core/geography'
     | '/master-core/help'
@@ -689,15 +758,18 @@ export interface FileRouteTypes {
     | '/work-craft/exceptions'
     | '/work-craft/finished-goods'
     | '/work-craft/rework-scrap'
+    | '/inventory-flow/'
     | '/master-core/'
     | '/wave-flow/'
     | '/work-craft/'
+    | '/inventory-flow/inventory/$itemId'
     | '/master-core/customers/$id'
     | '/master-core/items/$id'
     | '/master-core/suppliers/$id'
     | '/work-craft/certificates/$number'
     | '/work-craft/work-orders/$id'
     | '/work-craft/work-orders/new'
+    | '/inventory-flow/inventory/'
     | '/master-core/customers/'
     | '/master-core/items/'
     | '/master-core/suppliers/'
@@ -731,6 +803,9 @@ export interface FileRouteTypes {
     | '/settings'
     | '/vehicle-queue'
     | '/vehicle-verification'
+    | '/inventory-flow/adjustments'
+    | '/inventory-flow/cycle-count'
+    | '/inventory-flow/explorer'
     | '/master-core/employees'
     | '/master-core/geography'
     | '/master-core/help'
@@ -756,14 +831,17 @@ export interface FileRouteTypes {
     | '/work-craft/exceptions'
     | '/work-craft/finished-goods'
     | '/work-craft/rework-scrap'
+    | '/inventory-flow'
     | '/master-core'
     | '/wave-flow'
     | '/work-craft'
+    | '/inventory-flow/inventory/$itemId'
     | '/master-core/customers/$id'
     | '/master-core/items/$id'
     | '/master-core/suppliers/$id'
     | '/work-craft/certificates/$number'
     | '/work-craft/work-orders/new'
+    | '/inventory-flow/inventory'
     | '/master-core/customers'
     | '/master-core/items'
     | '/master-core/suppliers'
@@ -788,6 +866,7 @@ export interface FileRouteTypes {
     | '/gate-entry'
     | '/grn'
     | '/inventory'
+    | '/inventory-flow'
     | '/login'
     | '/master-core'
     | '/master-data'
@@ -800,6 +879,9 @@ export interface FileRouteTypes {
     | '/vehicle-verification'
     | '/wave-flow'
     | '/work-craft'
+    | '/inventory-flow/adjustments'
+    | '/inventory-flow/cycle-count'
+    | '/inventory-flow/explorer'
     | '/master-core/employees'
     | '/master-core/geography'
     | '/master-core/help'
@@ -825,15 +907,18 @@ export interface FileRouteTypes {
     | '/work-craft/exceptions'
     | '/work-craft/finished-goods'
     | '/work-craft/rework-scrap'
+    | '/inventory-flow/'
     | '/master-core/'
     | '/wave-flow/'
     | '/work-craft/'
+    | '/inventory-flow/inventory/$itemId'
     | '/master-core/customers/$id'
     | '/master-core/items/$id'
     | '/master-core/suppliers/$id'
     | '/work-craft/certificates/$number'
     | '/work-craft/work-orders/$id'
     | '/work-craft/work-orders/new'
+    | '/inventory-flow/inventory/'
     | '/master-core/customers/'
     | '/master-core/items/'
     | '/master-core/suppliers/'
@@ -859,6 +944,7 @@ export interface RootRouteChildren {
   GateEntryRoute: typeof GateEntryRoute
   GrnRoute: typeof GrnRoute
   InventoryRoute: typeof InventoryRoute
+  InventoryFlowRoute: typeof InventoryFlowRouteWithChildren
   LoginRoute: typeof LoginRoute
   MasterCoreRoute: typeof MasterCoreRouteWithChildren
   MasterDataRoute: typeof MasterDataRoute
@@ -945,6 +1031,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InventoryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/inventory-flow': {
+      id: '/inventory-flow'
+      path: '/inventory-flow'
+      fullPath: '/inventory-flow'
+      preLoaderRoute: typeof InventoryFlowRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -1028,6 +1121,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/work-craft'
       preLoaderRoute: typeof WorkCraftRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/inventory-flow/': {
+      id: '/inventory-flow/'
+      path: '/'
+      fullPath: '/inventory-flow/'
+      preLoaderRoute: typeof InventoryFlowIndexRouteImport
+      parentRoute: typeof InventoryFlowRoute
+    }
+    '/inventory-flow/adjustments': {
+      id: '/inventory-flow/adjustments'
+      path: '/adjustments'
+      fullPath: '/inventory-flow/adjustments'
+      preLoaderRoute: typeof InventoryFlowAdjustmentsRouteImport
+      parentRoute: typeof InventoryFlowRoute
+    }
+    '/inventory-flow/cycle-count': {
+      id: '/inventory-flow/cycle-count'
+      path: '/cycle-count'
+      fullPath: '/inventory-flow/cycle-count'
+      preLoaderRoute: typeof InventoryFlowCycleCountRouteImport
+      parentRoute: typeof InventoryFlowRoute
+    }
+    '/inventory-flow/explorer': {
+      id: '/inventory-flow/explorer'
+      path: '/explorer'
+      fullPath: '/inventory-flow/explorer'
+      preLoaderRoute: typeof InventoryFlowExplorerRouteImport
+      parentRoute: typeof InventoryFlowRoute
     }
     '/master-core/': {
       id: '/master-core/'
@@ -1225,6 +1346,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorkCraftReworkScrapRouteImport
       parentRoute: typeof WorkCraftRoute
     }
+    '/inventory-flow/inventory/': {
+      id: '/inventory-flow/inventory/'
+      path: '/inventory'
+      fullPath: '/inventory-flow/inventory/'
+      preLoaderRoute: typeof InventoryFlowInventoryIndexRouteImport
+      parentRoute: typeof InventoryFlowRoute
+    }
+    '/inventory-flow/inventory/$itemId': {
+      id: '/inventory-flow/inventory/$itemId'
+      path: '/inventory/$itemId'
+      fullPath: '/inventory-flow/inventory/$itemId'
+      preLoaderRoute: typeof InventoryFlowInventoryItemIdRouteImport
+      parentRoute: typeof InventoryFlowRoute
+    }
     '/master-core/customers/': {
       id: '/master-core/customers/'
       path: '/customers'
@@ -1353,6 +1488,28 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface InventoryFlowRouteChildren {
+  InventoryFlowAdjustmentsRoute: typeof InventoryFlowAdjustmentsRoute
+  InventoryFlowCycleCountRoute: typeof InventoryFlowCycleCountRoute
+  InventoryFlowExplorerRoute: typeof InventoryFlowExplorerRoute
+  InventoryFlowIndexRoute: typeof InventoryFlowIndexRoute
+  InventoryFlowInventoryItemIdRoute: typeof InventoryFlowInventoryItemIdRoute
+  InventoryFlowInventoryIndexRoute: typeof InventoryFlowInventoryIndexRoute
+}
+
+const InventoryFlowRouteChildren: InventoryFlowRouteChildren = {
+  InventoryFlowAdjustmentsRoute: InventoryFlowAdjustmentsRoute,
+  InventoryFlowCycleCountRoute: InventoryFlowCycleCountRoute,
+  InventoryFlowExplorerRoute: InventoryFlowExplorerRoute,
+  InventoryFlowIndexRoute: InventoryFlowIndexRoute,
+  InventoryFlowInventoryItemIdRoute: InventoryFlowInventoryItemIdRoute,
+  InventoryFlowInventoryIndexRoute: InventoryFlowInventoryIndexRoute,
+}
+
+const InventoryFlowRouteWithChildren = InventoryFlowRoute._addFileChildren(
+  InventoryFlowRouteChildren,
+)
 
 interface MasterCoreRouteChildren {
   MasterCoreEmployeesRoute: typeof MasterCoreEmployeesRoute
@@ -1499,6 +1656,7 @@ const rootRouteChildren: RootRouteChildren = {
   GateEntryRoute: GateEntryRoute,
   GrnRoute: GrnRoute,
   InventoryRoute: InventoryRoute,
+  InventoryFlowRoute: InventoryFlowRouteWithChildren,
   LoginRoute: LoginRoute,
   MasterCoreRoute: MasterCoreRouteWithChildren,
   MasterDataRoute: MasterDataRoute,

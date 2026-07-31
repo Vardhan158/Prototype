@@ -245,3 +245,49 @@
     animation: wms-ripple 0.6s ease-out forwards;
   }
 }
+
+/* Inventory Flow semantic tokens imported from the VoltCore dashboard. */
+@theme inline {
+  --color-status-available: var(--status-available);
+  --color-status-available-soft: var(--status-available-soft);
+  --color-status-reserved: var(--status-reserved);
+  --color-status-reserved-soft: var(--status-reserved-soft);
+  --color-status-damaged: var(--status-damaged);
+  --color-status-damaged-soft: var(--status-damaged-soft);
+  --color-status-quarantine: var(--status-quarantine);
+  --color-status-quarantine-soft: var(--status-quarantine-soft);
+  --color-status-low: var(--status-low);
+  --color-status-low-soft: var(--status-low-soft);
+  --color-status-out: var(--status-out);
+  --color-status-out-soft: var(--status-out-soft);
+  --shadow-card: var(--inventory-shadow-card);
+  --shadow-elevated: var(--inventory-shadow-elevated);
+}
+
+:root {
+  --status-available: oklch(0.55 0.15 152);
+  --status-available-soft: oklch(0.95 0.04 152);
+  --status-reserved: oklch(0.546 0.215 262.881);
+  --status-reserved-soft: oklch(0.95 0.03 262);
+  --status-damaged: oklch(0.57 0.22 27);
+  --status-damaged-soft: oklch(0.95 0.03 27);
+  --status-quarantine: oklch(0.66 0.18 48);
+  --status-quarantine-soft: oklch(0.96 0.04 62);
+  --status-low: oklch(0.72 0.16 79);
+  --status-low-soft: oklch(0.96 0.05 90);
+  --status-out: oklch(0.55 0.02 257);
+  --status-out-soft: oklch(0.95 0.005 257);
+  --inventory-shadow-card: 0 1px 3px oklch(0.208 0.042 265.755 / 0.08);
+  --inventory-shadow-elevated: 0 10px 30px -12px oklch(0.208 0.042 265.755 / 0.18);
+}
+
+@utility card-surface {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--inventory-shadow-card);
+}
+
+@utility num {
+  font-variant-numeric: tabular-nums;
+}
