@@ -126,6 +126,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(null);
         window.localStorage.removeItem(SESSION_KEY);
         document.cookie = `${SSO_COOKIE}=; Path=/; Max-Age=0; SameSite=Lax`;
+        window.location.assign("/login");
       },
       canAccess: (module) => Boolean(user?.modules.includes(module)),
     }),
