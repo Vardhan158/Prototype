@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: prototype
+    runtime: node
+    rootDir: arrivalflow-pro
+    buildCommand: bun install --frozen-lockfile && bun run build
+    startCommand: bun run start
+    healthCheckPath: /login
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
