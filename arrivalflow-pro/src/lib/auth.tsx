@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
-export type AppRole = "Administrator" | "Data Steward" | "Wave Planner" | "Production Manager" | "Inventory Controller";
-export type ModuleKey = "arrival" | "master" | "wave" | "workcraft" | "inventory";
+export type AppRole = "Administrator" | "Data Steward" | "Wave Planner" | "Production Manager" | "Inventory Controller" | "Warehouse Supervisor";
+export type ModuleKey = "arrival" | "master" | "wave" | "workcraft" | "inventory" | "warehouse";
 
 export interface AuthUser {
   id: string;
@@ -20,7 +20,7 @@ export const SEEDED_USERS: SeededUser[] = [
     email: "admin@nexuswms.com",
     password: "Admin@2026",
     role: "Administrator",
-    modules: ["arrival", "master", "wave", "workcraft", "inventory"],
+    modules: ["arrival", "master", "wave", "workcraft", "inventory", "warehouse"],
     dashboard: "/dashboard",
   },
   {
@@ -58,6 +58,15 @@ export const SEEDED_USERS: SeededUser[] = [
     role: "Inventory Controller",
     modules: ["inventory"],
     dashboard: "/inventory-flow",
+  },
+  {
+    id: "WHS-1001",
+    name: "Anjali Sharma",
+    email: "anjali@nexuswms.com",
+    password: "warehouse@2026",
+    role: "Warehouse Supervisor",
+    modules: ["warehouse"],
+    dashboard: "/warehouse-flow",
   },
 ];
 
