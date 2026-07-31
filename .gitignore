@@ -32,3 +32,8 @@ Thumbs.db
 *.tmp
 *.temp
 *.swp
+
+# Original standalone projects; the unified app lives in arrivalflow-pro
+/master-core/
+/wave-flow/
+/work-craft-flow/
