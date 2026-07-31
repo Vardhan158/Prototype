@@ -9,12 +9,6 @@ import {
   BarChart3,
   ArrowUpRight,
   CircleDot,
-  LayoutDashboard,
-  Database,
-  Waves,
-  Factory,
-  Boxes,
-  LockKeyhole,
 } from "lucide-react";
 import {
   Area,
@@ -30,7 +24,7 @@ import { SectionCard, StatCard, Timeline } from "@/components/wms/primitives";
 import { Button } from "@/components/ui/button";
 import { arrivals, activity, arrivalTrend, docks } from "@/lib/wms-data";
 import { Progress } from "@/components/ui/progress";
-import { useAuth, type ModuleKey } from "@/lib/auth";
+import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -51,17 +45,8 @@ const quickActions = [
   { label: "Reports", to: "/reports", icon: BarChart3 },
 ];
 
-const modules: Array<{ key: ModuleKey; title: string; description: string; href: "/master-core" | "/wave-flow" | "/work-craft" | "/inventory-flow" | "/warehouse-flow" | "/receiving-hub"; icon: typeof Database }> = [
-  { key: "master", title: "Master Core", description: "Suppliers, customers, items, warehouses and enterprise records.", href: "/master-core", icon: Database },
-  { key: "wave", title: "Wave Flow", description: "Outbound allocation, wave planning, picking, packing and dispatch.", href: "/wave-flow", icon: Waves },
-  { key: "workcraft", title: "Work Craft Flow", description: "Assembly work orders, BOM consumption, quality and completion.", href: "/work-craft", icon: Factory },
-  { key: "inventory", title: "Inventory Flow", description: "Stock visibility, inventory explorer, cycle counts and adjustments.", href: "/inventory-flow", icon: Boxes },
-  { key: "warehouse", title: "Warehouse Flow", description: "Material requests, approvals, reservations, issues and returns.", href: "/warehouse-flow", icon: PackageCheck },
-  { key: "receiving", title: "Receiving Hub", description: "Purchase orders, GRNs, quality inspection, discrepancies and put-away.", href: "/receiving-hub", icon: Truck },
-];
-
 function Dashboard() {
-  const { user, canAccess } = useAuth();
+  const { user } = useAuth();
   const occupied = docks.filter((d) => d.status === "Occupied" || d.status === "Reserved").length;
 
   return (
@@ -83,29 +68,6 @@ function Dashboard() {
         </>
       }
     >
-      <SectionCard title="Nexus modules" description="Your role-based application access" icon={LayoutDashboard}>
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {modules.map((module) => {
-            const allowed = canAccess(module.key);
-            return allowed ? (
-              <Link key={module.key} to={module.href} className="group rounded-2xl border border-border bg-card p-5 transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-soft">
-                <span className="grid size-10 place-items-center rounded-xl bg-primary-soft text-primary"><module.icon className="size-5" /></span>
-                <h3 className="mt-4 font-semibold">{module.title}</h3>
-                <p className="mt-1 text-xs leading-5 text-muted-foreground">{module.description}</p>
-                <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-primary">Open dashboard <ArrowUpRight className="size-3.5" /></span>
-              </Link>
-            ) : (
-              <div key={module.key} className="rounded-2xl border border-dashed border-border bg-muted/30 p-5 opacity-70">
-                <span className="grid size-10 place-items-center rounded-xl bg-muted text-muted-foreground"><LockKeyhole className="size-5" /></span>
-                <h3 className="mt-4 font-semibold">{module.title}</h3>
-                <p className="mt-1 text-xs text-muted-foreground">Not available for {user?.role}.</p>
-              </div>
-            );
-          })}
-        </div>
-      </SectionCard>
-
-      <div className="mt-4" />
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         <StatCard label="Today's arrivals" value="18" delta="+4 vs yesterday" icon={Truck} tone="primary" to="/vehicle-queue" />
         <StatCard label="Pending arrivals" value="2" delta="Oldest waiting 18 min" icon={Clock3} tone="warning" to="/notifications" />
