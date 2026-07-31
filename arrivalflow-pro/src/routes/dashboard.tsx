@@ -51,13 +51,12 @@ const quickActions = [
   { label: "Reports", to: "/reports", icon: BarChart3 },
 ];
 
-const modules: Array<{ key: ModuleKey; title: string; description: string; href: "/master-core" | "/wave-flow" | "/work-craft" | "/inventory-flow" | "/warehouse-flow" | "/warehouse-navigator" | "/receiving-hub"; icon: typeof Database }> = [
+const modules: Array<{ key: ModuleKey; title: string; description: string; href: "/master-core" | "/wave-flow" | "/work-craft" | "/inventory-flow" | "/warehouse-flow" | "/receiving-hub"; icon: typeof Database }> = [
   { key: "master", title: "Master Core", description: "Suppliers, customers, items, warehouses and enterprise records.", href: "/master-core", icon: Database },
   { key: "wave", title: "Wave Flow", description: "Outbound allocation, wave planning, picking, packing and dispatch.", href: "/wave-flow", icon: Waves },
   { key: "workcraft", title: "Work Craft Flow", description: "Assembly work orders, BOM consumption, quality and completion.", href: "/work-craft", icon: Factory },
   { key: "inventory", title: "Inventory Flow", description: "Stock visibility, inventory explorer, cycle counts and adjustments.", href: "/inventory-flow", icon: Boxes },
   { key: "warehouse", title: "Warehouse Flow", description: "Material requests, approvals, reservations, issues and returns.", href: "/warehouse-flow", icon: PackageCheck },
-  { key: "navigator", title: "Warehouse Navigator", description: "Storage layouts, warehouses, zones, aisles, racks and capacity maps.", href: "/warehouse-navigator", icon: Warehouse },
   { key: "receiving", title: "Receiving Hub", description: "Purchase orders, GRNs, quality inspection, discrepancies and put-away.", href: "/receiving-hub", icon: Truck },
 ];
 

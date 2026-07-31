@@ -32,7 +32,6 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as VehicleQueueRouteImport } from './routes/vehicle-queue'
 import { Route as VehicleVerificationRouteImport } from './routes/vehicle-verification'
 import { Route as WarehouseFlowRouteImport } from './routes/warehouse-flow'
-import { Route as WarehouseNavigatorRouteImport } from './routes/warehouse-navigator'
 import { Route as WaveFlowRouteImport } from './routes/wave-flow'
 import { Route as WorkCraftRouteImport } from './routes/work-craft'
 import { Route as InventoryFlowIndexRouteImport } from './routes/inventory-flow.index'
@@ -63,11 +62,6 @@ import { Route as WarehouseFlowReportsRouteImport } from './routes/warehouse-flo
 import { Route as WarehouseFlowReservationsRouteImport } from './routes/warehouse-flow.reservations'
 import { Route as WarehouseFlowReturnsRouteImport } from './routes/warehouse-flow.returns'
 import { Route as WarehouseFlowSettingsRouteImport } from './routes/warehouse-flow.settings'
-import { Route as WarehouseNavigatorIndexRouteImport } from './routes/warehouse-navigator.index'
-import { Route as WarehouseNavigatorAislesRouteImport } from './routes/warehouse-navigator.aisles'
-import { Route as WarehouseNavigatorLayoutRouteImport } from './routes/warehouse-navigator.layout'
-import { Route as WarehouseNavigatorRacksRouteImport } from './routes/warehouse-navigator.racks'
-import { Route as WarehouseNavigatorZonesRouteImport } from './routes/warehouse-navigator.zones'
 import { Route as WaveFlowIndexRouteImport } from './routes/wave-flow.index'
 import { Route as WaveFlowAllocationRouteImport } from './routes/wave-flow.allocation'
 import { Route as WaveFlowBackordersRouteImport } from './routes/wave-flow.backorders'
@@ -105,8 +99,6 @@ import { Route as ReceivingHubPurchaseOrdersIndexRouteImport } from './routes/re
 import { Route as ReceivingHubPurchaseOrdersPoNumberRouteImport } from './routes/receiving-hub.purchase-orders.$poNumber'
 import { Route as WarehouseFlowRequestsIndexRouteImport } from './routes/warehouse-flow.requests.index'
 import { Route as WarehouseFlowRequestsNewRouteImport } from './routes/warehouse-flow.requests.new'
-import { Route as WarehouseNavigatorWarehousesIndexRouteImport } from './routes/warehouse-navigator.warehouses.index'
-import { Route as WarehouseNavigatorWarehousesCodeRouteImport } from './routes/warehouse-navigator.warehouses.$code'
 import { Route as WorkCraftCertificatesIndexRouteImport } from './routes/work-craft.certificates.index'
 import { Route as WorkCraftCertificatesNumberRouteImport } from './routes/work-craft.certificates.$number'
 import { Route as WorkCraftWorkOrdersIndexRouteImport } from './routes/work-craft.work-orders.index'
@@ -233,11 +225,6 @@ const VehicleVerificationRoute = VehicleVerificationRouteImport.update({
 const WarehouseFlowRoute = WarehouseFlowRouteImport.update({
   id: '/warehouse-flow',
   path: '/warehouse-flow',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const WarehouseNavigatorRoute = WarehouseNavigatorRouteImport.update({
-  id: '/warehouse-navigator',
-  path: '/warehouse-navigator',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WaveFlowRoute = WaveFlowRouteImport.update({
@@ -395,33 +382,6 @@ const WarehouseFlowSettingsRoute = WarehouseFlowSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => WarehouseFlowRoute,
-} as any)
-const WarehouseNavigatorIndexRoute = WarehouseNavigatorIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => WarehouseNavigatorRoute,
-} as any)
-const WarehouseNavigatorAislesRoute =
-  WarehouseNavigatorAislesRouteImport.update({
-    id: '/aisles',
-    path: '/aisles',
-    getParentRoute: () => WarehouseNavigatorRoute,
-  } as any)
-const WarehouseNavigatorLayoutRoute =
-  WarehouseNavigatorLayoutRouteImport.update({
-    id: '/layout',
-    path: '/layout',
-    getParentRoute: () => WarehouseNavigatorRoute,
-  } as any)
-const WarehouseNavigatorRacksRoute = WarehouseNavigatorRacksRouteImport.update({
-  id: '/racks',
-  path: '/racks',
-  getParentRoute: () => WarehouseNavigatorRoute,
-} as any)
-const WarehouseNavigatorZonesRoute = WarehouseNavigatorZonesRouteImport.update({
-  id: '/zones',
-  path: '/zones',
-  getParentRoute: () => WarehouseNavigatorRoute,
 } as any)
 const WaveFlowIndexRoute = WaveFlowIndexRouteImport.update({
   id: '/',
@@ -618,18 +578,6 @@ const WarehouseFlowRequestsNewRoute =
     path: '/requests/new',
     getParentRoute: () => WarehouseFlowRoute,
   } as any)
-const WarehouseNavigatorWarehousesIndexRoute =
-  WarehouseNavigatorWarehousesIndexRouteImport.update({
-    id: '/warehouses/',
-    path: '/warehouses/',
-    getParentRoute: () => WarehouseNavigatorRoute,
-  } as any)
-const WarehouseNavigatorWarehousesCodeRoute =
-  WarehouseNavigatorWarehousesCodeRouteImport.update({
-    id: '/warehouses/$code',
-    path: '/warehouses/$code',
-    getParentRoute: () => WarehouseNavigatorRoute,
-  } as any)
 const WorkCraftCertificatesIndexRoute =
   WorkCraftCertificatesIndexRouteImport.update({
     id: '/certificates/',
@@ -725,7 +673,6 @@ export interface FileRoutesByFullPath {
   '/vehicle-queue': typeof VehicleQueueRoute
   '/vehicle-verification': typeof VehicleVerificationRoute
   '/warehouse-flow': typeof WarehouseFlowRouteWithChildren
-  '/warehouse-navigator': typeof WarehouseNavigatorRouteWithChildren
   '/wave-flow': typeof WaveFlowRouteWithChildren
   '/work-craft': typeof WorkCraftRouteWithChildren
   '/inventory-flow/adjustments': typeof InventoryFlowAdjustmentsRoute
@@ -752,10 +699,6 @@ export interface FileRoutesByFullPath {
   '/warehouse-flow/reservations': typeof WarehouseFlowReservationsRoute
   '/warehouse-flow/returns': typeof WarehouseFlowReturnsRoute
   '/warehouse-flow/settings': typeof WarehouseFlowSettingsRoute
-  '/warehouse-navigator/aisles': typeof WarehouseNavigatorAislesRoute
-  '/warehouse-navigator/layout': typeof WarehouseNavigatorLayoutRoute
-  '/warehouse-navigator/racks': typeof WarehouseNavigatorRacksRoute
-  '/warehouse-navigator/zones': typeof WarehouseNavigatorZonesRoute
   '/wave-flow/allocation': typeof WaveFlowAllocationRoute
   '/wave-flow/backorders': typeof WaveFlowBackordersRoute
   '/wave-flow/dispatch': typeof WaveFlowDispatchRoute
@@ -779,7 +722,6 @@ export interface FileRoutesByFullPath {
   '/master-core/': typeof MasterCoreIndexRoute
   '/receiving-hub/': typeof ReceivingHubIndexRoute
   '/warehouse-flow/': typeof WarehouseFlowIndexRoute
-  '/warehouse-navigator/': typeof WarehouseNavigatorIndexRoute
   '/wave-flow/': typeof WaveFlowIndexRoute
   '/work-craft/': typeof WorkCraftIndexRoute
   '/inventory-flow/inventory/$itemId': typeof InventoryFlowInventoryItemIdRoute
@@ -791,7 +733,6 @@ export interface FileRoutesByFullPath {
   '/receiving-hub/kpi/dock-to-stock': typeof ReceivingHubKpiDockToStockRoute
   '/receiving-hub/purchase-orders/$poNumber': typeof ReceivingHubPurchaseOrdersPoNumberRoute
   '/warehouse-flow/requests/new': typeof WarehouseFlowRequestsNewRoute
-  '/warehouse-navigator/warehouses/$code': typeof WarehouseNavigatorWarehousesCodeRoute
   '/work-craft/certificates/$number': typeof WorkCraftCertificatesNumberRoute
   '/work-craft/work-orders/$id': typeof WorkCraftWorkOrdersIdRouteWithChildren
   '/work-craft/work-orders/new': typeof WorkCraftWorkOrdersNewRoute
@@ -802,7 +743,6 @@ export interface FileRoutesByFullPath {
   '/receiving-hub/grn/': typeof ReceivingHubGrnIndexRoute
   '/receiving-hub/purchase-orders/': typeof ReceivingHubPurchaseOrdersIndexRoute
   '/warehouse-flow/requests/': typeof WarehouseFlowRequestsIndexRoute
-  '/warehouse-navigator/warehouses/': typeof WarehouseNavigatorWarehousesIndexRoute
   '/work-craft/certificates/': typeof WorkCraftCertificatesIndexRoute
   '/work-craft/work-orders/': typeof WorkCraftWorkOrdersIndexRoute
   '/work-craft/work-orders/$id/bom': typeof WorkCraftWorkOrdersIdBomRoute
@@ -857,10 +797,6 @@ export interface FileRoutesByTo {
   '/warehouse-flow/reservations': typeof WarehouseFlowReservationsRoute
   '/warehouse-flow/returns': typeof WarehouseFlowReturnsRoute
   '/warehouse-flow/settings': typeof WarehouseFlowSettingsRoute
-  '/warehouse-navigator/aisles': typeof WarehouseNavigatorAislesRoute
-  '/warehouse-navigator/layout': typeof WarehouseNavigatorLayoutRoute
-  '/warehouse-navigator/racks': typeof WarehouseNavigatorRacksRoute
-  '/warehouse-navigator/zones': typeof WarehouseNavigatorZonesRoute
   '/wave-flow/allocation': typeof WaveFlowAllocationRoute
   '/wave-flow/backorders': typeof WaveFlowBackordersRoute
   '/wave-flow/dispatch': typeof WaveFlowDispatchRoute
@@ -884,7 +820,6 @@ export interface FileRoutesByTo {
   '/master-core': typeof MasterCoreIndexRoute
   '/receiving-hub': typeof ReceivingHubIndexRoute
   '/warehouse-flow': typeof WarehouseFlowIndexRoute
-  '/warehouse-navigator': typeof WarehouseNavigatorIndexRoute
   '/wave-flow': typeof WaveFlowIndexRoute
   '/work-craft': typeof WorkCraftIndexRoute
   '/inventory-flow/inventory/$itemId': typeof InventoryFlowInventoryItemIdRoute
@@ -896,7 +831,6 @@ export interface FileRoutesByTo {
   '/receiving-hub/kpi/dock-to-stock': typeof ReceivingHubKpiDockToStockRoute
   '/receiving-hub/purchase-orders/$poNumber': typeof ReceivingHubPurchaseOrdersPoNumberRoute
   '/warehouse-flow/requests/new': typeof WarehouseFlowRequestsNewRoute
-  '/warehouse-navigator/warehouses/$code': typeof WarehouseNavigatorWarehousesCodeRoute
   '/work-craft/certificates/$number': typeof WorkCraftCertificatesNumberRoute
   '/work-craft/work-orders/new': typeof WorkCraftWorkOrdersNewRoute
   '/inventory-flow/inventory': typeof InventoryFlowInventoryIndexRoute
@@ -906,7 +840,6 @@ export interface FileRoutesByTo {
   '/receiving-hub/grn': typeof ReceivingHubGrnIndexRoute
   '/receiving-hub/purchase-orders': typeof ReceivingHubPurchaseOrdersIndexRoute
   '/warehouse-flow/requests': typeof WarehouseFlowRequestsIndexRoute
-  '/warehouse-navigator/warehouses': typeof WarehouseNavigatorWarehousesIndexRoute
   '/work-craft/certificates': typeof WorkCraftCertificatesIndexRoute
   '/work-craft/work-orders': typeof WorkCraftWorkOrdersIndexRoute
   '/work-craft/work-orders/$id/bom': typeof WorkCraftWorkOrdersIdBomRoute
@@ -942,7 +875,6 @@ export interface FileRoutesById {
   '/vehicle-queue': typeof VehicleQueueRoute
   '/vehicle-verification': typeof VehicleVerificationRoute
   '/warehouse-flow': typeof WarehouseFlowRouteWithChildren
-  '/warehouse-navigator': typeof WarehouseNavigatorRouteWithChildren
   '/wave-flow': typeof WaveFlowRouteWithChildren
   '/work-craft': typeof WorkCraftRouteWithChildren
   '/inventory-flow/adjustments': typeof InventoryFlowAdjustmentsRoute
@@ -969,10 +901,6 @@ export interface FileRoutesById {
   '/warehouse-flow/reservations': typeof WarehouseFlowReservationsRoute
   '/warehouse-flow/returns': typeof WarehouseFlowReturnsRoute
   '/warehouse-flow/settings': typeof WarehouseFlowSettingsRoute
-  '/warehouse-navigator/aisles': typeof WarehouseNavigatorAislesRoute
-  '/warehouse-navigator/layout': typeof WarehouseNavigatorLayoutRoute
-  '/warehouse-navigator/racks': typeof WarehouseNavigatorRacksRoute
-  '/warehouse-navigator/zones': typeof WarehouseNavigatorZonesRoute
   '/wave-flow/allocation': typeof WaveFlowAllocationRoute
   '/wave-flow/backorders': typeof WaveFlowBackordersRoute
   '/wave-flow/dispatch': typeof WaveFlowDispatchRoute
@@ -996,7 +924,6 @@ export interface FileRoutesById {
   '/master-core/': typeof MasterCoreIndexRoute
   '/receiving-hub/': typeof ReceivingHubIndexRoute
   '/warehouse-flow/': typeof WarehouseFlowIndexRoute
-  '/warehouse-navigator/': typeof WarehouseNavigatorIndexRoute
   '/wave-flow/': typeof WaveFlowIndexRoute
   '/work-craft/': typeof WorkCraftIndexRoute
   '/inventory-flow/inventory/$itemId': typeof InventoryFlowInventoryItemIdRoute
@@ -1008,7 +935,6 @@ export interface FileRoutesById {
   '/receiving-hub/kpi/dock-to-stock': typeof ReceivingHubKpiDockToStockRoute
   '/receiving-hub/purchase-orders/$poNumber': typeof ReceivingHubPurchaseOrdersPoNumberRoute
   '/warehouse-flow/requests/new': typeof WarehouseFlowRequestsNewRoute
-  '/warehouse-navigator/warehouses/$code': typeof WarehouseNavigatorWarehousesCodeRoute
   '/work-craft/certificates/$number': typeof WorkCraftCertificatesNumberRoute
   '/work-craft/work-orders/$id': typeof WorkCraftWorkOrdersIdRouteWithChildren
   '/work-craft/work-orders/new': typeof WorkCraftWorkOrdersNewRoute
@@ -1019,7 +945,6 @@ export interface FileRoutesById {
   '/receiving-hub/grn/': typeof ReceivingHubGrnIndexRoute
   '/receiving-hub/purchase-orders/': typeof ReceivingHubPurchaseOrdersIndexRoute
   '/warehouse-flow/requests/': typeof WarehouseFlowRequestsIndexRoute
-  '/warehouse-navigator/warehouses/': typeof WarehouseNavigatorWarehousesIndexRoute
   '/work-craft/certificates/': typeof WorkCraftCertificatesIndexRoute
   '/work-craft/work-orders/': typeof WorkCraftWorkOrdersIndexRoute
   '/work-craft/work-orders/$id/bom': typeof WorkCraftWorkOrdersIdBomRoute
@@ -1056,7 +981,6 @@ export interface FileRouteTypes {
     | '/vehicle-queue'
     | '/vehicle-verification'
     | '/warehouse-flow'
-    | '/warehouse-navigator'
     | '/wave-flow'
     | '/work-craft'
     | '/inventory-flow/adjustments'
@@ -1083,10 +1007,6 @@ export interface FileRouteTypes {
     | '/warehouse-flow/reservations'
     | '/warehouse-flow/returns'
     | '/warehouse-flow/settings'
-    | '/warehouse-navigator/aisles'
-    | '/warehouse-navigator/layout'
-    | '/warehouse-navigator/racks'
-    | '/warehouse-navigator/zones'
     | '/wave-flow/allocation'
     | '/wave-flow/backorders'
     | '/wave-flow/dispatch'
@@ -1110,7 +1030,6 @@ export interface FileRouteTypes {
     | '/master-core/'
     | '/receiving-hub/'
     | '/warehouse-flow/'
-    | '/warehouse-navigator/'
     | '/wave-flow/'
     | '/work-craft/'
     | '/inventory-flow/inventory/$itemId'
@@ -1122,7 +1041,6 @@ export interface FileRouteTypes {
     | '/receiving-hub/kpi/dock-to-stock'
     | '/receiving-hub/purchase-orders/$poNumber'
     | '/warehouse-flow/requests/new'
-    | '/warehouse-navigator/warehouses/$code'
     | '/work-craft/certificates/$number'
     | '/work-craft/work-orders/$id'
     | '/work-craft/work-orders/new'
@@ -1133,7 +1051,6 @@ export interface FileRouteTypes {
     | '/receiving-hub/grn/'
     | '/receiving-hub/purchase-orders/'
     | '/warehouse-flow/requests/'
-    | '/warehouse-navigator/warehouses/'
     | '/work-craft/certificates/'
     | '/work-craft/work-orders/'
     | '/work-craft/work-orders/$id/bom'
@@ -1188,10 +1105,6 @@ export interface FileRouteTypes {
     | '/warehouse-flow/reservations'
     | '/warehouse-flow/returns'
     | '/warehouse-flow/settings'
-    | '/warehouse-navigator/aisles'
-    | '/warehouse-navigator/layout'
-    | '/warehouse-navigator/racks'
-    | '/warehouse-navigator/zones'
     | '/wave-flow/allocation'
     | '/wave-flow/backorders'
     | '/wave-flow/dispatch'
@@ -1215,7 +1128,6 @@ export interface FileRouteTypes {
     | '/master-core'
     | '/receiving-hub'
     | '/warehouse-flow'
-    | '/warehouse-navigator'
     | '/wave-flow'
     | '/work-craft'
     | '/inventory-flow/inventory/$itemId'
@@ -1227,7 +1139,6 @@ export interface FileRouteTypes {
     | '/receiving-hub/kpi/dock-to-stock'
     | '/receiving-hub/purchase-orders/$poNumber'
     | '/warehouse-flow/requests/new'
-    | '/warehouse-navigator/warehouses/$code'
     | '/work-craft/certificates/$number'
     | '/work-craft/work-orders/new'
     | '/inventory-flow/inventory'
@@ -1237,7 +1148,6 @@ export interface FileRouteTypes {
     | '/receiving-hub/grn'
     | '/receiving-hub/purchase-orders'
     | '/warehouse-flow/requests'
-    | '/warehouse-navigator/warehouses'
     | '/work-craft/certificates'
     | '/work-craft/work-orders'
     | '/work-craft/work-orders/$id/bom'
@@ -1272,7 +1182,6 @@ export interface FileRouteTypes {
     | '/vehicle-queue'
     | '/vehicle-verification'
     | '/warehouse-flow'
-    | '/warehouse-navigator'
     | '/wave-flow'
     | '/work-craft'
     | '/inventory-flow/adjustments'
@@ -1299,10 +1208,6 @@ export interface FileRouteTypes {
     | '/warehouse-flow/reservations'
     | '/warehouse-flow/returns'
     | '/warehouse-flow/settings'
-    | '/warehouse-navigator/aisles'
-    | '/warehouse-navigator/layout'
-    | '/warehouse-navigator/racks'
-    | '/warehouse-navigator/zones'
     | '/wave-flow/allocation'
     | '/wave-flow/backorders'
     | '/wave-flow/dispatch'
@@ -1326,7 +1231,6 @@ export interface FileRouteTypes {
     | '/master-core/'
     | '/receiving-hub/'
     | '/warehouse-flow/'
-    | '/warehouse-navigator/'
     | '/wave-flow/'
     | '/work-craft/'
     | '/inventory-flow/inventory/$itemId'
@@ -1338,7 +1242,6 @@ export interface FileRouteTypes {
     | '/receiving-hub/kpi/dock-to-stock'
     | '/receiving-hub/purchase-orders/$poNumber'
     | '/warehouse-flow/requests/new'
-    | '/warehouse-navigator/warehouses/$code'
     | '/work-craft/certificates/$number'
     | '/work-craft/work-orders/$id'
     | '/work-craft/work-orders/new'
@@ -1349,7 +1252,6 @@ export interface FileRouteTypes {
     | '/receiving-hub/grn/'
     | '/receiving-hub/purchase-orders/'
     | '/warehouse-flow/requests/'
-    | '/warehouse-navigator/warehouses/'
     | '/work-craft/certificates/'
     | '/work-craft/work-orders/'
     | '/work-craft/work-orders/$id/bom'
@@ -1385,7 +1287,6 @@ export interface RootRouteChildren {
   VehicleQueueRoute: typeof VehicleQueueRoute
   VehicleVerificationRoute: typeof VehicleVerificationRoute
   WarehouseFlowRoute: typeof WarehouseFlowRouteWithChildren
-  WarehouseNavigatorRoute: typeof WarehouseNavigatorRouteWithChildren
   WaveFlowRoute: typeof WaveFlowRouteWithChildren
   WorkCraftRoute: typeof WorkCraftRouteWithChildren
 }
@@ -1551,13 +1452,6 @@ declare module '@tanstack/react-router' {
       path: '/warehouse-flow'
       fullPath: '/warehouse-flow'
       preLoaderRoute: typeof WarehouseFlowRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/warehouse-navigator': {
-      id: '/warehouse-navigator'
-      path: '/warehouse-navigator'
-      fullPath: '/warehouse-navigator'
-      preLoaderRoute: typeof WarehouseNavigatorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/wave-flow': {
@@ -1769,41 +1663,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/warehouse-flow/settings'
       preLoaderRoute: typeof WarehouseFlowSettingsRouteImport
       parentRoute: typeof WarehouseFlowRoute
-    }
-    '/warehouse-navigator/': {
-      id: '/warehouse-navigator/'
-      path: '/'
-      fullPath: '/warehouse-navigator/'
-      preLoaderRoute: typeof WarehouseNavigatorIndexRouteImport
-      parentRoute: typeof WarehouseNavigatorRoute
-    }
-    '/warehouse-navigator/aisles': {
-      id: '/warehouse-navigator/aisles'
-      path: '/aisles'
-      fullPath: '/warehouse-navigator/aisles'
-      preLoaderRoute: typeof WarehouseNavigatorAislesRouteImport
-      parentRoute: typeof WarehouseNavigatorRoute
-    }
-    '/warehouse-navigator/layout': {
-      id: '/warehouse-navigator/layout'
-      path: '/layout'
-      fullPath: '/warehouse-navigator/layout'
-      preLoaderRoute: typeof WarehouseNavigatorLayoutRouteImport
-      parentRoute: typeof WarehouseNavigatorRoute
-    }
-    '/warehouse-navigator/racks': {
-      id: '/warehouse-navigator/racks'
-      path: '/racks'
-      fullPath: '/warehouse-navigator/racks'
-      preLoaderRoute: typeof WarehouseNavigatorRacksRouteImport
-      parentRoute: typeof WarehouseNavigatorRoute
-    }
-    '/warehouse-navigator/zones': {
-      id: '/warehouse-navigator/zones'
-      path: '/zones'
-      fullPath: '/warehouse-navigator/zones'
-      preLoaderRoute: typeof WarehouseNavigatorZonesRouteImport
-      parentRoute: typeof WarehouseNavigatorRoute
     }
     '/wave-flow/': {
       id: '/wave-flow/'
@@ -2064,20 +1923,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WarehouseFlowRequestsNewRouteImport
       parentRoute: typeof WarehouseFlowRoute
     }
-    '/warehouse-navigator/warehouses/': {
-      id: '/warehouse-navigator/warehouses/'
-      path: '/warehouses'
-      fullPath: '/warehouse-navigator/warehouses/'
-      preLoaderRoute: typeof WarehouseNavigatorWarehousesIndexRouteImport
-      parentRoute: typeof WarehouseNavigatorRoute
-    }
-    '/warehouse-navigator/warehouses/$code': {
-      id: '/warehouse-navigator/warehouses/$code'
-      path: '/warehouses/$code'
-      fullPath: '/warehouse-navigator/warehouses/$code'
-      preLoaderRoute: typeof WarehouseNavigatorWarehousesCodeRouteImport
-      parentRoute: typeof WarehouseNavigatorRoute
-    }
     '/work-craft/certificates/': {
       id: '/work-craft/certificates/'
       path: '/certificates'
@@ -2294,30 +2139,6 @@ const WarehouseFlowRouteWithChildren = WarehouseFlowRoute._addFileChildren(
   WarehouseFlowRouteChildren,
 )
 
-interface WarehouseNavigatorRouteChildren {
-  WarehouseNavigatorAislesRoute: typeof WarehouseNavigatorAislesRoute
-  WarehouseNavigatorLayoutRoute: typeof WarehouseNavigatorLayoutRoute
-  WarehouseNavigatorRacksRoute: typeof WarehouseNavigatorRacksRoute
-  WarehouseNavigatorZonesRoute: typeof WarehouseNavigatorZonesRoute
-  WarehouseNavigatorIndexRoute: typeof WarehouseNavigatorIndexRoute
-  WarehouseNavigatorWarehousesCodeRoute: typeof WarehouseNavigatorWarehousesCodeRoute
-  WarehouseNavigatorWarehousesIndexRoute: typeof WarehouseNavigatorWarehousesIndexRoute
-}
-
-const WarehouseNavigatorRouteChildren: WarehouseNavigatorRouteChildren = {
-  WarehouseNavigatorAislesRoute: WarehouseNavigatorAislesRoute,
-  WarehouseNavigatorLayoutRoute: WarehouseNavigatorLayoutRoute,
-  WarehouseNavigatorRacksRoute: WarehouseNavigatorRacksRoute,
-  WarehouseNavigatorZonesRoute: WarehouseNavigatorZonesRoute,
-  WarehouseNavigatorIndexRoute: WarehouseNavigatorIndexRoute,
-  WarehouseNavigatorWarehousesCodeRoute: WarehouseNavigatorWarehousesCodeRoute,
-  WarehouseNavigatorWarehousesIndexRoute:
-    WarehouseNavigatorWarehousesIndexRoute,
-}
-
-const WarehouseNavigatorRouteWithChildren =
-  WarehouseNavigatorRoute._addFileChildren(WarehouseNavigatorRouteChildren)
-
 interface WaveFlowRouteChildren {
   WaveFlowAllocationRoute: typeof WaveFlowAllocationRoute
   WaveFlowBackordersRoute: typeof WaveFlowBackordersRoute
@@ -2440,7 +2261,6 @@ const rootRouteChildren: RootRouteChildren = {
   VehicleQueueRoute: VehicleQueueRoute,
   VehicleVerificationRoute: VehicleVerificationRoute,
   WarehouseFlowRoute: WarehouseFlowRouteWithChildren,
-  WarehouseNavigatorRoute: WarehouseNavigatorRouteWithChildren,
   WaveFlowRoute: WaveFlowRouteWithChildren,
   WorkCraftRoute: WorkCraftRouteWithChildren,
 }
