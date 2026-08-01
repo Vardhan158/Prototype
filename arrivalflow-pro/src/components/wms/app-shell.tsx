@@ -7,10 +7,6 @@ import {
   Warehouse,
   PackageCheck,
   FileCheck2,
-  Boxes,
-  BarChart3,
-  Database,
-  Settings,
   Search,
   Bell,
   Moon,
@@ -34,10 +30,6 @@ const nav = [
   { label: "Dock Assignment", to: "/dock-assignment", icon: Warehouse },
   { label: "Receiving", to: "/receiving", icon: PackageCheck },
   { label: "GRN", to: "/grn", icon: FileCheck2 },
-  { label: "Inventory", to: "/dashboard/inventory", icon: Boxes },
-  { label: "Reports", to: "/reports", icon: BarChart3 },
-  { label: "Master Data", to: "/master-data", icon: Database },
-  { label: "Settings", to: "/settings", icon: Settings },
 ];
 
 export function AppShell({
