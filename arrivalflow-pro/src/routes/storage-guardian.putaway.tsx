@@ -1,0 +1,152 @@
+import { useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { toast } from "sonner";
+import { CheckCircle2, ScanLine, UserCog } from "lucide-react";
+import { PageHeader } from "@/apps/storage-guardian/components/warehouse/app-shell";
+import { QrCode } from "@/apps/storage-guardian/components/warehouse/qr-code";
+import { QrScanner } from "@/apps/storage-guardian/components/warehouse/qr-scanner";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useWarehouse } from "@/apps/storage-guardian/lib/warehouse/store";
+import { STAFF } from "@/apps/storage-guardian/lib/warehouse/data";
+import type { PutAwayTask } from "@/apps/storage-guardian/lib/warehouse/types";
+
+export const Route = createFileRoute("/storage-guardian/putaway")({
+  head: () => ({
+    meta: [
+      { title: "Put-Away Queue — NODE·WMS" },
+      {
+        name: "description",
+        content:
+          "Auto-assigned put-away tasks with suggested locations, QR label scanning and match validation before inventory commit.",
+      },
+      { property: "og:title", content: "Put-Away Queue — NODE·WMS" },
+      {
+        property: "og:description",
+        content: "Scan item and location QR codes to confirm put-away and commit inventory.",
+      },
+    ],
+  }),
+  component: PutAwayPage,
+});
+
+function PutAwayPage() {
+  const { tasks } = useWarehouse();
+  const open = tasks.filter((t) => t.status !== "Done");
+  const done = tasks.filter((t) => t.status === "Done");
+
+  return (
+    <div className="space-y-6">
+      <PageHeader
+        title="Put-Away Queue"
+        subtitle="Scan the item QR and the location QR. The pair must match the task before inventory is committed."
+      />
+
+      <div className="space-y-4">
+        {open.length === 0 && (
+          <p className="panel p-6 text-sm text-muted-foreground">
+            Queue is clear. New tasks appear after a capacity check assigns a location.
+          </p>
+        )}
+        {open.map((task) => <TaskCard key={task.id} task={task} />)}
+      </div>
+
+      {done.length > 0 && (
+        <section className="panel p-5">
+          <h2 className="text-lg font-semibold">Completed today ({done.length})</h2>
+          <ul className="mt-3 space-y-2 text-sm">
+            {done.map((t) => (
+              <li key={t.id} className="flex items-center gap-2 text-muted-foreground">
+                <CheckCircle2 className="size-4 text-success" />
+                <span className="font-mono text-xs">{t.id}</span> · {t.itemId} stored at{" "}
+                <span className="font-mono text-xs">{t.locationCode}</span> by {t.assignee}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </div>
+  );
+}
+
+function TaskCard({ task }: { task: PutAwayTask }) {
+  const { items, confirmPutAway, reassignTask } = useWarehouse();
+  const item = items.find((i) => i.id === task.itemId);
+  const [itemScan, setItemScan] = useState("");
+  const [locScan, setLocScan] = useState("");
+
+  const submit = () => {
+    const res = confirmPutAway(task.id, itemScan, locScan);
+    res.ok ? toast.success(res.message) : toast.error(res.message);
+    if (res.ok) {
+      setItemScan("");
+      setLocScan("");
+    }
+  };
+
+  return (
+    <article className="panel p-5">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <div className="flex items-center gap-2">
+            <h3 className="font-semibold">{item?.name ?? task.itemId}</h3>
+            <Badge variant={task.priority === "High" ? "destructive" : "secondary"}>{task.priority}</Badge>
+            <Badge variant="outline">{task.status}</Badge>
+          </div>
+          <p className="mt-0.5 font-mono text-xs text-muted-foreground">
+            {task.id} · item {task.itemId} · {item?.qty ?? 0} units → {task.locationCode}
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <UserCog className="size-4 text-muted-foreground" />
+          <Select value={task.assignee} onValueChange={(v) => { reassignTask(task.id, v); toast.success(`Reassigned to ${v}.`); }}>
+            <SelectTrigger className="h-8 w-44 text-xs"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {STAFF.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="mt-4 grid gap-5 md:grid-cols-[auto_1fr]">
+        <div className="flex gap-3">
+          {item?.code ? <QrCode value={item.code} size={104} /> : (
+            <p className="text-xs text-warning">Item has no label yet — generate a QR in the pipeline.</p>
+          )}
+          <QrCode value={task.locationCode} size={104} />
+        </div>
+
+        <div className="space-y-3">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label htmlFor={`is-${task.id}`}>Item QR scan</Label>
+              <Input id={`is-${task.id}`} value={itemScan} onChange={(e) => setItemScan(e.target.value)} placeholder={item?.code ?? "DC-…"} className="font-mono text-xs" />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor={`ls-${task.id}`}>Location QR scan</Label>
+              <Input id={`ls-${task.id}`} value={locScan} onChange={(e) => setLocScan(e.target.value)} placeholder={task.locationCode} className="font-mono text-xs" />
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <Button size="sm" onClick={submit}>
+              <ScanLine className="size-4" /> Confirm put-away
+            </Button>
+            <Button size="sm" variant="ghost" onClick={() => { setItemScan(item?.code ?? ""); setLocScan(task.locationCode); }}>
+              Autofill scans
+            </Button>
+            <QrScanner onScan={(t) => (itemScan ? setLocScan(t) : setItemScan(t))} />
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}

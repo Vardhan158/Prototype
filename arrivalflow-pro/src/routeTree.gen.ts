@@ -31,6 +31,7 @@ import { Route as ReceivingRouteImport } from './routes/receiving'
 import { Route as ReceivingHubRouteImport } from './routes/receiving-hub'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as StorageGuardianRouteImport } from './routes/storage-guardian'
 import { Route as VehicleQueueRouteImport } from './routes/vehicle-queue'
 import { Route as VehicleVerificationRouteImport } from './routes/vehicle-verification'
 import { Route as WarehouseFlowRouteImport } from './routes/warehouse-flow'
@@ -59,6 +60,14 @@ import { Route as ReceivingHubDiscrepanciesRouteImport } from './routes/receivin
 import { Route as ReceivingHubNonPoReceiptRouteImport } from './routes/receiving-hub.non-po-receipt'
 import { Route as ReceivingHubPutAwayRouteImport } from './routes/receiving-hub.put-away'
 import { Route as ReceivingHubQualityInspectionRouteImport } from './routes/receiving-hub.quality-inspection'
+import { Route as StorageGuardianIndexRouteImport } from './routes/storage-guardian.index'
+import { Route as StorageGuardianAlertsRouteImport } from './routes/storage-guardian.alerts'
+import { Route as StorageGuardianAuditRouteImport } from './routes/storage-guardian.audit'
+import { Route as StorageGuardianLocationsRouteImport } from './routes/storage-guardian.locations'
+import { Route as StorageGuardianOverflowRouteImport } from './routes/storage-guardian.overflow'
+import { Route as StorageGuardianPutawayRouteImport } from './routes/storage-guardian.putaway'
+import { Route as StorageGuardianReceivingRouteImport } from './routes/storage-guardian.receiving'
+import { Route as StorageGuardianReportsRouteImport } from './routes/storage-guardian.reports'
 import { Route as WarehouseFlowIndexRouteImport } from './routes/warehouse-flow.index'
 import { Route as WarehouseFlowApprovalsRouteImport } from './routes/warehouse-flow.approvals'
 import { Route as WarehouseFlowAuditLogsRouteImport } from './routes/warehouse-flow.audit-logs'
@@ -245,6 +254,11 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StorageGuardianRoute = StorageGuardianRouteImport.update({
+  id: '/storage-guardian',
+  path: '/storage-guardian',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VehicleQueueRoute = VehicleQueueRouteImport.update({
   id: '/vehicle-queue',
   path: '/vehicle-queue',
@@ -389,6 +403,48 @@ const ReceivingHubQualityInspectionRoute =
     path: '/quality-inspection',
     getParentRoute: () => ReceivingHubRoute,
   } as any)
+const StorageGuardianIndexRoute = StorageGuardianIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => StorageGuardianRoute,
+} as any)
+const StorageGuardianAlertsRoute = StorageGuardianAlertsRouteImport.update({
+  id: '/alerts',
+  path: '/alerts',
+  getParentRoute: () => StorageGuardianRoute,
+} as any)
+const StorageGuardianAuditRoute = StorageGuardianAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => StorageGuardianRoute,
+} as any)
+const StorageGuardianLocationsRoute =
+  StorageGuardianLocationsRouteImport.update({
+    id: '/locations',
+    path: '/locations',
+    getParentRoute: () => StorageGuardianRoute,
+  } as any)
+const StorageGuardianOverflowRoute = StorageGuardianOverflowRouteImport.update({
+  id: '/overflow',
+  path: '/overflow',
+  getParentRoute: () => StorageGuardianRoute,
+} as any)
+const StorageGuardianPutawayRoute = StorageGuardianPutawayRouteImport.update({
+  id: '/putaway',
+  path: '/putaway',
+  getParentRoute: () => StorageGuardianRoute,
+} as any)
+const StorageGuardianReceivingRoute =
+  StorageGuardianReceivingRouteImport.update({
+    id: '/receiving',
+    path: '/receiving',
+    getParentRoute: () => StorageGuardianRoute,
+  } as any)
+const StorageGuardianReportsRoute = StorageGuardianReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => StorageGuardianRoute,
+} as any)
 const WarehouseFlowIndexRoute = WarehouseFlowIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -821,6 +877,7 @@ export interface FileRoutesByFullPath {
   '/receiving-hub': typeof ReceivingHubRouteWithChildren
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
+  '/storage-guardian': typeof StorageGuardianRouteWithChildren
   '/vehicle-queue': typeof VehicleQueueRoute
   '/vehicle-verification': typeof VehicleVerificationRoute
   '/warehouse-flow': typeof WarehouseFlowRouteWithChildren
@@ -844,6 +901,13 @@ export interface FileRoutesByFullPath {
   '/receiving-hub/non-po-receipt': typeof ReceivingHubNonPoReceiptRoute
   '/receiving-hub/put-away': typeof ReceivingHubPutAwayRoute
   '/receiving-hub/quality-inspection': typeof ReceivingHubQualityInspectionRoute
+  '/storage-guardian/alerts': typeof StorageGuardianAlertsRoute
+  '/storage-guardian/audit': typeof StorageGuardianAuditRoute
+  '/storage-guardian/locations': typeof StorageGuardianLocationsRoute
+  '/storage-guardian/overflow': typeof StorageGuardianOverflowRoute
+  '/storage-guardian/putaway': typeof StorageGuardianPutawayRoute
+  '/storage-guardian/receiving': typeof StorageGuardianReceivingRoute
+  '/storage-guardian/reports': typeof StorageGuardianReportsRoute
   '/warehouse-flow/approvals': typeof WarehouseFlowApprovalsRoute
   '/warehouse-flow/audit-logs': typeof WarehouseFlowAuditLogsRoute
   '/warehouse-flow/inspection': typeof WarehouseFlowInspectionRoute
@@ -879,6 +943,7 @@ export interface FileRoutesByFullPath {
   '/inventory-flow/': typeof InventoryFlowIndexRoute
   '/master-core/': typeof MasterCoreIndexRoute
   '/receiving-hub/': typeof ReceivingHubIndexRoute
+  '/storage-guardian/': typeof StorageGuardianIndexRoute
   '/warehouse-flow/': typeof WarehouseFlowIndexRoute
   '/wave-flow/': typeof WaveFlowIndexRoute
   '/work-craft/': typeof WorkCraftIndexRoute
@@ -963,6 +1028,13 @@ export interface FileRoutesByTo {
   '/receiving-hub/non-po-receipt': typeof ReceivingHubNonPoReceiptRoute
   '/receiving-hub/put-away': typeof ReceivingHubPutAwayRoute
   '/receiving-hub/quality-inspection': typeof ReceivingHubQualityInspectionRoute
+  '/storage-guardian/alerts': typeof StorageGuardianAlertsRoute
+  '/storage-guardian/audit': typeof StorageGuardianAuditRoute
+  '/storage-guardian/locations': typeof StorageGuardianLocationsRoute
+  '/storage-guardian/overflow': typeof StorageGuardianOverflowRoute
+  '/storage-guardian/putaway': typeof StorageGuardianPutawayRoute
+  '/storage-guardian/receiving': typeof StorageGuardianReceivingRoute
+  '/storage-guardian/reports': typeof StorageGuardianReportsRoute
   '/warehouse-flow/approvals': typeof WarehouseFlowApprovalsRoute
   '/warehouse-flow/audit-logs': typeof WarehouseFlowAuditLogsRoute
   '/warehouse-flow/inspection': typeof WarehouseFlowInspectionRoute
@@ -998,6 +1070,7 @@ export interface FileRoutesByTo {
   '/inventory-flow': typeof InventoryFlowIndexRoute
   '/master-core': typeof MasterCoreIndexRoute
   '/receiving-hub': typeof ReceivingHubIndexRoute
+  '/storage-guardian': typeof StorageGuardianIndexRoute
   '/warehouse-flow': typeof WarehouseFlowIndexRoute
   '/wave-flow': typeof WaveFlowIndexRoute
   '/work-craft': typeof WorkCraftIndexRoute
@@ -1067,6 +1140,7 @@ export interface FileRoutesById {
   '/receiving-hub': typeof ReceivingHubRouteWithChildren
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
+  '/storage-guardian': typeof StorageGuardianRouteWithChildren
   '/vehicle-queue': typeof VehicleQueueRoute
   '/vehicle-verification': typeof VehicleVerificationRoute
   '/warehouse-flow': typeof WarehouseFlowRouteWithChildren
@@ -1090,6 +1164,13 @@ export interface FileRoutesById {
   '/receiving-hub/non-po-receipt': typeof ReceivingHubNonPoReceiptRoute
   '/receiving-hub/put-away': typeof ReceivingHubPutAwayRoute
   '/receiving-hub/quality-inspection': typeof ReceivingHubQualityInspectionRoute
+  '/storage-guardian/alerts': typeof StorageGuardianAlertsRoute
+  '/storage-guardian/audit': typeof StorageGuardianAuditRoute
+  '/storage-guardian/locations': typeof StorageGuardianLocationsRoute
+  '/storage-guardian/overflow': typeof StorageGuardianOverflowRoute
+  '/storage-guardian/putaway': typeof StorageGuardianPutawayRoute
+  '/storage-guardian/receiving': typeof StorageGuardianReceivingRoute
+  '/storage-guardian/reports': typeof StorageGuardianReportsRoute
   '/warehouse-flow/approvals': typeof WarehouseFlowApprovalsRoute
   '/warehouse-flow/audit-logs': typeof WarehouseFlowAuditLogsRoute
   '/warehouse-flow/inspection': typeof WarehouseFlowInspectionRoute
@@ -1125,6 +1206,7 @@ export interface FileRoutesById {
   '/inventory-flow/': typeof InventoryFlowIndexRoute
   '/master-core/': typeof MasterCoreIndexRoute
   '/receiving-hub/': typeof ReceivingHubIndexRoute
+  '/storage-guardian/': typeof StorageGuardianIndexRoute
   '/warehouse-flow/': typeof WarehouseFlowIndexRoute
   '/wave-flow/': typeof WaveFlowIndexRoute
   '/work-craft/': typeof WorkCraftIndexRoute
@@ -1196,6 +1278,7 @@ export interface FileRouteTypes {
     | '/receiving-hub'
     | '/reports'
     | '/settings'
+    | '/storage-guardian'
     | '/vehicle-queue'
     | '/vehicle-verification'
     | '/warehouse-flow'
@@ -1219,6 +1302,13 @@ export interface FileRouteTypes {
     | '/receiving-hub/non-po-receipt'
     | '/receiving-hub/put-away'
     | '/receiving-hub/quality-inspection'
+    | '/storage-guardian/alerts'
+    | '/storage-guardian/audit'
+    | '/storage-guardian/locations'
+    | '/storage-guardian/overflow'
+    | '/storage-guardian/putaway'
+    | '/storage-guardian/receiving'
+    | '/storage-guardian/reports'
     | '/warehouse-flow/approvals'
     | '/warehouse-flow/audit-logs'
     | '/warehouse-flow/inspection'
@@ -1254,6 +1344,7 @@ export interface FileRouteTypes {
     | '/inventory-flow/'
     | '/master-core/'
     | '/receiving-hub/'
+    | '/storage-guardian/'
     | '/warehouse-flow/'
     | '/wave-flow/'
     | '/work-craft/'
@@ -1338,6 +1429,13 @@ export interface FileRouteTypes {
     | '/receiving-hub/non-po-receipt'
     | '/receiving-hub/put-away'
     | '/receiving-hub/quality-inspection'
+    | '/storage-guardian/alerts'
+    | '/storage-guardian/audit'
+    | '/storage-guardian/locations'
+    | '/storage-guardian/overflow'
+    | '/storage-guardian/putaway'
+    | '/storage-guardian/receiving'
+    | '/storage-guardian/reports'
     | '/warehouse-flow/approvals'
     | '/warehouse-flow/audit-logs'
     | '/warehouse-flow/inspection'
@@ -1373,6 +1471,7 @@ export interface FileRouteTypes {
     | '/inventory-flow'
     | '/master-core'
     | '/receiving-hub'
+    | '/storage-guardian'
     | '/warehouse-flow'
     | '/wave-flow'
     | '/work-craft'
@@ -1441,6 +1540,7 @@ export interface FileRouteTypes {
     | '/receiving-hub'
     | '/reports'
     | '/settings'
+    | '/storage-guardian'
     | '/vehicle-queue'
     | '/vehicle-verification'
     | '/warehouse-flow'
@@ -1464,6 +1564,13 @@ export interface FileRouteTypes {
     | '/receiving-hub/non-po-receipt'
     | '/receiving-hub/put-away'
     | '/receiving-hub/quality-inspection'
+    | '/storage-guardian/alerts'
+    | '/storage-guardian/audit'
+    | '/storage-guardian/locations'
+    | '/storage-guardian/overflow'
+    | '/storage-guardian/putaway'
+    | '/storage-guardian/receiving'
+    | '/storage-guardian/reports'
     | '/warehouse-flow/approvals'
     | '/warehouse-flow/audit-logs'
     | '/warehouse-flow/inspection'
@@ -1499,6 +1606,7 @@ export interface FileRouteTypes {
     | '/inventory-flow/'
     | '/master-core/'
     | '/receiving-hub/'
+    | '/storage-guardian/'
     | '/warehouse-flow/'
     | '/wave-flow/'
     | '/work-craft/'
@@ -1569,6 +1677,7 @@ export interface RootRouteChildren {
   ReceivingHubRoute: typeof ReceivingHubRouteWithChildren
   ReportsRoute: typeof ReportsRoute
   SettingsRoute: typeof SettingsRoute
+  StorageGuardianRoute: typeof StorageGuardianRouteWithChildren
   VehicleQueueRoute: typeof VehicleQueueRoute
   VehicleVerificationRoute: typeof VehicleVerificationRoute
   WarehouseFlowRoute: typeof WarehouseFlowRouteWithChildren
@@ -1730,6 +1839,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/storage-guardian': {
+      id: '/storage-guardian'
+      path: '/storage-guardian'
+      fullPath: '/storage-guardian'
+      preLoaderRoute: typeof StorageGuardianRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/vehicle-queue': {
@@ -1927,6 +2043,62 @@ declare module '@tanstack/react-router' {
       fullPath: '/receiving-hub/quality-inspection'
       preLoaderRoute: typeof ReceivingHubQualityInspectionRouteImport
       parentRoute: typeof ReceivingHubRoute
+    }
+    '/storage-guardian/': {
+      id: '/storage-guardian/'
+      path: '/'
+      fullPath: '/storage-guardian/'
+      preLoaderRoute: typeof StorageGuardianIndexRouteImport
+      parentRoute: typeof StorageGuardianRoute
+    }
+    '/storage-guardian/alerts': {
+      id: '/storage-guardian/alerts'
+      path: '/alerts'
+      fullPath: '/storage-guardian/alerts'
+      preLoaderRoute: typeof StorageGuardianAlertsRouteImport
+      parentRoute: typeof StorageGuardianRoute
+    }
+    '/storage-guardian/audit': {
+      id: '/storage-guardian/audit'
+      path: '/audit'
+      fullPath: '/storage-guardian/audit'
+      preLoaderRoute: typeof StorageGuardianAuditRouteImport
+      parentRoute: typeof StorageGuardianRoute
+    }
+    '/storage-guardian/locations': {
+      id: '/storage-guardian/locations'
+      path: '/locations'
+      fullPath: '/storage-guardian/locations'
+      preLoaderRoute: typeof StorageGuardianLocationsRouteImport
+      parentRoute: typeof StorageGuardianRoute
+    }
+    '/storage-guardian/overflow': {
+      id: '/storage-guardian/overflow'
+      path: '/overflow'
+      fullPath: '/storage-guardian/overflow'
+      preLoaderRoute: typeof StorageGuardianOverflowRouteImport
+      parentRoute: typeof StorageGuardianRoute
+    }
+    '/storage-guardian/putaway': {
+      id: '/storage-guardian/putaway'
+      path: '/putaway'
+      fullPath: '/storage-guardian/putaway'
+      preLoaderRoute: typeof StorageGuardianPutawayRouteImport
+      parentRoute: typeof StorageGuardianRoute
+    }
+    '/storage-guardian/receiving': {
+      id: '/storage-guardian/receiving'
+      path: '/receiving'
+      fullPath: '/storage-guardian/receiving'
+      preLoaderRoute: typeof StorageGuardianReceivingRouteImport
+      parentRoute: typeof StorageGuardianRoute
+    }
+    '/storage-guardian/reports': {
+      id: '/storage-guardian/reports'
+      path: '/reports'
+      fullPath: '/storage-guardian/reports'
+      preLoaderRoute: typeof StorageGuardianReportsRouteImport
+      parentRoute: typeof StorageGuardianRoute
     }
     '/warehouse-flow/': {
       id: '/warehouse-flow/'
@@ -2611,6 +2783,32 @@ const ReceivingHubRouteWithChildren = ReceivingHubRoute._addFileChildren(
   ReceivingHubRouteChildren,
 )
 
+interface StorageGuardianRouteChildren {
+  StorageGuardianAlertsRoute: typeof StorageGuardianAlertsRoute
+  StorageGuardianAuditRoute: typeof StorageGuardianAuditRoute
+  StorageGuardianLocationsRoute: typeof StorageGuardianLocationsRoute
+  StorageGuardianOverflowRoute: typeof StorageGuardianOverflowRoute
+  StorageGuardianPutawayRoute: typeof StorageGuardianPutawayRoute
+  StorageGuardianReceivingRoute: typeof StorageGuardianReceivingRoute
+  StorageGuardianReportsRoute: typeof StorageGuardianReportsRoute
+  StorageGuardianIndexRoute: typeof StorageGuardianIndexRoute
+}
+
+const StorageGuardianRouteChildren: StorageGuardianRouteChildren = {
+  StorageGuardianAlertsRoute: StorageGuardianAlertsRoute,
+  StorageGuardianAuditRoute: StorageGuardianAuditRoute,
+  StorageGuardianLocationsRoute: StorageGuardianLocationsRoute,
+  StorageGuardianOverflowRoute: StorageGuardianOverflowRoute,
+  StorageGuardianPutawayRoute: StorageGuardianPutawayRoute,
+  StorageGuardianReceivingRoute: StorageGuardianReceivingRoute,
+  StorageGuardianReportsRoute: StorageGuardianReportsRoute,
+  StorageGuardianIndexRoute: StorageGuardianIndexRoute,
+}
+
+const StorageGuardianRouteWithChildren = StorageGuardianRoute._addFileChildren(
+  StorageGuardianRouteChildren,
+)
+
 interface WarehouseFlowRouteChildren {
   WarehouseFlowApprovalsRoute: typeof WarehouseFlowApprovalsRoute
   WarehouseFlowAuditLogsRoute: typeof WarehouseFlowAuditLogsRoute
@@ -2770,6 +2968,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReceivingHubRoute: ReceivingHubRouteWithChildren,
   ReportsRoute: ReportsRoute,
   SettingsRoute: SettingsRoute,
+  StorageGuardianRoute: StorageGuardianRouteWithChildren,
   VehicleQueueRoute: VehicleQueueRoute,
   VehicleVerificationRoute: VehicleVerificationRoute,
   WarehouseFlowRoute: WarehouseFlowRouteWithChildren,
