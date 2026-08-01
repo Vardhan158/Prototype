@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
-export type AppRole = "Administrator" | "Data Steward" | "Wave Planner" | "Production Manager" | "Inventory Controller" | "Warehouse Supervisor" | "Receiving Supervisor" | "Document Controller" | "Procurement Manager" | "Storage Manager" | "Quality Inspector";
-export type ModuleKey = "arrival" | "master" | "wave" | "workcraft" | "inventory" | "warehouse" | "receiving" | "document" | "procurement" | "storage" | "quality";
+export type AppRole = "Administrator" | "Data Steward" | "Wave Planner" | "Production Manager" | "Inventory Controller" | "Warehouse Supervisor" | "Receiving Supervisor" | "Document Controller" | "Procurement Manager" | "Storage Manager" | "Quality Inspector" | "Inventory Lifecycle Manager";
+export type ModuleKey = "arrival" | "master" | "wave" | "workcraft" | "inventory" | "warehouse" | "receiving" | "document" | "procurement" | "storage" | "quality" | "lifecycle";
 
 export interface AuthUser {
   id: string;
@@ -20,7 +20,7 @@ export const SEEDED_USERS: SeededUser[] = [
     email: "admin@nexuswms.com",
     password: "Admin@2026",
     role: "Administrator",
-    modules: ["arrival", "master", "wave", "workcraft", "inventory", "warehouse", "receiving", "document", "procurement", "storage", "quality"],
+    modules: ["arrival", "master", "wave", "workcraft", "inventory", "warehouse", "receiving", "document", "procurement", "storage", "quality", "lifecycle"],
     dashboard: "/dashboard",
   },
   {
@@ -112,6 +112,15 @@ export const SEEDED_USERS: SeededUser[] = [
     role: "Quality Inspector",
     modules: ["quality"],
     dashboard: "/quality-gatekeeper",
+  },
+  {
+    id: "ILM-1001",
+    name: "Inventory Lifecycle Manager",
+    email: "lifecycle@nexuswms.com",
+    password: "lifecycle@2026",
+    role: "Inventory Lifecycle Manager",
+    modules: ["lifecycle"],
+    dashboard: "/inventory-flow-pro",
   },
 ];
 

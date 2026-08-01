@@ -22,6 +22,7 @@ import { Route as GateEntryRouteImport } from './routes/gate-entry'
 import { Route as GrnRouteImport } from './routes/grn'
 import { Route as InventoryRouteImport } from './routes/inventory'
 import { Route as InventoryFlowRouteImport } from './routes/inventory-flow'
+import { Route as InventoryFlowProRouteImport } from './routes/inventory-flow-pro'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MasterCoreRouteImport } from './routes/master-core'
 import { Route as MasterDataRouteImport } from './routes/master-data'
@@ -45,6 +46,16 @@ import { Route as AmsInsightsInventoryRouteImport } from './routes/ams-insights.
 import { Route as AmsInsightsReceivingRouteImport } from './routes/ams-insights.receiving'
 import { Route as AmsInsightsReportsRouteImport } from './routes/ams-insights.reports'
 import { Route as DocumentFlowIndexRouteImport } from './routes/document-flow.index'
+import { Route as InventoryFlowProIndexRouteImport } from './routes/inventory-flow-pro.index'
+import { Route as InventoryFlowProDamagedRouteImport } from './routes/inventory-flow-pro.damaged'
+import { Route as InventoryFlowProPickingRouteImport } from './routes/inventory-flow-pro.picking'
+import { Route as InventoryFlowProQualityHoldRouteImport } from './routes/inventory-flow-pro.quality-hold'
+import { Route as InventoryFlowProQuarantineRouteImport } from './routes/inventory-flow-pro.quarantine'
+import { Route as InventoryFlowProRecallRouteImport } from './routes/inventory-flow-pro.recall'
+import { Route as InventoryFlowProReservationsRouteImport } from './routes/inventory-flow-pro.reservations'
+import { Route as InventoryFlowProStatusBoardRouteImport } from './routes/inventory-flow-pro.status-board'
+import { Route as InventoryFlowProTimelineRouteImport } from './routes/inventory-flow-pro.timeline'
+import { Route as InventoryFlowProTransitionRouteImport } from './routes/inventory-flow-pro.transition'
 import { Route as InventoryFlowIndexRouteImport } from './routes/inventory-flow.index'
 import { Route as InventoryFlowAdjustmentsRouteImport } from './routes/inventory-flow.adjustments'
 import { Route as InventoryFlowCycleCountRouteImport } from './routes/inventory-flow.cycle-count'
@@ -128,6 +139,8 @@ import { Route as DocumentFlowDocumentsLibraryRouteImport } from './routes/docum
 import { Route as DocumentFlowDocumentsUploadRouteImport } from './routes/document-flow.documents.upload'
 import { Route as DocumentFlowOcrIndexRouteImport } from './routes/document-flow.ocr.index'
 import { Route as DocumentFlowOcrIdRouteImport } from './routes/document-flow.ocr.$id'
+import { Route as InventoryFlowProInventoryIndexRouteImport } from './routes/inventory-flow-pro.inventory.index'
+import { Route as InventoryFlowProInventoryIdRouteImport } from './routes/inventory-flow-pro.inventory.$id'
 import { Route as InventoryFlowInventoryIndexRouteImport } from './routes/inventory-flow.inventory.index'
 import { Route as InventoryFlowInventoryItemIdRouteImport } from './routes/inventory-flow.inventory.$itemId'
 import { Route as MasterCoreCustomersIndexRouteImport } from './routes/master-core.customers.index'
@@ -222,6 +235,11 @@ const InventoryRoute = InventoryRouteImport.update({
 const InventoryFlowRoute = InventoryFlowRouteImport.update({
   id: '/inventory-flow',
   path: '/inventory-flow',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InventoryFlowProRoute = InventoryFlowProRouteImport.update({
+  id: '/inventory-flow-pro',
+  path: '/inventory-flow-pro',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -339,6 +357,62 @@ const DocumentFlowIndexRoute = DocumentFlowIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DocumentFlowRoute,
 } as any)
+const InventoryFlowProIndexRoute = InventoryFlowProIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => InventoryFlowProRoute,
+} as any)
+const InventoryFlowProDamagedRoute = InventoryFlowProDamagedRouteImport.update({
+  id: '/damaged',
+  path: '/damaged',
+  getParentRoute: () => InventoryFlowProRoute,
+} as any)
+const InventoryFlowProPickingRoute = InventoryFlowProPickingRouteImport.update({
+  id: '/picking',
+  path: '/picking',
+  getParentRoute: () => InventoryFlowProRoute,
+} as any)
+const InventoryFlowProQualityHoldRoute =
+  InventoryFlowProQualityHoldRouteImport.update({
+    id: '/quality-hold',
+    path: '/quality-hold',
+    getParentRoute: () => InventoryFlowProRoute,
+  } as any)
+const InventoryFlowProQuarantineRoute =
+  InventoryFlowProQuarantineRouteImport.update({
+    id: '/quarantine',
+    path: '/quarantine',
+    getParentRoute: () => InventoryFlowProRoute,
+  } as any)
+const InventoryFlowProRecallRoute = InventoryFlowProRecallRouteImport.update({
+  id: '/recall',
+  path: '/recall',
+  getParentRoute: () => InventoryFlowProRoute,
+} as any)
+const InventoryFlowProReservationsRoute =
+  InventoryFlowProReservationsRouteImport.update({
+    id: '/reservations',
+    path: '/reservations',
+    getParentRoute: () => InventoryFlowProRoute,
+  } as any)
+const InventoryFlowProStatusBoardRoute =
+  InventoryFlowProStatusBoardRouteImport.update({
+    id: '/status-board',
+    path: '/status-board',
+    getParentRoute: () => InventoryFlowProRoute,
+  } as any)
+const InventoryFlowProTimelineRoute =
+  InventoryFlowProTimelineRouteImport.update({
+    id: '/timeline',
+    path: '/timeline',
+    getParentRoute: () => InventoryFlowProRoute,
+  } as any)
+const InventoryFlowProTransitionRoute =
+  InventoryFlowProTransitionRouteImport.update({
+    id: '/transition',
+    path: '/transition',
+    getParentRoute: () => InventoryFlowProRoute,
+  } as any)
 const InventoryFlowIndexRoute = InventoryFlowIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -780,6 +854,18 @@ const DocumentFlowOcrIdRoute = DocumentFlowOcrIdRouteImport.update({
   path: '/ocr/$id',
   getParentRoute: () => DocumentFlowRoute,
 } as any)
+const InventoryFlowProInventoryIndexRoute =
+  InventoryFlowProInventoryIndexRouteImport.update({
+    id: '/inventory/',
+    path: '/inventory/',
+    getParentRoute: () => InventoryFlowProRoute,
+  } as any)
+const InventoryFlowProInventoryIdRoute =
+  InventoryFlowProInventoryIdRouteImport.update({
+    id: '/inventory/$id',
+    path: '/inventory/$id',
+    getParentRoute: () => InventoryFlowProRoute,
+  } as any)
 const InventoryFlowInventoryIndexRoute =
   InventoryFlowInventoryIndexRouteImport.update({
     id: '/inventory/',
@@ -966,6 +1052,7 @@ export interface FileRoutesByFullPath {
   '/grn': typeof GrnRoute
   '/inventory': typeof InventoryRoute
   '/inventory-flow': typeof InventoryFlowRouteWithChildren
+  '/inventory-flow-pro': typeof InventoryFlowProRouteWithChildren
   '/login': typeof LoginRoute
   '/master-core': typeof MasterCoreRouteWithChildren
   '/master-data': typeof MasterDataRoute
@@ -987,6 +1074,15 @@ export interface FileRoutesByFullPath {
   '/ams-insights/inventory': typeof AmsInsightsInventoryRoute
   '/ams-insights/receiving': typeof AmsInsightsReceivingRoute
   '/ams-insights/reports': typeof AmsInsightsReportsRoute
+  '/inventory-flow-pro/damaged': typeof InventoryFlowProDamagedRoute
+  '/inventory-flow-pro/picking': typeof InventoryFlowProPickingRoute
+  '/inventory-flow-pro/quality-hold': typeof InventoryFlowProQualityHoldRoute
+  '/inventory-flow-pro/quarantine': typeof InventoryFlowProQuarantineRoute
+  '/inventory-flow-pro/recall': typeof InventoryFlowProRecallRoute
+  '/inventory-flow-pro/reservations': typeof InventoryFlowProReservationsRoute
+  '/inventory-flow-pro/status-board': typeof InventoryFlowProStatusBoardRoute
+  '/inventory-flow-pro/timeline': typeof InventoryFlowProTimelineRoute
+  '/inventory-flow-pro/transition': typeof InventoryFlowProTransitionRoute
   '/inventory-flow/adjustments': typeof InventoryFlowAdjustmentsRoute
   '/inventory-flow/cycle-count': typeof InventoryFlowCycleCountRoute
   '/inventory-flow/explorer': typeof InventoryFlowExplorerRoute
@@ -1050,6 +1146,7 @@ export interface FileRoutesByFullPath {
   '/work-craft/rework-scrap': typeof WorkCraftReworkScrapRoute
   '/ams-insights/': typeof AmsInsightsIndexRoute
   '/document-flow/': typeof DocumentFlowIndexRoute
+  '/inventory-flow-pro/': typeof InventoryFlowProIndexRoute
   '/inventory-flow/': typeof InventoryFlowIndexRoute
   '/master-core/': typeof MasterCoreIndexRoute
   '/quality-gatekeeper/': typeof QualityGatekeeperIndexRoute
@@ -1070,6 +1167,7 @@ export interface FileRoutesByFullPath {
   '/document-flow/documents/library': typeof DocumentFlowDocumentsLibraryRoute
   '/document-flow/documents/upload': typeof DocumentFlowDocumentsUploadRoute
   '/document-flow/ocr/$id': typeof DocumentFlowOcrIdRoute
+  '/inventory-flow-pro/inventory/$id': typeof InventoryFlowProInventoryIdRoute
   '/inventory-flow/inventory/$itemId': typeof InventoryFlowInventoryItemIdRoute
   '/master-core/customers/$id': typeof MasterCoreCustomersIdRoute
   '/master-core/items/$id': typeof MasterCoreItemsIdRoute
@@ -1086,6 +1184,7 @@ export interface FileRoutesByFullPath {
   '/work-craft/work-orders/new': typeof WorkCraftWorkOrdersNewRoute
   '/document-flow/documents/': typeof DocumentFlowDocumentsIndexRoute
   '/document-flow/ocr/': typeof DocumentFlowOcrIndexRoute
+  '/inventory-flow-pro/inventory/': typeof InventoryFlowProInventoryIndexRoute
   '/inventory-flow/inventory/': typeof InventoryFlowInventoryIndexRoute
   '/master-core/customers/': typeof MasterCoreCustomersIndexRoute
   '/master-core/items/': typeof MasterCoreItemsIndexRoute
@@ -1128,6 +1227,15 @@ export interface FileRoutesByTo {
   '/ams-insights/inventory': typeof AmsInsightsInventoryRoute
   '/ams-insights/receiving': typeof AmsInsightsReceivingRoute
   '/ams-insights/reports': typeof AmsInsightsReportsRoute
+  '/inventory-flow-pro/damaged': typeof InventoryFlowProDamagedRoute
+  '/inventory-flow-pro/picking': typeof InventoryFlowProPickingRoute
+  '/inventory-flow-pro/quality-hold': typeof InventoryFlowProQualityHoldRoute
+  '/inventory-flow-pro/quarantine': typeof InventoryFlowProQuarantineRoute
+  '/inventory-flow-pro/recall': typeof InventoryFlowProRecallRoute
+  '/inventory-flow-pro/reservations': typeof InventoryFlowProReservationsRoute
+  '/inventory-flow-pro/status-board': typeof InventoryFlowProStatusBoardRoute
+  '/inventory-flow-pro/timeline': typeof InventoryFlowProTimelineRoute
+  '/inventory-flow-pro/transition': typeof InventoryFlowProTransitionRoute
   '/inventory-flow/adjustments': typeof InventoryFlowAdjustmentsRoute
   '/inventory-flow/cycle-count': typeof InventoryFlowCycleCountRoute
   '/inventory-flow/explorer': typeof InventoryFlowExplorerRoute
@@ -1191,6 +1299,7 @@ export interface FileRoutesByTo {
   '/work-craft/rework-scrap': typeof WorkCraftReworkScrapRoute
   '/ams-insights': typeof AmsInsightsIndexRoute
   '/document-flow': typeof DocumentFlowIndexRoute
+  '/inventory-flow-pro': typeof InventoryFlowProIndexRoute
   '/inventory-flow': typeof InventoryFlowIndexRoute
   '/master-core': typeof MasterCoreIndexRoute
   '/quality-gatekeeper': typeof QualityGatekeeperIndexRoute
@@ -1211,6 +1320,7 @@ export interface FileRoutesByTo {
   '/document-flow/documents/library': typeof DocumentFlowDocumentsLibraryRoute
   '/document-flow/documents/upload': typeof DocumentFlowDocumentsUploadRoute
   '/document-flow/ocr/$id': typeof DocumentFlowOcrIdRoute
+  '/inventory-flow-pro/inventory/$id': typeof InventoryFlowProInventoryIdRoute
   '/inventory-flow/inventory/$itemId': typeof InventoryFlowInventoryItemIdRoute
   '/master-core/customers/$id': typeof MasterCoreCustomersIdRoute
   '/master-core/items/$id': typeof MasterCoreItemsIdRoute
@@ -1226,6 +1336,7 @@ export interface FileRoutesByTo {
   '/work-craft/work-orders/new': typeof WorkCraftWorkOrdersNewRoute
   '/document-flow/documents': typeof DocumentFlowDocumentsIndexRoute
   '/document-flow/ocr': typeof DocumentFlowOcrIndexRoute
+  '/inventory-flow-pro/inventory': typeof InventoryFlowProInventoryIndexRoute
   '/inventory-flow/inventory': typeof InventoryFlowInventoryIndexRoute
   '/master-core/customers': typeof MasterCoreCustomersIndexRoute
   '/master-core/items': typeof MasterCoreItemsIndexRoute
@@ -1258,6 +1369,7 @@ export interface FileRoutesById {
   '/grn': typeof GrnRoute
   '/inventory': typeof InventoryRoute
   '/inventory-flow': typeof InventoryFlowRouteWithChildren
+  '/inventory-flow-pro': typeof InventoryFlowProRouteWithChildren
   '/login': typeof LoginRoute
   '/master-core': typeof MasterCoreRouteWithChildren
   '/master-data': typeof MasterDataRoute
@@ -1279,6 +1391,15 @@ export interface FileRoutesById {
   '/ams-insights/inventory': typeof AmsInsightsInventoryRoute
   '/ams-insights/receiving': typeof AmsInsightsReceivingRoute
   '/ams-insights/reports': typeof AmsInsightsReportsRoute
+  '/inventory-flow-pro/damaged': typeof InventoryFlowProDamagedRoute
+  '/inventory-flow-pro/picking': typeof InventoryFlowProPickingRoute
+  '/inventory-flow-pro/quality-hold': typeof InventoryFlowProQualityHoldRoute
+  '/inventory-flow-pro/quarantine': typeof InventoryFlowProQuarantineRoute
+  '/inventory-flow-pro/recall': typeof InventoryFlowProRecallRoute
+  '/inventory-flow-pro/reservations': typeof InventoryFlowProReservationsRoute
+  '/inventory-flow-pro/status-board': typeof InventoryFlowProStatusBoardRoute
+  '/inventory-flow-pro/timeline': typeof InventoryFlowProTimelineRoute
+  '/inventory-flow-pro/transition': typeof InventoryFlowProTransitionRoute
   '/inventory-flow/adjustments': typeof InventoryFlowAdjustmentsRoute
   '/inventory-flow/cycle-count': typeof InventoryFlowCycleCountRoute
   '/inventory-flow/explorer': typeof InventoryFlowExplorerRoute
@@ -1342,6 +1463,7 @@ export interface FileRoutesById {
   '/work-craft/rework-scrap': typeof WorkCraftReworkScrapRoute
   '/ams-insights/': typeof AmsInsightsIndexRoute
   '/document-flow/': typeof DocumentFlowIndexRoute
+  '/inventory-flow-pro/': typeof InventoryFlowProIndexRoute
   '/inventory-flow/': typeof InventoryFlowIndexRoute
   '/master-core/': typeof MasterCoreIndexRoute
   '/quality-gatekeeper/': typeof QualityGatekeeperIndexRoute
@@ -1362,6 +1484,7 @@ export interface FileRoutesById {
   '/document-flow/documents/library': typeof DocumentFlowDocumentsLibraryRoute
   '/document-flow/documents/upload': typeof DocumentFlowDocumentsUploadRoute
   '/document-flow/ocr/$id': typeof DocumentFlowOcrIdRoute
+  '/inventory-flow-pro/inventory/$id': typeof InventoryFlowProInventoryIdRoute
   '/inventory-flow/inventory/$itemId': typeof InventoryFlowInventoryItemIdRoute
   '/master-core/customers/$id': typeof MasterCoreCustomersIdRoute
   '/master-core/items/$id': typeof MasterCoreItemsIdRoute
@@ -1378,6 +1501,7 @@ export interface FileRoutesById {
   '/work-craft/work-orders/new': typeof WorkCraftWorkOrdersNewRoute
   '/document-flow/documents/': typeof DocumentFlowDocumentsIndexRoute
   '/document-flow/ocr/': typeof DocumentFlowOcrIndexRoute
+  '/inventory-flow-pro/inventory/': typeof InventoryFlowProInventoryIndexRoute
   '/inventory-flow/inventory/': typeof InventoryFlowInventoryIndexRoute
   '/master-core/customers/': typeof MasterCoreCustomersIndexRoute
   '/master-core/items/': typeof MasterCoreItemsIndexRoute
@@ -1411,6 +1535,7 @@ export interface FileRouteTypes {
     | '/grn'
     | '/inventory'
     | '/inventory-flow'
+    | '/inventory-flow-pro'
     | '/login'
     | '/master-core'
     | '/master-data'
@@ -1432,6 +1557,15 @@ export interface FileRouteTypes {
     | '/ams-insights/inventory'
     | '/ams-insights/receiving'
     | '/ams-insights/reports'
+    | '/inventory-flow-pro/damaged'
+    | '/inventory-flow-pro/picking'
+    | '/inventory-flow-pro/quality-hold'
+    | '/inventory-flow-pro/quarantine'
+    | '/inventory-flow-pro/recall'
+    | '/inventory-flow-pro/reservations'
+    | '/inventory-flow-pro/status-board'
+    | '/inventory-flow-pro/timeline'
+    | '/inventory-flow-pro/transition'
     | '/inventory-flow/adjustments'
     | '/inventory-flow/cycle-count'
     | '/inventory-flow/explorer'
@@ -1495,6 +1629,7 @@ export interface FileRouteTypes {
     | '/work-craft/rework-scrap'
     | '/ams-insights/'
     | '/document-flow/'
+    | '/inventory-flow-pro/'
     | '/inventory-flow/'
     | '/master-core/'
     | '/quality-gatekeeper/'
@@ -1515,6 +1650,7 @@ export interface FileRouteTypes {
     | '/document-flow/documents/library'
     | '/document-flow/documents/upload'
     | '/document-flow/ocr/$id'
+    | '/inventory-flow-pro/inventory/$id'
     | '/inventory-flow/inventory/$itemId'
     | '/master-core/customers/$id'
     | '/master-core/items/$id'
@@ -1531,6 +1667,7 @@ export interface FileRouteTypes {
     | '/work-craft/work-orders/new'
     | '/document-flow/documents/'
     | '/document-flow/ocr/'
+    | '/inventory-flow-pro/inventory/'
     | '/inventory-flow/inventory/'
     | '/master-core/customers/'
     | '/master-core/items/'
@@ -1573,6 +1710,15 @@ export interface FileRouteTypes {
     | '/ams-insights/inventory'
     | '/ams-insights/receiving'
     | '/ams-insights/reports'
+    | '/inventory-flow-pro/damaged'
+    | '/inventory-flow-pro/picking'
+    | '/inventory-flow-pro/quality-hold'
+    | '/inventory-flow-pro/quarantine'
+    | '/inventory-flow-pro/recall'
+    | '/inventory-flow-pro/reservations'
+    | '/inventory-flow-pro/status-board'
+    | '/inventory-flow-pro/timeline'
+    | '/inventory-flow-pro/transition'
     | '/inventory-flow/adjustments'
     | '/inventory-flow/cycle-count'
     | '/inventory-flow/explorer'
@@ -1636,6 +1782,7 @@ export interface FileRouteTypes {
     | '/work-craft/rework-scrap'
     | '/ams-insights'
     | '/document-flow'
+    | '/inventory-flow-pro'
     | '/inventory-flow'
     | '/master-core'
     | '/quality-gatekeeper'
@@ -1656,6 +1803,7 @@ export interface FileRouteTypes {
     | '/document-flow/documents/library'
     | '/document-flow/documents/upload'
     | '/document-flow/ocr/$id'
+    | '/inventory-flow-pro/inventory/$id'
     | '/inventory-flow/inventory/$itemId'
     | '/master-core/customers/$id'
     | '/master-core/items/$id'
@@ -1671,6 +1819,7 @@ export interface FileRouteTypes {
     | '/work-craft/work-orders/new'
     | '/document-flow/documents'
     | '/document-flow/ocr'
+    | '/inventory-flow-pro/inventory'
     | '/inventory-flow/inventory'
     | '/master-core/customers'
     | '/master-core/items'
@@ -1702,6 +1851,7 @@ export interface FileRouteTypes {
     | '/grn'
     | '/inventory'
     | '/inventory-flow'
+    | '/inventory-flow-pro'
     | '/login'
     | '/master-core'
     | '/master-data'
@@ -1723,6 +1873,15 @@ export interface FileRouteTypes {
     | '/ams-insights/inventory'
     | '/ams-insights/receiving'
     | '/ams-insights/reports'
+    | '/inventory-flow-pro/damaged'
+    | '/inventory-flow-pro/picking'
+    | '/inventory-flow-pro/quality-hold'
+    | '/inventory-flow-pro/quarantine'
+    | '/inventory-flow-pro/recall'
+    | '/inventory-flow-pro/reservations'
+    | '/inventory-flow-pro/status-board'
+    | '/inventory-flow-pro/timeline'
+    | '/inventory-flow-pro/transition'
     | '/inventory-flow/adjustments'
     | '/inventory-flow/cycle-count'
     | '/inventory-flow/explorer'
@@ -1786,6 +1945,7 @@ export interface FileRouteTypes {
     | '/work-craft/rework-scrap'
     | '/ams-insights/'
     | '/document-flow/'
+    | '/inventory-flow-pro/'
     | '/inventory-flow/'
     | '/master-core/'
     | '/quality-gatekeeper/'
@@ -1806,6 +1966,7 @@ export interface FileRouteTypes {
     | '/document-flow/documents/library'
     | '/document-flow/documents/upload'
     | '/document-flow/ocr/$id'
+    | '/inventory-flow-pro/inventory/$id'
     | '/inventory-flow/inventory/$itemId'
     | '/master-core/customers/$id'
     | '/master-core/items/$id'
@@ -1822,6 +1983,7 @@ export interface FileRouteTypes {
     | '/work-craft/work-orders/new'
     | '/document-flow/documents/'
     | '/document-flow/ocr/'
+    | '/inventory-flow-pro/inventory/'
     | '/inventory-flow/inventory/'
     | '/master-core/customers/'
     | '/master-core/items/'
@@ -1854,6 +2016,7 @@ export interface RootRouteChildren {
   GrnRoute: typeof GrnRoute
   InventoryRoute: typeof InventoryRoute
   InventoryFlowRoute: typeof InventoryFlowRouteWithChildren
+  InventoryFlowProRoute: typeof InventoryFlowProRouteWithChildren
   LoginRoute: typeof LoginRoute
   MasterCoreRoute: typeof MasterCoreRouteWithChildren
   MasterDataRoute: typeof MasterDataRoute
@@ -1963,6 +2126,13 @@ declare module '@tanstack/react-router' {
       path: '/inventory-flow'
       fullPath: '/inventory-flow'
       preLoaderRoute: typeof InventoryFlowRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inventory-flow-pro': {
+      id: '/inventory-flow-pro'
+      path: '/inventory-flow-pro'
+      fullPath: '/inventory-flow-pro'
+      preLoaderRoute: typeof InventoryFlowProRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -2125,6 +2295,76 @@ declare module '@tanstack/react-router' {
       fullPath: '/document-flow/'
       preLoaderRoute: typeof DocumentFlowIndexRouteImport
       parentRoute: typeof DocumentFlowRoute
+    }
+    '/inventory-flow-pro/': {
+      id: '/inventory-flow-pro/'
+      path: '/'
+      fullPath: '/inventory-flow-pro/'
+      preLoaderRoute: typeof InventoryFlowProIndexRouteImport
+      parentRoute: typeof InventoryFlowProRoute
+    }
+    '/inventory-flow-pro/damaged': {
+      id: '/inventory-flow-pro/damaged'
+      path: '/damaged'
+      fullPath: '/inventory-flow-pro/damaged'
+      preLoaderRoute: typeof InventoryFlowProDamagedRouteImport
+      parentRoute: typeof InventoryFlowProRoute
+    }
+    '/inventory-flow-pro/picking': {
+      id: '/inventory-flow-pro/picking'
+      path: '/picking'
+      fullPath: '/inventory-flow-pro/picking'
+      preLoaderRoute: typeof InventoryFlowProPickingRouteImport
+      parentRoute: typeof InventoryFlowProRoute
+    }
+    '/inventory-flow-pro/quality-hold': {
+      id: '/inventory-flow-pro/quality-hold'
+      path: '/quality-hold'
+      fullPath: '/inventory-flow-pro/quality-hold'
+      preLoaderRoute: typeof InventoryFlowProQualityHoldRouteImport
+      parentRoute: typeof InventoryFlowProRoute
+    }
+    '/inventory-flow-pro/quarantine': {
+      id: '/inventory-flow-pro/quarantine'
+      path: '/quarantine'
+      fullPath: '/inventory-flow-pro/quarantine'
+      preLoaderRoute: typeof InventoryFlowProQuarantineRouteImport
+      parentRoute: typeof InventoryFlowProRoute
+    }
+    '/inventory-flow-pro/recall': {
+      id: '/inventory-flow-pro/recall'
+      path: '/recall'
+      fullPath: '/inventory-flow-pro/recall'
+      preLoaderRoute: typeof InventoryFlowProRecallRouteImport
+      parentRoute: typeof InventoryFlowProRoute
+    }
+    '/inventory-flow-pro/reservations': {
+      id: '/inventory-flow-pro/reservations'
+      path: '/reservations'
+      fullPath: '/inventory-flow-pro/reservations'
+      preLoaderRoute: typeof InventoryFlowProReservationsRouteImport
+      parentRoute: typeof InventoryFlowProRoute
+    }
+    '/inventory-flow-pro/status-board': {
+      id: '/inventory-flow-pro/status-board'
+      path: '/status-board'
+      fullPath: '/inventory-flow-pro/status-board'
+      preLoaderRoute: typeof InventoryFlowProStatusBoardRouteImport
+      parentRoute: typeof InventoryFlowProRoute
+    }
+    '/inventory-flow-pro/timeline': {
+      id: '/inventory-flow-pro/timeline'
+      path: '/timeline'
+      fullPath: '/inventory-flow-pro/timeline'
+      preLoaderRoute: typeof InventoryFlowProTimelineRouteImport
+      parentRoute: typeof InventoryFlowProRoute
+    }
+    '/inventory-flow-pro/transition': {
+      id: '/inventory-flow-pro/transition'
+      path: '/transition'
+      fullPath: '/inventory-flow-pro/transition'
+      preLoaderRoute: typeof InventoryFlowProTransitionRouteImport
+      parentRoute: typeof InventoryFlowProRoute
     }
     '/inventory-flow/': {
       id: '/inventory-flow/'
@@ -2707,6 +2947,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocumentFlowOcrIdRouteImport
       parentRoute: typeof DocumentFlowRoute
     }
+    '/inventory-flow-pro/inventory/': {
+      id: '/inventory-flow-pro/inventory/'
+      path: '/inventory'
+      fullPath: '/inventory-flow-pro/inventory/'
+      preLoaderRoute: typeof InventoryFlowProInventoryIndexRouteImport
+      parentRoute: typeof InventoryFlowProRoute
+    }
+    '/inventory-flow-pro/inventory/$id': {
+      id: '/inventory-flow-pro/inventory/$id'
+      path: '/inventory/$id'
+      fullPath: '/inventory-flow-pro/inventory/$id'
+      preLoaderRoute: typeof InventoryFlowProInventoryIdRouteImport
+      parentRoute: typeof InventoryFlowProRoute
+    }
     '/inventory-flow/inventory/': {
       id: '/inventory-flow/inventory/'
       path: '/inventory'
@@ -3006,6 +3260,39 @@ const InventoryFlowRouteWithChildren = InventoryFlowRoute._addFileChildren(
   InventoryFlowRouteChildren,
 )
 
+interface InventoryFlowProRouteChildren {
+  InventoryFlowProDamagedRoute: typeof InventoryFlowProDamagedRoute
+  InventoryFlowProPickingRoute: typeof InventoryFlowProPickingRoute
+  InventoryFlowProQualityHoldRoute: typeof InventoryFlowProQualityHoldRoute
+  InventoryFlowProQuarantineRoute: typeof InventoryFlowProQuarantineRoute
+  InventoryFlowProRecallRoute: typeof InventoryFlowProRecallRoute
+  InventoryFlowProReservationsRoute: typeof InventoryFlowProReservationsRoute
+  InventoryFlowProStatusBoardRoute: typeof InventoryFlowProStatusBoardRoute
+  InventoryFlowProTimelineRoute: typeof InventoryFlowProTimelineRoute
+  InventoryFlowProTransitionRoute: typeof InventoryFlowProTransitionRoute
+  InventoryFlowProIndexRoute: typeof InventoryFlowProIndexRoute
+  InventoryFlowProInventoryIdRoute: typeof InventoryFlowProInventoryIdRoute
+  InventoryFlowProInventoryIndexRoute: typeof InventoryFlowProInventoryIndexRoute
+}
+
+const InventoryFlowProRouteChildren: InventoryFlowProRouteChildren = {
+  InventoryFlowProDamagedRoute: InventoryFlowProDamagedRoute,
+  InventoryFlowProPickingRoute: InventoryFlowProPickingRoute,
+  InventoryFlowProQualityHoldRoute: InventoryFlowProQualityHoldRoute,
+  InventoryFlowProQuarantineRoute: InventoryFlowProQuarantineRoute,
+  InventoryFlowProRecallRoute: InventoryFlowProRecallRoute,
+  InventoryFlowProReservationsRoute: InventoryFlowProReservationsRoute,
+  InventoryFlowProStatusBoardRoute: InventoryFlowProStatusBoardRoute,
+  InventoryFlowProTimelineRoute: InventoryFlowProTimelineRoute,
+  InventoryFlowProTransitionRoute: InventoryFlowProTransitionRoute,
+  InventoryFlowProIndexRoute: InventoryFlowProIndexRoute,
+  InventoryFlowProInventoryIdRoute: InventoryFlowProInventoryIdRoute,
+  InventoryFlowProInventoryIndexRoute: InventoryFlowProInventoryIndexRoute,
+}
+
+const InventoryFlowProRouteWithChildren =
+  InventoryFlowProRoute._addFileChildren(InventoryFlowProRouteChildren)
+
 interface MasterCoreRouteChildren {
   MasterCoreEmployeesRoute: typeof MasterCoreEmployeesRoute
   MasterCoreGeographyRoute: typeof MasterCoreGeographyRoute
@@ -3288,6 +3575,7 @@ const rootRouteChildren: RootRouteChildren = {
   GrnRoute: GrnRoute,
   InventoryRoute: InventoryRoute,
   InventoryFlowRoute: InventoryFlowRouteWithChildren,
+  InventoryFlowProRoute: InventoryFlowProRouteWithChildren,
   LoginRoute: LoginRoute,
   MasterCoreRoute: MasterCoreRouteWithChildren,
   MasterDataRoute: MasterDataRoute,
