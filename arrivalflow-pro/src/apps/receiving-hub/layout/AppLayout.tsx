@@ -137,7 +137,7 @@ function SidebarContent({ collapsed }: { collapsed: boolean }) {
             <div className="leading-tight">
               <p className="text-[13px] font-medium">{user?.name ?? "A. Mehta"}</p>
               <p className="text-[11px] text-muted-foreground">
-                {user?.role ?? "Receiving Supervisor"}
+                {user?.role ?? "Goods Receiving"}
               </p>
             </div>
           )}

@@ -1,7 +1,31 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
-export type AppRole = "Warehouse Gate Entry & Arrival Management" | "Data Steward" | "Wave Planner" | "Production Manager" | "Inventory Controller" | "Warehouse Supervisor" | "Receiving Supervisor" | "Document Management & OCR" | "Storage Manager" | "Quality Inspector" | "Inventory Lifecycle Manager" | "Supplier & Purchase Order Management";
-export type ModuleKey = "arrival" | "master" | "wave" | "workcraft" | "inventory" | "warehouse" | "receiving" | "document" | "storage" | "quality" | "lifecycle" | "supplier";
+export type AppRole =
+  | "Warehouse Gate Entry & Arrival Management"
+  | "Data Steward"
+  | "Wave Planner"
+  | "Production Manager"
+  | "Inventory Controller"
+  | "Warehouse Supervisor"
+  | "Goods Receiving"
+  | "Document Management & OCR"
+  | "Storage Manager"
+  | "Quality Inspector"
+  | "Inventory Lifecycle Manager"
+  | "Supplier & Purchase Order Management";
+export type ModuleKey =
+  | "arrival"
+  | "master"
+  | "wave"
+  | "workcraft"
+  | "inventory"
+  | "warehouse"
+  | "receiving"
+  | "document"
+  | "storage"
+  | "quality"
+  | "lifecycle"
+  | "supplier";
 
 export interface AuthUser {
   id: string;
@@ -20,7 +44,20 @@ export const SEEDED_USERS: SeededUser[] = [
     email: "admin@nexuswms.com",
     password: "Admin@2026",
     role: "Warehouse Gate Entry & Arrival Management",
-    modules: ["arrival", "master", "wave", "workcraft", "inventory", "warehouse", "receiving", "document", "storage", "quality", "lifecycle", "supplier"],
+    modules: [
+      "arrival",
+      "master",
+      "wave",
+      "workcraft",
+      "inventory",
+      "warehouse",
+      "receiving",
+      "document",
+      "storage",
+      "quality",
+      "lifecycle",
+      "supplier",
+    ],
     dashboard: "/dashboard",
   },
   {
@@ -73,7 +110,7 @@ export const SEEDED_USERS: SeededUser[] = [
     name: "A. Mehta",
     email: "mehta@nexuswms.com",
     password: "receiving@2026",
-    role: "Receiving Supervisor",
+    role: "Goods Receiving",
     modules: ["receiving"],
     dashboard: "/receiving-hub",
   },
