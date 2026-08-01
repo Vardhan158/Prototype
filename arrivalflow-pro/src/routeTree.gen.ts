@@ -19,6 +19,7 @@ import { Route as DocumentFlowRouteImport } from './routes/document-flow'
 import { Route as DriverVerificationRouteImport } from './routes/driver-verification'
 import { Route as EmployeesRouteImport } from './routes/employees'
 import { Route as GateEntryRouteImport } from './routes/gate-entry'
+import { Route as GatePassProRouteImport } from './routes/gate-pass-pro'
 import { Route as GrnRouteImport } from './routes/grn'
 import { Route as InventoryRouteImport } from './routes/inventory'
 import { Route as InventoryFlowRouteImport } from './routes/inventory-flow'
@@ -48,6 +49,17 @@ import { Route as AmsInsightsReceivingRouteImport } from './routes/ams-insights.
 import { Route as AmsInsightsReportsRouteImport } from './routes/ams-insights.reports'
 import { Route as DashboardInventoryRouteImport } from './routes/dashboard_.inventory'
 import { Route as DocumentFlowIndexRouteImport } from './routes/document-flow.index'
+import { Route as GatePassProIndexRouteImport } from './routes/gate-pass-pro.index'
+import { Route as GatePassProAppointmentsRouteImport } from './routes/gate-pass-pro.appointments'
+import { Route as GatePassProArrivalNotificationsRouteImport } from './routes/gate-pass-pro.arrival-notifications'
+import { Route as GatePassProAuditRouteImport } from './routes/gate-pass-pro.audit'
+import { Route as GatePassProNotificationsRouteImport } from './routes/gate-pass-pro.notifications'
+import { Route as GatePassProPendingApprovalRouteImport } from './routes/gate-pass-pro.pending-approval'
+import { Route as GatePassProQueueRouteImport } from './routes/gate-pass-pro.queue'
+import { Route as GatePassProReceivingRouteImport } from './routes/gate-pass-pro.receiving'
+import { Route as GatePassProReportsRouteImport } from './routes/gate-pass-pro.reports'
+import { Route as GatePassProSettingsRouteImport } from './routes/gate-pass-pro.settings'
+import { Route as GatePassProVehicleExitRouteImport } from './routes/gate-pass-pro.vehicle-exit'
 import { Route as InventoryFlowProIndexRouteImport } from './routes/inventory-flow-pro.index'
 import { Route as InventoryFlowProDamagedRouteImport } from './routes/inventory-flow-pro.damaged'
 import { Route as InventoryFlowProPickingRouteImport } from './routes/inventory-flow-pro.picking'
@@ -150,6 +162,11 @@ import { Route as DocumentFlowDocumentsLibraryRouteImport } from './routes/docum
 import { Route as DocumentFlowDocumentsUploadRouteImport } from './routes/document-flow.documents.upload'
 import { Route as DocumentFlowOcrIndexRouteImport } from './routes/document-flow.ocr.index'
 import { Route as DocumentFlowOcrIdRouteImport } from './routes/document-flow.ocr.$id'
+import { Route as GatePassProDriversIdRouteImport } from './routes/gate-pass-pro.drivers.$id'
+import { Route as GatePassProGateEntryIndexRouteImport } from './routes/gate-pass-pro.gate-entry.index'
+import { Route as GatePassProGateEntryIdRouteImport } from './routes/gate-pass-pro.gate-entry.$id'
+import { Route as GatePassProGateEntryNewRouteImport } from './routes/gate-pass-pro.gate-entry.new'
+import { Route as GatePassProVehiclesIdRouteImport } from './routes/gate-pass-pro.vehicles.$id'
 import { Route as InventoryFlowProInventoryIndexRouteImport } from './routes/inventory-flow-pro.inventory.index'
 import { Route as InventoryFlowProInventoryIdRouteImport } from './routes/inventory-flow-pro.inventory.$id'
 import { Route as InventoryFlowInventoryIndexRouteImport } from './routes/inventory-flow.inventory.index'
@@ -244,6 +261,11 @@ const EmployeesRoute = EmployeesRouteImport.update({
 const GateEntryRoute = GateEntryRouteImport.update({
   id: '/gate-entry',
   path: '/gate-entry',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GatePassProRoute = GatePassProRouteImport.update({
+  id: '/gate-pass-pro',
+  path: '/gate-pass-pro',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GrnRoute = GrnRouteImport.update({
@@ -390,6 +412,64 @@ const DocumentFlowIndexRoute = DocumentFlowIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => DocumentFlowRoute,
+} as any)
+const GatePassProIndexRoute = GatePassProIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => GatePassProRoute,
+} as any)
+const GatePassProAppointmentsRoute = GatePassProAppointmentsRouteImport.update({
+  id: '/appointments',
+  path: '/appointments',
+  getParentRoute: () => GatePassProRoute,
+} as any)
+const GatePassProArrivalNotificationsRoute =
+  GatePassProArrivalNotificationsRouteImport.update({
+    id: '/arrival-notifications',
+    path: '/arrival-notifications',
+    getParentRoute: () => GatePassProRoute,
+  } as any)
+const GatePassProAuditRoute = GatePassProAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => GatePassProRoute,
+} as any)
+const GatePassProNotificationsRoute =
+  GatePassProNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => GatePassProRoute,
+  } as any)
+const GatePassProPendingApprovalRoute =
+  GatePassProPendingApprovalRouteImport.update({
+    id: '/pending-approval',
+    path: '/pending-approval',
+    getParentRoute: () => GatePassProRoute,
+  } as any)
+const GatePassProQueueRoute = GatePassProQueueRouteImport.update({
+  id: '/queue',
+  path: '/queue',
+  getParentRoute: () => GatePassProRoute,
+} as any)
+const GatePassProReceivingRoute = GatePassProReceivingRouteImport.update({
+  id: '/receiving',
+  path: '/receiving',
+  getParentRoute: () => GatePassProRoute,
+} as any)
+const GatePassProReportsRoute = GatePassProReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => GatePassProRoute,
+} as any)
+const GatePassProSettingsRoute = GatePassProSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => GatePassProRoute,
+} as any)
+const GatePassProVehicleExitRoute = GatePassProVehicleExitRouteImport.update({
+  id: '/vehicle-exit',
+  path: '/vehicle-exit',
+  getParentRoute: () => GatePassProRoute,
 } as any)
 const InventoryFlowProIndexRoute = InventoryFlowProIndexRouteImport.update({
   id: '/',
@@ -933,6 +1013,32 @@ const DocumentFlowOcrIdRoute = DocumentFlowOcrIdRouteImport.update({
   path: '/ocr/$id',
   getParentRoute: () => DocumentFlowRoute,
 } as any)
+const GatePassProDriversIdRoute = GatePassProDriversIdRouteImport.update({
+  id: '/drivers/$id',
+  path: '/drivers/$id',
+  getParentRoute: () => GatePassProRoute,
+} as any)
+const GatePassProGateEntryIndexRoute =
+  GatePassProGateEntryIndexRouteImport.update({
+    id: '/gate-entry/',
+    path: '/gate-entry/',
+    getParentRoute: () => GatePassProRoute,
+  } as any)
+const GatePassProGateEntryIdRoute = GatePassProGateEntryIdRouteImport.update({
+  id: '/gate-entry/$id',
+  path: '/gate-entry/$id',
+  getParentRoute: () => GatePassProRoute,
+} as any)
+const GatePassProGateEntryNewRoute = GatePassProGateEntryNewRouteImport.update({
+  id: '/gate-entry/new',
+  path: '/gate-entry/new',
+  getParentRoute: () => GatePassProRoute,
+} as any)
+const GatePassProVehiclesIdRoute = GatePassProVehiclesIdRouteImport.update({
+  id: '/vehicles/$id',
+  path: '/vehicles/$id',
+  getParentRoute: () => GatePassProRoute,
+} as any)
 const InventoryFlowProInventoryIndexRoute =
   InventoryFlowProInventoryIndexRouteImport.update({
     id: '/inventory/',
@@ -1203,6 +1309,7 @@ export interface FileRoutesByFullPath {
   '/driver-verification': typeof DriverVerificationRoute
   '/employees': typeof EmployeesRoute
   '/gate-entry': typeof GateEntryRoute
+  '/gate-pass-pro': typeof GatePassProRouteWithChildren
   '/grn': typeof GrnRoute
   '/inventory': typeof InventoryRoute
   '/inventory-flow': typeof InventoryFlowRouteWithChildren
@@ -1230,6 +1337,16 @@ export interface FileRoutesByFullPath {
   '/ams-insights/receiving': typeof AmsInsightsReceivingRoute
   '/ams-insights/reports': typeof AmsInsightsReportsRoute
   '/dashboard/inventory': typeof DashboardInventoryRoute
+  '/gate-pass-pro/appointments': typeof GatePassProAppointmentsRoute
+  '/gate-pass-pro/arrival-notifications': typeof GatePassProArrivalNotificationsRoute
+  '/gate-pass-pro/audit': typeof GatePassProAuditRoute
+  '/gate-pass-pro/notifications': typeof GatePassProNotificationsRoute
+  '/gate-pass-pro/pending-approval': typeof GatePassProPendingApprovalRoute
+  '/gate-pass-pro/queue': typeof GatePassProQueueRoute
+  '/gate-pass-pro/receiving': typeof GatePassProReceivingRoute
+  '/gate-pass-pro/reports': typeof GatePassProReportsRoute
+  '/gate-pass-pro/settings': typeof GatePassProSettingsRoute
+  '/gate-pass-pro/vehicle-exit': typeof GatePassProVehicleExitRoute
   '/inventory-flow-pro/damaged': typeof InventoryFlowProDamagedRoute
   '/inventory-flow-pro/picking': typeof InventoryFlowProPickingRoute
   '/inventory-flow-pro/quality-hold': typeof InventoryFlowProQualityHoldRoute
@@ -1310,6 +1427,7 @@ export interface FileRoutesByFullPath {
   '/work-craft/rework-scrap': typeof WorkCraftReworkScrapRoute
   '/ams-insights/': typeof AmsInsightsIndexRoute
   '/document-flow/': typeof DocumentFlowIndexRoute
+  '/gate-pass-pro/': typeof GatePassProIndexRoute
   '/inventory-flow-pro/': typeof InventoryFlowProIndexRoute
   '/inventory-flow/': typeof InventoryFlowIndexRoute
   '/master-core/': typeof MasterCoreIndexRoute
@@ -1332,6 +1450,10 @@ export interface FileRoutesByFullPath {
   '/document-flow/documents/library': typeof DocumentFlowDocumentsLibraryRoute
   '/document-flow/documents/upload': typeof DocumentFlowDocumentsUploadRoute
   '/document-flow/ocr/$id': typeof DocumentFlowOcrIdRoute
+  '/gate-pass-pro/drivers/$id': typeof GatePassProDriversIdRoute
+  '/gate-pass-pro/gate-entry/$id': typeof GatePassProGateEntryIdRoute
+  '/gate-pass-pro/gate-entry/new': typeof GatePassProGateEntryNewRoute
+  '/gate-pass-pro/vehicles/$id': typeof GatePassProVehiclesIdRoute
   '/inventory-flow-pro/inventory/$id': typeof InventoryFlowProInventoryIdRoute
   '/inventory-flow/inventory/$itemId': typeof InventoryFlowInventoryItemIdRoute
   '/master-core/customers/$id': typeof MasterCoreCustomersIdRoute
@@ -1357,6 +1479,7 @@ export interface FileRoutesByFullPath {
   '/work-craft/work-orders/new': typeof WorkCraftWorkOrdersNewRoute
   '/document-flow/documents/': typeof DocumentFlowDocumentsIndexRoute
   '/document-flow/ocr/': typeof DocumentFlowOcrIndexRoute
+  '/gate-pass-pro/gate-entry/': typeof GatePassProGateEntryIndexRoute
   '/inventory-flow-pro/inventory/': typeof InventoryFlowProInventoryIndexRoute
   '/inventory-flow/inventory/': typeof InventoryFlowInventoryIndexRoute
   '/master-core/customers/': typeof MasterCoreCustomersIndexRoute
@@ -1406,6 +1529,16 @@ export interface FileRoutesByTo {
   '/ams-insights/receiving': typeof AmsInsightsReceivingRoute
   '/ams-insights/reports': typeof AmsInsightsReportsRoute
   '/dashboard/inventory': typeof DashboardInventoryRoute
+  '/gate-pass-pro/appointments': typeof GatePassProAppointmentsRoute
+  '/gate-pass-pro/arrival-notifications': typeof GatePassProArrivalNotificationsRoute
+  '/gate-pass-pro/audit': typeof GatePassProAuditRoute
+  '/gate-pass-pro/notifications': typeof GatePassProNotificationsRoute
+  '/gate-pass-pro/pending-approval': typeof GatePassProPendingApprovalRoute
+  '/gate-pass-pro/queue': typeof GatePassProQueueRoute
+  '/gate-pass-pro/receiving': typeof GatePassProReceivingRoute
+  '/gate-pass-pro/reports': typeof GatePassProReportsRoute
+  '/gate-pass-pro/settings': typeof GatePassProSettingsRoute
+  '/gate-pass-pro/vehicle-exit': typeof GatePassProVehicleExitRoute
   '/inventory-flow-pro/damaged': typeof InventoryFlowProDamagedRoute
   '/inventory-flow-pro/picking': typeof InventoryFlowProPickingRoute
   '/inventory-flow-pro/quality-hold': typeof InventoryFlowProQualityHoldRoute
@@ -1486,6 +1619,7 @@ export interface FileRoutesByTo {
   '/work-craft/rework-scrap': typeof WorkCraftReworkScrapRoute
   '/ams-insights': typeof AmsInsightsIndexRoute
   '/document-flow': typeof DocumentFlowIndexRoute
+  '/gate-pass-pro': typeof GatePassProIndexRoute
   '/inventory-flow-pro': typeof InventoryFlowProIndexRoute
   '/inventory-flow': typeof InventoryFlowIndexRoute
   '/master-core': typeof MasterCoreIndexRoute
@@ -1508,6 +1642,10 @@ export interface FileRoutesByTo {
   '/document-flow/documents/library': typeof DocumentFlowDocumentsLibraryRoute
   '/document-flow/documents/upload': typeof DocumentFlowDocumentsUploadRoute
   '/document-flow/ocr/$id': typeof DocumentFlowOcrIdRoute
+  '/gate-pass-pro/drivers/$id': typeof GatePassProDriversIdRoute
+  '/gate-pass-pro/gate-entry/$id': typeof GatePassProGateEntryIdRoute
+  '/gate-pass-pro/gate-entry/new': typeof GatePassProGateEntryNewRoute
+  '/gate-pass-pro/vehicles/$id': typeof GatePassProVehiclesIdRoute
   '/inventory-flow-pro/inventory/$id': typeof InventoryFlowProInventoryIdRoute
   '/inventory-flow/inventory/$itemId': typeof InventoryFlowInventoryItemIdRoute
   '/master-core/customers/$id': typeof MasterCoreCustomersIdRoute
@@ -1532,6 +1670,7 @@ export interface FileRoutesByTo {
   '/work-craft/work-orders/new': typeof WorkCraftWorkOrdersNewRoute
   '/document-flow/documents': typeof DocumentFlowDocumentsIndexRoute
   '/document-flow/ocr': typeof DocumentFlowOcrIndexRoute
+  '/gate-pass-pro/gate-entry': typeof GatePassProGateEntryIndexRoute
   '/inventory-flow-pro/inventory': typeof InventoryFlowProInventoryIndexRoute
   '/inventory-flow/inventory': typeof InventoryFlowInventoryIndexRoute
   '/master-core/customers': typeof MasterCoreCustomersIndexRoute
@@ -1567,6 +1706,7 @@ export interface FileRoutesById {
   '/driver-verification': typeof DriverVerificationRoute
   '/employees': typeof EmployeesRoute
   '/gate-entry': typeof GateEntryRoute
+  '/gate-pass-pro': typeof GatePassProRouteWithChildren
   '/grn': typeof GrnRoute
   '/inventory': typeof InventoryRoute
   '/inventory-flow': typeof InventoryFlowRouteWithChildren
@@ -1594,6 +1734,16 @@ export interface FileRoutesById {
   '/ams-insights/receiving': typeof AmsInsightsReceivingRoute
   '/ams-insights/reports': typeof AmsInsightsReportsRoute
   '/dashboard_/inventory': typeof DashboardInventoryRoute
+  '/gate-pass-pro/appointments': typeof GatePassProAppointmentsRoute
+  '/gate-pass-pro/arrival-notifications': typeof GatePassProArrivalNotificationsRoute
+  '/gate-pass-pro/audit': typeof GatePassProAuditRoute
+  '/gate-pass-pro/notifications': typeof GatePassProNotificationsRoute
+  '/gate-pass-pro/pending-approval': typeof GatePassProPendingApprovalRoute
+  '/gate-pass-pro/queue': typeof GatePassProQueueRoute
+  '/gate-pass-pro/receiving': typeof GatePassProReceivingRoute
+  '/gate-pass-pro/reports': typeof GatePassProReportsRoute
+  '/gate-pass-pro/settings': typeof GatePassProSettingsRoute
+  '/gate-pass-pro/vehicle-exit': typeof GatePassProVehicleExitRoute
   '/inventory-flow-pro/damaged': typeof InventoryFlowProDamagedRoute
   '/inventory-flow-pro/picking': typeof InventoryFlowProPickingRoute
   '/inventory-flow-pro/quality-hold': typeof InventoryFlowProQualityHoldRoute
@@ -1674,6 +1824,7 @@ export interface FileRoutesById {
   '/work-craft/rework-scrap': typeof WorkCraftReworkScrapRoute
   '/ams-insights/': typeof AmsInsightsIndexRoute
   '/document-flow/': typeof DocumentFlowIndexRoute
+  '/gate-pass-pro/': typeof GatePassProIndexRoute
   '/inventory-flow-pro/': typeof InventoryFlowProIndexRoute
   '/inventory-flow/': typeof InventoryFlowIndexRoute
   '/master-core/': typeof MasterCoreIndexRoute
@@ -1696,6 +1847,10 @@ export interface FileRoutesById {
   '/document-flow/documents/library': typeof DocumentFlowDocumentsLibraryRoute
   '/document-flow/documents/upload': typeof DocumentFlowDocumentsUploadRoute
   '/document-flow/ocr/$id': typeof DocumentFlowOcrIdRoute
+  '/gate-pass-pro/drivers/$id': typeof GatePassProDriversIdRoute
+  '/gate-pass-pro/gate-entry/$id': typeof GatePassProGateEntryIdRoute
+  '/gate-pass-pro/gate-entry/new': typeof GatePassProGateEntryNewRoute
+  '/gate-pass-pro/vehicles/$id': typeof GatePassProVehiclesIdRoute
   '/inventory-flow-pro/inventory/$id': typeof InventoryFlowProInventoryIdRoute
   '/inventory-flow/inventory/$itemId': typeof InventoryFlowInventoryItemIdRoute
   '/master-core/customers/$id': typeof MasterCoreCustomersIdRoute
@@ -1721,6 +1876,7 @@ export interface FileRoutesById {
   '/work-craft/work-orders/new': typeof WorkCraftWorkOrdersNewRoute
   '/document-flow/documents/': typeof DocumentFlowDocumentsIndexRoute
   '/document-flow/ocr/': typeof DocumentFlowOcrIndexRoute
+  '/gate-pass-pro/gate-entry/': typeof GatePassProGateEntryIndexRoute
   '/inventory-flow-pro/inventory/': typeof InventoryFlowProInventoryIndexRoute
   '/inventory-flow/inventory/': typeof InventoryFlowInventoryIndexRoute
   '/master-core/customers/': typeof MasterCoreCustomersIndexRoute
@@ -1757,6 +1913,7 @@ export interface FileRouteTypes {
     | '/driver-verification'
     | '/employees'
     | '/gate-entry'
+    | '/gate-pass-pro'
     | '/grn'
     | '/inventory'
     | '/inventory-flow'
@@ -1784,6 +1941,16 @@ export interface FileRouteTypes {
     | '/ams-insights/receiving'
     | '/ams-insights/reports'
     | '/dashboard/inventory'
+    | '/gate-pass-pro/appointments'
+    | '/gate-pass-pro/arrival-notifications'
+    | '/gate-pass-pro/audit'
+    | '/gate-pass-pro/notifications'
+    | '/gate-pass-pro/pending-approval'
+    | '/gate-pass-pro/queue'
+    | '/gate-pass-pro/receiving'
+    | '/gate-pass-pro/reports'
+    | '/gate-pass-pro/settings'
+    | '/gate-pass-pro/vehicle-exit'
     | '/inventory-flow-pro/damaged'
     | '/inventory-flow-pro/picking'
     | '/inventory-flow-pro/quality-hold'
@@ -1864,6 +2031,7 @@ export interface FileRouteTypes {
     | '/work-craft/rework-scrap'
     | '/ams-insights/'
     | '/document-flow/'
+    | '/gate-pass-pro/'
     | '/inventory-flow-pro/'
     | '/inventory-flow/'
     | '/master-core/'
@@ -1886,6 +2054,10 @@ export interface FileRouteTypes {
     | '/document-flow/documents/library'
     | '/document-flow/documents/upload'
     | '/document-flow/ocr/$id'
+    | '/gate-pass-pro/drivers/$id'
+    | '/gate-pass-pro/gate-entry/$id'
+    | '/gate-pass-pro/gate-entry/new'
+    | '/gate-pass-pro/vehicles/$id'
     | '/inventory-flow-pro/inventory/$id'
     | '/inventory-flow/inventory/$itemId'
     | '/master-core/customers/$id'
@@ -1911,6 +2083,7 @@ export interface FileRouteTypes {
     | '/work-craft/work-orders/new'
     | '/document-flow/documents/'
     | '/document-flow/ocr/'
+    | '/gate-pass-pro/gate-entry/'
     | '/inventory-flow-pro/inventory/'
     | '/inventory-flow/inventory/'
     | '/master-core/customers/'
@@ -1960,6 +2133,16 @@ export interface FileRouteTypes {
     | '/ams-insights/receiving'
     | '/ams-insights/reports'
     | '/dashboard/inventory'
+    | '/gate-pass-pro/appointments'
+    | '/gate-pass-pro/arrival-notifications'
+    | '/gate-pass-pro/audit'
+    | '/gate-pass-pro/notifications'
+    | '/gate-pass-pro/pending-approval'
+    | '/gate-pass-pro/queue'
+    | '/gate-pass-pro/receiving'
+    | '/gate-pass-pro/reports'
+    | '/gate-pass-pro/settings'
+    | '/gate-pass-pro/vehicle-exit'
     | '/inventory-flow-pro/damaged'
     | '/inventory-flow-pro/picking'
     | '/inventory-flow-pro/quality-hold'
@@ -2040,6 +2223,7 @@ export interface FileRouteTypes {
     | '/work-craft/rework-scrap'
     | '/ams-insights'
     | '/document-flow'
+    | '/gate-pass-pro'
     | '/inventory-flow-pro'
     | '/inventory-flow'
     | '/master-core'
@@ -2062,6 +2246,10 @@ export interface FileRouteTypes {
     | '/document-flow/documents/library'
     | '/document-flow/documents/upload'
     | '/document-flow/ocr/$id'
+    | '/gate-pass-pro/drivers/$id'
+    | '/gate-pass-pro/gate-entry/$id'
+    | '/gate-pass-pro/gate-entry/new'
+    | '/gate-pass-pro/vehicles/$id'
     | '/inventory-flow-pro/inventory/$id'
     | '/inventory-flow/inventory/$itemId'
     | '/master-core/customers/$id'
@@ -2086,6 +2274,7 @@ export interface FileRouteTypes {
     | '/work-craft/work-orders/new'
     | '/document-flow/documents'
     | '/document-flow/ocr'
+    | '/gate-pass-pro/gate-entry'
     | '/inventory-flow-pro/inventory'
     | '/inventory-flow/inventory'
     | '/master-core/customers'
@@ -2120,6 +2309,7 @@ export interface FileRouteTypes {
     | '/driver-verification'
     | '/employees'
     | '/gate-entry'
+    | '/gate-pass-pro'
     | '/grn'
     | '/inventory'
     | '/inventory-flow'
@@ -2147,6 +2337,16 @@ export interface FileRouteTypes {
     | '/ams-insights/receiving'
     | '/ams-insights/reports'
     | '/dashboard_/inventory'
+    | '/gate-pass-pro/appointments'
+    | '/gate-pass-pro/arrival-notifications'
+    | '/gate-pass-pro/audit'
+    | '/gate-pass-pro/notifications'
+    | '/gate-pass-pro/pending-approval'
+    | '/gate-pass-pro/queue'
+    | '/gate-pass-pro/receiving'
+    | '/gate-pass-pro/reports'
+    | '/gate-pass-pro/settings'
+    | '/gate-pass-pro/vehicle-exit'
     | '/inventory-flow-pro/damaged'
     | '/inventory-flow-pro/picking'
     | '/inventory-flow-pro/quality-hold'
@@ -2227,6 +2427,7 @@ export interface FileRouteTypes {
     | '/work-craft/rework-scrap'
     | '/ams-insights/'
     | '/document-flow/'
+    | '/gate-pass-pro/'
     | '/inventory-flow-pro/'
     | '/inventory-flow/'
     | '/master-core/'
@@ -2249,6 +2450,10 @@ export interface FileRouteTypes {
     | '/document-flow/documents/library'
     | '/document-flow/documents/upload'
     | '/document-flow/ocr/$id'
+    | '/gate-pass-pro/drivers/$id'
+    | '/gate-pass-pro/gate-entry/$id'
+    | '/gate-pass-pro/gate-entry/new'
+    | '/gate-pass-pro/vehicles/$id'
     | '/inventory-flow-pro/inventory/$id'
     | '/inventory-flow/inventory/$itemId'
     | '/master-core/customers/$id'
@@ -2274,6 +2479,7 @@ export interface FileRouteTypes {
     | '/work-craft/work-orders/new'
     | '/document-flow/documents/'
     | '/document-flow/ocr/'
+    | '/gate-pass-pro/gate-entry/'
     | '/inventory-flow-pro/inventory/'
     | '/inventory-flow/inventory/'
     | '/master-core/customers/'
@@ -2309,6 +2515,7 @@ export interface RootRouteChildren {
   DriverVerificationRoute: typeof DriverVerificationRoute
   EmployeesRoute: typeof EmployeesRoute
   GateEntryRoute: typeof GateEntryRoute
+  GatePassProRoute: typeof GatePassProRouteWithChildren
   GrnRoute: typeof GrnRoute
   InventoryRoute: typeof InventoryRoute
   InventoryFlowRoute: typeof InventoryFlowRouteWithChildren
@@ -2403,6 +2610,13 @@ declare module '@tanstack/react-router' {
       path: '/gate-entry'
       fullPath: '/gate-entry'
       preLoaderRoute: typeof GateEntryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gate-pass-pro': {
+      id: '/gate-pass-pro'
+      path: '/gate-pass-pro'
+      fullPath: '/gate-pass-pro'
+      preLoaderRoute: typeof GatePassProRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/grn': {
@@ -2607,6 +2821,83 @@ declare module '@tanstack/react-router' {
       fullPath: '/document-flow/'
       preLoaderRoute: typeof DocumentFlowIndexRouteImport
       parentRoute: typeof DocumentFlowRoute
+    }
+    '/gate-pass-pro/': {
+      id: '/gate-pass-pro/'
+      path: '/'
+      fullPath: '/gate-pass-pro/'
+      preLoaderRoute: typeof GatePassProIndexRouteImport
+      parentRoute: typeof GatePassProRoute
+    }
+    '/gate-pass-pro/appointments': {
+      id: '/gate-pass-pro/appointments'
+      path: '/appointments'
+      fullPath: '/gate-pass-pro/appointments'
+      preLoaderRoute: typeof GatePassProAppointmentsRouteImport
+      parentRoute: typeof GatePassProRoute
+    }
+    '/gate-pass-pro/arrival-notifications': {
+      id: '/gate-pass-pro/arrival-notifications'
+      path: '/arrival-notifications'
+      fullPath: '/gate-pass-pro/arrival-notifications'
+      preLoaderRoute: typeof GatePassProArrivalNotificationsRouteImport
+      parentRoute: typeof GatePassProRoute
+    }
+    '/gate-pass-pro/audit': {
+      id: '/gate-pass-pro/audit'
+      path: '/audit'
+      fullPath: '/gate-pass-pro/audit'
+      preLoaderRoute: typeof GatePassProAuditRouteImport
+      parentRoute: typeof GatePassProRoute
+    }
+    '/gate-pass-pro/notifications': {
+      id: '/gate-pass-pro/notifications'
+      path: '/notifications'
+      fullPath: '/gate-pass-pro/notifications'
+      preLoaderRoute: typeof GatePassProNotificationsRouteImport
+      parentRoute: typeof GatePassProRoute
+    }
+    '/gate-pass-pro/pending-approval': {
+      id: '/gate-pass-pro/pending-approval'
+      path: '/pending-approval'
+      fullPath: '/gate-pass-pro/pending-approval'
+      preLoaderRoute: typeof GatePassProPendingApprovalRouteImport
+      parentRoute: typeof GatePassProRoute
+    }
+    '/gate-pass-pro/queue': {
+      id: '/gate-pass-pro/queue'
+      path: '/queue'
+      fullPath: '/gate-pass-pro/queue'
+      preLoaderRoute: typeof GatePassProQueueRouteImport
+      parentRoute: typeof GatePassProRoute
+    }
+    '/gate-pass-pro/receiving': {
+      id: '/gate-pass-pro/receiving'
+      path: '/receiving'
+      fullPath: '/gate-pass-pro/receiving'
+      preLoaderRoute: typeof GatePassProReceivingRouteImport
+      parentRoute: typeof GatePassProRoute
+    }
+    '/gate-pass-pro/reports': {
+      id: '/gate-pass-pro/reports'
+      path: '/reports'
+      fullPath: '/gate-pass-pro/reports'
+      preLoaderRoute: typeof GatePassProReportsRouteImport
+      parentRoute: typeof GatePassProRoute
+    }
+    '/gate-pass-pro/settings': {
+      id: '/gate-pass-pro/settings'
+      path: '/settings'
+      fullPath: '/gate-pass-pro/settings'
+      preLoaderRoute: typeof GatePassProSettingsRouteImport
+      parentRoute: typeof GatePassProRoute
+    }
+    '/gate-pass-pro/vehicle-exit': {
+      id: '/gate-pass-pro/vehicle-exit'
+      path: '/vehicle-exit'
+      fullPath: '/gate-pass-pro/vehicle-exit'
+      preLoaderRoute: typeof GatePassProVehicleExitRouteImport
+      parentRoute: typeof GatePassProRoute
     }
     '/inventory-flow-pro/': {
       id: '/inventory-flow-pro/'
@@ -3322,6 +3613,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocumentFlowOcrIdRouteImport
       parentRoute: typeof DocumentFlowRoute
     }
+    '/gate-pass-pro/drivers/$id': {
+      id: '/gate-pass-pro/drivers/$id'
+      path: '/drivers/$id'
+      fullPath: '/gate-pass-pro/drivers/$id'
+      preLoaderRoute: typeof GatePassProDriversIdRouteImport
+      parentRoute: typeof GatePassProRoute
+    }
+    '/gate-pass-pro/gate-entry/': {
+      id: '/gate-pass-pro/gate-entry/'
+      path: '/gate-entry'
+      fullPath: '/gate-pass-pro/gate-entry/'
+      preLoaderRoute: typeof GatePassProGateEntryIndexRouteImport
+      parentRoute: typeof GatePassProRoute
+    }
+    '/gate-pass-pro/gate-entry/$id': {
+      id: '/gate-pass-pro/gate-entry/$id'
+      path: '/gate-entry/$id'
+      fullPath: '/gate-pass-pro/gate-entry/$id'
+      preLoaderRoute: typeof GatePassProGateEntryIdRouteImport
+      parentRoute: typeof GatePassProRoute
+    }
+    '/gate-pass-pro/gate-entry/new': {
+      id: '/gate-pass-pro/gate-entry/new'
+      path: '/gate-entry/new'
+      fullPath: '/gate-pass-pro/gate-entry/new'
+      preLoaderRoute: typeof GatePassProGateEntryNewRouteImport
+      parentRoute: typeof GatePassProRoute
+    }
+    '/gate-pass-pro/vehicles/$id': {
+      id: '/gate-pass-pro/vehicles/$id'
+      path: '/vehicles/$id'
+      fullPath: '/gate-pass-pro/vehicles/$id'
+      preLoaderRoute: typeof GatePassProVehiclesIdRouteImport
+      parentRoute: typeof GatePassProRoute
+    }
     '/inventory-flow-pro/inventory/': {
       id: '/inventory-flow-pro/inventory/'
       path: '/inventory'
@@ -3702,6 +4028,48 @@ const DocumentFlowRouteChildren: DocumentFlowRouteChildren = {
 
 const DocumentFlowRouteWithChildren = DocumentFlowRoute._addFileChildren(
   DocumentFlowRouteChildren,
+)
+
+interface GatePassProRouteChildren {
+  GatePassProAppointmentsRoute: typeof GatePassProAppointmentsRoute
+  GatePassProArrivalNotificationsRoute: typeof GatePassProArrivalNotificationsRoute
+  GatePassProAuditRoute: typeof GatePassProAuditRoute
+  GatePassProNotificationsRoute: typeof GatePassProNotificationsRoute
+  GatePassProPendingApprovalRoute: typeof GatePassProPendingApprovalRoute
+  GatePassProQueueRoute: typeof GatePassProQueueRoute
+  GatePassProReceivingRoute: typeof GatePassProReceivingRoute
+  GatePassProReportsRoute: typeof GatePassProReportsRoute
+  GatePassProSettingsRoute: typeof GatePassProSettingsRoute
+  GatePassProVehicleExitRoute: typeof GatePassProVehicleExitRoute
+  GatePassProIndexRoute: typeof GatePassProIndexRoute
+  GatePassProDriversIdRoute: typeof GatePassProDriversIdRoute
+  GatePassProGateEntryIdRoute: typeof GatePassProGateEntryIdRoute
+  GatePassProGateEntryNewRoute: typeof GatePassProGateEntryNewRoute
+  GatePassProVehiclesIdRoute: typeof GatePassProVehiclesIdRoute
+  GatePassProGateEntryIndexRoute: typeof GatePassProGateEntryIndexRoute
+}
+
+const GatePassProRouteChildren: GatePassProRouteChildren = {
+  GatePassProAppointmentsRoute: GatePassProAppointmentsRoute,
+  GatePassProArrivalNotificationsRoute: GatePassProArrivalNotificationsRoute,
+  GatePassProAuditRoute: GatePassProAuditRoute,
+  GatePassProNotificationsRoute: GatePassProNotificationsRoute,
+  GatePassProPendingApprovalRoute: GatePassProPendingApprovalRoute,
+  GatePassProQueueRoute: GatePassProQueueRoute,
+  GatePassProReceivingRoute: GatePassProReceivingRoute,
+  GatePassProReportsRoute: GatePassProReportsRoute,
+  GatePassProSettingsRoute: GatePassProSettingsRoute,
+  GatePassProVehicleExitRoute: GatePassProVehicleExitRoute,
+  GatePassProIndexRoute: GatePassProIndexRoute,
+  GatePassProDriversIdRoute: GatePassProDriversIdRoute,
+  GatePassProGateEntryIdRoute: GatePassProGateEntryIdRoute,
+  GatePassProGateEntryNewRoute: GatePassProGateEntryNewRoute,
+  GatePassProVehiclesIdRoute: GatePassProVehiclesIdRoute,
+  GatePassProGateEntryIndexRoute: GatePassProGateEntryIndexRoute,
+}
+
+const GatePassProRouteWithChildren = GatePassProRoute._addFileChildren(
+  GatePassProRouteChildren,
 )
 
 interface InventoryFlowRouteChildren {
@@ -4094,6 +4462,7 @@ const rootRouteChildren: RootRouteChildren = {
   DriverVerificationRoute: DriverVerificationRoute,
   EmployeesRoute: EmployeesRoute,
   GateEntryRoute: GateEntryRoute,
+  GatePassProRoute: GatePassProRouteWithChildren,
   GrnRoute: GrnRoute,
   InventoryRoute: InventoryRoute,
   InventoryFlowRoute: InventoryFlowRouteWithChildren,

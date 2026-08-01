@@ -24,7 +24,7 @@ import { useAuth } from "@/lib/auth";
 
 const nav = [
   { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard },
-  { label: "Gate Entry", to: "/gate-entry", icon: DoorOpen },
+  { label: "Gate Entry", to: "/gate-pass-pro", icon: DoorOpen },
   { label: "Arrival Management", to: "/notifications", icon: Truck, badge: "2" },
   { label: "Vehicle Queue", to: "/vehicle-queue", icon: ListOrdered },
   { label: "Dock Assignment", to: "/dock-assignment", icon: Warehouse },
