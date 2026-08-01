@@ -45,6 +45,7 @@ import { Route as AmsInsightsDispatchRouteImport } from './routes/ams-insights.d
 import { Route as AmsInsightsInventoryRouteImport } from './routes/ams-insights.inventory'
 import { Route as AmsInsightsReceivingRouteImport } from './routes/ams-insights.receiving'
 import { Route as AmsInsightsReportsRouteImport } from './routes/ams-insights.reports'
+import { Route as DashboardInventoryRouteImport } from './routes/dashboard.inventory'
 import { Route as DocumentFlowIndexRouteImport } from './routes/document-flow.index'
 import { Route as InventoryFlowProIndexRouteImport } from './routes/inventory-flow-pro.index'
 import { Route as InventoryFlowProDamagedRouteImport } from './routes/inventory-flow-pro.damaged'
@@ -351,6 +352,11 @@ const AmsInsightsReportsRoute = AmsInsightsReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
   getParentRoute: () => AmsInsightsRoute,
+} as any)
+const DashboardInventoryRoute = DashboardInventoryRouteImport.update({
+  id: '/inventory',
+  path: '/inventory',
+  getParentRoute: () => DashboardRoute,
 } as any)
 const DocumentFlowIndexRoute = DocumentFlowIndexRouteImport.update({
   id: '/',
@@ -1043,7 +1049,7 @@ export interface FileRoutesByFullPath {
   '/accept-arrival': typeof AcceptArrivalRoute
   '/ams-insights': typeof AmsInsightsRouteWithChildren
   '/arrival-success': typeof ArrivalSuccessRoute
-  '/dashboard': typeof DashboardRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/dock-assignment': typeof DockAssignmentRoute
   '/document-flow': typeof DocumentFlowRouteWithChildren
   '/driver-verification': typeof DriverVerificationRoute
@@ -1074,6 +1080,7 @@ export interface FileRoutesByFullPath {
   '/ams-insights/inventory': typeof AmsInsightsInventoryRoute
   '/ams-insights/receiving': typeof AmsInsightsReceivingRoute
   '/ams-insights/reports': typeof AmsInsightsReportsRoute
+  '/dashboard/inventory': typeof DashboardInventoryRoute
   '/inventory-flow-pro/damaged': typeof InventoryFlowProDamagedRoute
   '/inventory-flow-pro/picking': typeof InventoryFlowProPickingRoute
   '/inventory-flow-pro/quality-hold': typeof InventoryFlowProQualityHoldRoute
@@ -1206,7 +1213,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/accept-arrival': typeof AcceptArrivalRoute
   '/arrival-success': typeof ArrivalSuccessRoute
-  '/dashboard': typeof DashboardRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/dock-assignment': typeof DockAssignmentRoute
   '/driver-verification': typeof DriverVerificationRoute
   '/employees': typeof EmployeesRoute
@@ -1227,6 +1234,7 @@ export interface FileRoutesByTo {
   '/ams-insights/inventory': typeof AmsInsightsInventoryRoute
   '/ams-insights/receiving': typeof AmsInsightsReceivingRoute
   '/ams-insights/reports': typeof AmsInsightsReportsRoute
+  '/dashboard/inventory': typeof DashboardInventoryRoute
   '/inventory-flow-pro/damaged': typeof InventoryFlowProDamagedRoute
   '/inventory-flow-pro/picking': typeof InventoryFlowProPickingRoute
   '/inventory-flow-pro/quality-hold': typeof InventoryFlowProQualityHoldRoute
@@ -1360,7 +1368,7 @@ export interface FileRoutesById {
   '/accept-arrival': typeof AcceptArrivalRoute
   '/ams-insights': typeof AmsInsightsRouteWithChildren
   '/arrival-success': typeof ArrivalSuccessRoute
-  '/dashboard': typeof DashboardRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/dock-assignment': typeof DockAssignmentRoute
   '/document-flow': typeof DocumentFlowRouteWithChildren
   '/driver-verification': typeof DriverVerificationRoute
@@ -1391,6 +1399,7 @@ export interface FileRoutesById {
   '/ams-insights/inventory': typeof AmsInsightsInventoryRoute
   '/ams-insights/receiving': typeof AmsInsightsReceivingRoute
   '/ams-insights/reports': typeof AmsInsightsReportsRoute
+  '/dashboard/inventory': typeof DashboardInventoryRoute
   '/inventory-flow-pro/damaged': typeof InventoryFlowProDamagedRoute
   '/inventory-flow-pro/picking': typeof InventoryFlowProPickingRoute
   '/inventory-flow-pro/quality-hold': typeof InventoryFlowProQualityHoldRoute
@@ -1557,6 +1566,7 @@ export interface FileRouteTypes {
     | '/ams-insights/inventory'
     | '/ams-insights/receiving'
     | '/ams-insights/reports'
+    | '/dashboard/inventory'
     | '/inventory-flow-pro/damaged'
     | '/inventory-flow-pro/picking'
     | '/inventory-flow-pro/quality-hold'
@@ -1710,6 +1720,7 @@ export interface FileRouteTypes {
     | '/ams-insights/inventory'
     | '/ams-insights/receiving'
     | '/ams-insights/reports'
+    | '/dashboard/inventory'
     | '/inventory-flow-pro/damaged'
     | '/inventory-flow-pro/picking'
     | '/inventory-flow-pro/quality-hold'
@@ -1873,6 +1884,7 @@ export interface FileRouteTypes {
     | '/ams-insights/inventory'
     | '/ams-insights/receiving'
     | '/ams-insights/reports'
+    | '/dashboard/inventory'
     | '/inventory-flow-pro/damaged'
     | '/inventory-flow-pro/picking'
     | '/inventory-flow-pro/quality-hold'
@@ -2007,7 +2019,7 @@ export interface RootRouteChildren {
   AcceptArrivalRoute: typeof AcceptArrivalRoute
   AmsInsightsRoute: typeof AmsInsightsRouteWithChildren
   ArrivalSuccessRoute: typeof ArrivalSuccessRoute
-  DashboardRoute: typeof DashboardRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
   DockAssignmentRoute: typeof DockAssignmentRoute
   DocumentFlowRoute: typeof DocumentFlowRouteWithChildren
   DriverVerificationRoute: typeof DriverVerificationRoute
@@ -2288,6 +2300,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/ams-insights/reports'
       preLoaderRoute: typeof AmsInsightsReportsRouteImport
       parentRoute: typeof AmsInsightsRoute
+    }
+    '/dashboard/inventory': {
+      id: '/dashboard/inventory'
+      path: '/inventory'
+      fullPath: '/dashboard/inventory'
+      preLoaderRoute: typeof DashboardInventoryRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/document-flow/': {
       id: '/document-flow/'
@@ -3214,6 +3233,18 @@ const AmsInsightsRouteWithChildren = AmsInsightsRoute._addFileChildren(
   AmsInsightsRouteChildren,
 )
 
+interface DashboardRouteChildren {
+  DashboardInventoryRoute: typeof DashboardInventoryRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardInventoryRoute: DashboardInventoryRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
+
 interface DocumentFlowRouteChildren {
   DocumentFlowIndexRoute: typeof DocumentFlowIndexRoute
   DocumentFlowDocumentsIdRoute: typeof DocumentFlowDocumentsIdRoute
@@ -3566,7 +3597,7 @@ const rootRouteChildren: RootRouteChildren = {
   AcceptArrivalRoute: AcceptArrivalRoute,
   AmsInsightsRoute: AmsInsightsRouteWithChildren,
   ArrivalSuccessRoute: ArrivalSuccessRoute,
-  DashboardRoute: DashboardRoute,
+  DashboardRoute: DashboardRouteWithChildren,
   DockAssignmentRoute: DockAssignmentRoute,
   DocumentFlowRoute: DocumentFlowRouteWithChildren,
   DriverVerificationRoute: DriverVerificationRoute,
