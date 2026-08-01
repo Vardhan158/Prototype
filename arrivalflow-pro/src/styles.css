@@ -291,3 +291,43 @@
 @utility num {
   font-variant-numeric: tabular-nums;
 }
+
+/* Document Flow surfaces and interactions */
+@utility glass-panel {
+  background: color-mix(in oklab, var(--card) 82%, transparent);
+  backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid color-mix(in oklab, var(--border) 75%, transparent);
+  box-shadow: 0 1px 2px oklch(0.2 0.05 260 / 0.06), 0 8px 24px -12px oklch(0.2 0.05 260 / 0.18);
+}
+
+@utility surface-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 2px oklch(0.2 0.05 260 / 0.06), 0 8px 24px -12px oklch(0.2 0.05 260 / 0.18);
+}
+
+@utility interactive {
+  transition: transform 0.18s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.18s cubic-bezier(0.2, 0, 0, 1), border-color 0.18s ease;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px -12px oklch(0.2 0.05 260 / 0.28);
+  }
+}
+
+@utility grid-paper {
+  background-image:
+    linear-gradient(color-mix(in oklab, var(--border) 60%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--border) 60%, transparent) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+@keyframes document-scanline {
+  0% { top: 0%; opacity: 0; }
+  10%, 90% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+@utility animate-scanline {
+  animation: document-scanline 2.1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}

@@ -14,6 +14,7 @@ import { Route as AcceptArrivalRouteImport } from './routes/accept-arrival'
 import { Route as ArrivalSuccessRouteImport } from './routes/arrival-success'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DockAssignmentRouteImport } from './routes/dock-assignment'
+import { Route as DocumentFlowRouteImport } from './routes/document-flow'
 import { Route as DriverVerificationRouteImport } from './routes/driver-verification'
 import { Route as EmployeesRouteImport } from './routes/employees'
 import { Route as GateEntryRouteImport } from './routes/gate-entry'
@@ -34,6 +35,7 @@ import { Route as VehicleVerificationRouteImport } from './routes/vehicle-verifi
 import { Route as WarehouseFlowRouteImport } from './routes/warehouse-flow'
 import { Route as WaveFlowRouteImport } from './routes/wave-flow'
 import { Route as WorkCraftRouteImport } from './routes/work-craft'
+import { Route as DocumentFlowIndexRouteImport } from './routes/document-flow.index'
 import { Route as InventoryFlowIndexRouteImport } from './routes/inventory-flow.index'
 import { Route as InventoryFlowAdjustmentsRouteImport } from './routes/inventory-flow.adjustments'
 import { Route as InventoryFlowCycleCountRouteImport } from './routes/inventory-flow.cycle-count'
@@ -83,6 +85,12 @@ import { Route as WorkCraftIndexRouteImport } from './routes/work-craft.index'
 import { Route as WorkCraftExceptionsRouteImport } from './routes/work-craft.exceptions'
 import { Route as WorkCraftFinishedGoodsRouteImport } from './routes/work-craft.finished-goods'
 import { Route as WorkCraftReworkScrapRouteImport } from './routes/work-craft.rework-scrap'
+import { Route as DocumentFlowDocumentsIndexRouteImport } from './routes/document-flow.documents.index'
+import { Route as DocumentFlowDocumentsIdRouteImport } from './routes/document-flow.documents.$id'
+import { Route as DocumentFlowDocumentsLibraryRouteImport } from './routes/document-flow.documents.library'
+import { Route as DocumentFlowDocumentsUploadRouteImport } from './routes/document-flow.documents.upload'
+import { Route as DocumentFlowOcrIndexRouteImport } from './routes/document-flow.ocr.index'
+import { Route as DocumentFlowOcrIdRouteImport } from './routes/document-flow.ocr.$id'
 import { Route as InventoryFlowInventoryIndexRouteImport } from './routes/inventory-flow.inventory.index'
 import { Route as InventoryFlowInventoryItemIdRouteImport } from './routes/inventory-flow.inventory.$itemId'
 import { Route as MasterCoreCustomersIndexRouteImport } from './routes/master-core.customers.index'
@@ -135,6 +143,11 @@ const DashboardRoute = DashboardRouteImport.update({
 const DockAssignmentRoute = DockAssignmentRouteImport.update({
   id: '/dock-assignment',
   path: '/dock-assignment',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocumentFlowRoute = DocumentFlowRouteImport.update({
+  id: '/document-flow',
+  path: '/document-flow',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DriverVerificationRoute = DriverVerificationRouteImport.update({
@@ -236,6 +249,11 @@ const WorkCraftRoute = WorkCraftRouteImport.update({
   id: '/work-craft',
   path: '/work-craft',
   getParentRoute: () => rootRouteImport,
+} as any)
+const DocumentFlowIndexRoute = DocumentFlowIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DocumentFlowRoute,
 } as any)
 const InventoryFlowIndexRoute = InventoryFlowIndexRouteImport.update({
   id: '/',
@@ -489,6 +507,39 @@ const WorkCraftReworkScrapRoute = WorkCraftReworkScrapRouteImport.update({
   path: '/rework-scrap',
   getParentRoute: () => WorkCraftRoute,
 } as any)
+const DocumentFlowDocumentsIndexRoute =
+  DocumentFlowDocumentsIndexRouteImport.update({
+    id: '/documents/',
+    path: '/documents/',
+    getParentRoute: () => DocumentFlowRoute,
+  } as any)
+const DocumentFlowDocumentsIdRoute = DocumentFlowDocumentsIdRouteImport.update({
+  id: '/documents/$id',
+  path: '/documents/$id',
+  getParentRoute: () => DocumentFlowRoute,
+} as any)
+const DocumentFlowDocumentsLibraryRoute =
+  DocumentFlowDocumentsLibraryRouteImport.update({
+    id: '/documents/library',
+    path: '/documents/library',
+    getParentRoute: () => DocumentFlowRoute,
+  } as any)
+const DocumentFlowDocumentsUploadRoute =
+  DocumentFlowDocumentsUploadRouteImport.update({
+    id: '/documents/upload',
+    path: '/documents/upload',
+    getParentRoute: () => DocumentFlowRoute,
+  } as any)
+const DocumentFlowOcrIndexRoute = DocumentFlowOcrIndexRouteImport.update({
+  id: '/ocr/',
+  path: '/ocr/',
+  getParentRoute: () => DocumentFlowRoute,
+} as any)
+const DocumentFlowOcrIdRoute = DocumentFlowOcrIdRouteImport.update({
+  id: '/ocr/$id',
+  path: '/ocr/$id',
+  getParentRoute: () => DocumentFlowRoute,
+} as any)
 const InventoryFlowInventoryIndexRoute =
   InventoryFlowInventoryIndexRouteImport.update({
     id: '/inventory/',
@@ -655,6 +706,7 @@ export interface FileRoutesByFullPath {
   '/arrival-success': typeof ArrivalSuccessRoute
   '/dashboard': typeof DashboardRoute
   '/dock-assignment': typeof DockAssignmentRoute
+  '/document-flow': typeof DocumentFlowRouteWithChildren
   '/driver-verification': typeof DriverVerificationRoute
   '/employees': typeof EmployeesRoute
   '/gate-entry': typeof GateEntryRoute
@@ -718,12 +770,17 @@ export interface FileRoutesByFullPath {
   '/work-craft/exceptions': typeof WorkCraftExceptionsRoute
   '/work-craft/finished-goods': typeof WorkCraftFinishedGoodsRoute
   '/work-craft/rework-scrap': typeof WorkCraftReworkScrapRoute
+  '/document-flow/': typeof DocumentFlowIndexRoute
   '/inventory-flow/': typeof InventoryFlowIndexRoute
   '/master-core/': typeof MasterCoreIndexRoute
   '/receiving-hub/': typeof ReceivingHubIndexRoute
   '/warehouse-flow/': typeof WarehouseFlowIndexRoute
   '/wave-flow/': typeof WaveFlowIndexRoute
   '/work-craft/': typeof WorkCraftIndexRoute
+  '/document-flow/documents/$id': typeof DocumentFlowDocumentsIdRoute
+  '/document-flow/documents/library': typeof DocumentFlowDocumentsLibraryRoute
+  '/document-flow/documents/upload': typeof DocumentFlowDocumentsUploadRoute
+  '/document-flow/ocr/$id': typeof DocumentFlowOcrIdRoute
   '/inventory-flow/inventory/$itemId': typeof InventoryFlowInventoryItemIdRoute
   '/master-core/customers/$id': typeof MasterCoreCustomersIdRoute
   '/master-core/items/$id': typeof MasterCoreItemsIdRoute
@@ -736,6 +793,8 @@ export interface FileRoutesByFullPath {
   '/work-craft/certificates/$number': typeof WorkCraftCertificatesNumberRoute
   '/work-craft/work-orders/$id': typeof WorkCraftWorkOrdersIdRouteWithChildren
   '/work-craft/work-orders/new': typeof WorkCraftWorkOrdersNewRoute
+  '/document-flow/documents/': typeof DocumentFlowDocumentsIndexRoute
+  '/document-flow/ocr/': typeof DocumentFlowOcrIndexRoute
   '/inventory-flow/inventory/': typeof InventoryFlowInventoryIndexRoute
   '/master-core/customers/': typeof MasterCoreCustomersIndexRoute
   '/master-core/items/': typeof MasterCoreItemsIndexRoute
@@ -816,12 +875,17 @@ export interface FileRoutesByTo {
   '/work-craft/exceptions': typeof WorkCraftExceptionsRoute
   '/work-craft/finished-goods': typeof WorkCraftFinishedGoodsRoute
   '/work-craft/rework-scrap': typeof WorkCraftReworkScrapRoute
+  '/document-flow': typeof DocumentFlowIndexRoute
   '/inventory-flow': typeof InventoryFlowIndexRoute
   '/master-core': typeof MasterCoreIndexRoute
   '/receiving-hub': typeof ReceivingHubIndexRoute
   '/warehouse-flow': typeof WarehouseFlowIndexRoute
   '/wave-flow': typeof WaveFlowIndexRoute
   '/work-craft': typeof WorkCraftIndexRoute
+  '/document-flow/documents/$id': typeof DocumentFlowDocumentsIdRoute
+  '/document-flow/documents/library': typeof DocumentFlowDocumentsLibraryRoute
+  '/document-flow/documents/upload': typeof DocumentFlowDocumentsUploadRoute
+  '/document-flow/ocr/$id': typeof DocumentFlowOcrIdRoute
   '/inventory-flow/inventory/$itemId': typeof InventoryFlowInventoryItemIdRoute
   '/master-core/customers/$id': typeof MasterCoreCustomersIdRoute
   '/master-core/items/$id': typeof MasterCoreItemsIdRoute
@@ -833,6 +897,8 @@ export interface FileRoutesByTo {
   '/warehouse-flow/requests/new': typeof WarehouseFlowRequestsNewRoute
   '/work-craft/certificates/$number': typeof WorkCraftCertificatesNumberRoute
   '/work-craft/work-orders/new': typeof WorkCraftWorkOrdersNewRoute
+  '/document-flow/documents': typeof DocumentFlowDocumentsIndexRoute
+  '/document-flow/ocr': typeof DocumentFlowOcrIndexRoute
   '/inventory-flow/inventory': typeof InventoryFlowInventoryIndexRoute
   '/master-core/customers': typeof MasterCoreCustomersIndexRoute
   '/master-core/items': typeof MasterCoreItemsIndexRoute
@@ -857,6 +923,7 @@ export interface FileRoutesById {
   '/arrival-success': typeof ArrivalSuccessRoute
   '/dashboard': typeof DashboardRoute
   '/dock-assignment': typeof DockAssignmentRoute
+  '/document-flow': typeof DocumentFlowRouteWithChildren
   '/driver-verification': typeof DriverVerificationRoute
   '/employees': typeof EmployeesRoute
   '/gate-entry': typeof GateEntryRoute
@@ -920,12 +987,17 @@ export interface FileRoutesById {
   '/work-craft/exceptions': typeof WorkCraftExceptionsRoute
   '/work-craft/finished-goods': typeof WorkCraftFinishedGoodsRoute
   '/work-craft/rework-scrap': typeof WorkCraftReworkScrapRoute
+  '/document-flow/': typeof DocumentFlowIndexRoute
   '/inventory-flow/': typeof InventoryFlowIndexRoute
   '/master-core/': typeof MasterCoreIndexRoute
   '/receiving-hub/': typeof ReceivingHubIndexRoute
   '/warehouse-flow/': typeof WarehouseFlowIndexRoute
   '/wave-flow/': typeof WaveFlowIndexRoute
   '/work-craft/': typeof WorkCraftIndexRoute
+  '/document-flow/documents/$id': typeof DocumentFlowDocumentsIdRoute
+  '/document-flow/documents/library': typeof DocumentFlowDocumentsLibraryRoute
+  '/document-flow/documents/upload': typeof DocumentFlowDocumentsUploadRoute
+  '/document-flow/ocr/$id': typeof DocumentFlowOcrIdRoute
   '/inventory-flow/inventory/$itemId': typeof InventoryFlowInventoryItemIdRoute
   '/master-core/customers/$id': typeof MasterCoreCustomersIdRoute
   '/master-core/items/$id': typeof MasterCoreItemsIdRoute
@@ -938,6 +1010,8 @@ export interface FileRoutesById {
   '/work-craft/certificates/$number': typeof WorkCraftCertificatesNumberRoute
   '/work-craft/work-orders/$id': typeof WorkCraftWorkOrdersIdRouteWithChildren
   '/work-craft/work-orders/new': typeof WorkCraftWorkOrdersNewRoute
+  '/document-flow/documents/': typeof DocumentFlowDocumentsIndexRoute
+  '/document-flow/ocr/': typeof DocumentFlowOcrIndexRoute
   '/inventory-flow/inventory/': typeof InventoryFlowInventoryIndexRoute
   '/master-core/customers/': typeof MasterCoreCustomersIndexRoute
   '/master-core/items/': typeof MasterCoreItemsIndexRoute
@@ -963,6 +1037,7 @@ export interface FileRouteTypes {
     | '/arrival-success'
     | '/dashboard'
     | '/dock-assignment'
+    | '/document-flow'
     | '/driver-verification'
     | '/employees'
     | '/gate-entry'
@@ -1026,12 +1101,17 @@ export interface FileRouteTypes {
     | '/work-craft/exceptions'
     | '/work-craft/finished-goods'
     | '/work-craft/rework-scrap'
+    | '/document-flow/'
     | '/inventory-flow/'
     | '/master-core/'
     | '/receiving-hub/'
     | '/warehouse-flow/'
     | '/wave-flow/'
     | '/work-craft/'
+    | '/document-flow/documents/$id'
+    | '/document-flow/documents/library'
+    | '/document-flow/documents/upload'
+    | '/document-flow/ocr/$id'
     | '/inventory-flow/inventory/$itemId'
     | '/master-core/customers/$id'
     | '/master-core/items/$id'
@@ -1044,6 +1124,8 @@ export interface FileRouteTypes {
     | '/work-craft/certificates/$number'
     | '/work-craft/work-orders/$id'
     | '/work-craft/work-orders/new'
+    | '/document-flow/documents/'
+    | '/document-flow/ocr/'
     | '/inventory-flow/inventory/'
     | '/master-core/customers/'
     | '/master-core/items/'
@@ -1124,12 +1206,17 @@ export interface FileRouteTypes {
     | '/work-craft/exceptions'
     | '/work-craft/finished-goods'
     | '/work-craft/rework-scrap'
+    | '/document-flow'
     | '/inventory-flow'
     | '/master-core'
     | '/receiving-hub'
     | '/warehouse-flow'
     | '/wave-flow'
     | '/work-craft'
+    | '/document-flow/documents/$id'
+    | '/document-flow/documents/library'
+    | '/document-flow/documents/upload'
+    | '/document-flow/ocr/$id'
     | '/inventory-flow/inventory/$itemId'
     | '/master-core/customers/$id'
     | '/master-core/items/$id'
@@ -1141,6 +1228,8 @@ export interface FileRouteTypes {
     | '/warehouse-flow/requests/new'
     | '/work-craft/certificates/$number'
     | '/work-craft/work-orders/new'
+    | '/document-flow/documents'
+    | '/document-flow/ocr'
     | '/inventory-flow/inventory'
     | '/master-core/customers'
     | '/master-core/items'
@@ -1164,6 +1253,7 @@ export interface FileRouteTypes {
     | '/arrival-success'
     | '/dashboard'
     | '/dock-assignment'
+    | '/document-flow'
     | '/driver-verification'
     | '/employees'
     | '/gate-entry'
@@ -1227,12 +1317,17 @@ export interface FileRouteTypes {
     | '/work-craft/exceptions'
     | '/work-craft/finished-goods'
     | '/work-craft/rework-scrap'
+    | '/document-flow/'
     | '/inventory-flow/'
     | '/master-core/'
     | '/receiving-hub/'
     | '/warehouse-flow/'
     | '/wave-flow/'
     | '/work-craft/'
+    | '/document-flow/documents/$id'
+    | '/document-flow/documents/library'
+    | '/document-flow/documents/upload'
+    | '/document-flow/ocr/$id'
     | '/inventory-flow/inventory/$itemId'
     | '/master-core/customers/$id'
     | '/master-core/items/$id'
@@ -1245,6 +1340,8 @@ export interface FileRouteTypes {
     | '/work-craft/certificates/$number'
     | '/work-craft/work-orders/$id'
     | '/work-craft/work-orders/new'
+    | '/document-flow/documents/'
+    | '/document-flow/ocr/'
     | '/inventory-flow/inventory/'
     | '/master-core/customers/'
     | '/master-core/items/'
@@ -1269,6 +1366,7 @@ export interface RootRouteChildren {
   ArrivalSuccessRoute: typeof ArrivalSuccessRoute
   DashboardRoute: typeof DashboardRoute
   DockAssignmentRoute: typeof DockAssignmentRoute
+  DocumentFlowRoute: typeof DocumentFlowRouteWithChildren
   DriverVerificationRoute: typeof DriverVerificationRoute
   EmployeesRoute: typeof EmployeesRoute
   GateEntryRoute: typeof GateEntryRoute
@@ -1326,6 +1424,13 @@ declare module '@tanstack/react-router' {
       path: '/dock-assignment'
       fullPath: '/dock-assignment'
       preLoaderRoute: typeof DockAssignmentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/document-flow': {
+      id: '/document-flow'
+      path: '/document-flow'
+      fullPath: '/document-flow'
+      preLoaderRoute: typeof DocumentFlowRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/driver-verification': {
@@ -1467,6 +1572,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/work-craft'
       preLoaderRoute: typeof WorkCraftRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/document-flow/': {
+      id: '/document-flow/'
+      path: '/'
+      fullPath: '/document-flow/'
+      preLoaderRoute: typeof DocumentFlowIndexRouteImport
+      parentRoute: typeof DocumentFlowRoute
     }
     '/inventory-flow/': {
       id: '/inventory-flow/'
@@ -1811,6 +1923,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorkCraftReworkScrapRouteImport
       parentRoute: typeof WorkCraftRoute
     }
+    '/document-flow/documents/': {
+      id: '/document-flow/documents/'
+      path: '/documents'
+      fullPath: '/document-flow/documents/'
+      preLoaderRoute: typeof DocumentFlowDocumentsIndexRouteImport
+      parentRoute: typeof DocumentFlowRoute
+    }
+    '/document-flow/documents/$id': {
+      id: '/document-flow/documents/$id'
+      path: '/documents/$id'
+      fullPath: '/document-flow/documents/$id'
+      preLoaderRoute: typeof DocumentFlowDocumentsIdRouteImport
+      parentRoute: typeof DocumentFlowRoute
+    }
+    '/document-flow/documents/library': {
+      id: '/document-flow/documents/library'
+      path: '/documents/library'
+      fullPath: '/document-flow/documents/library'
+      preLoaderRoute: typeof DocumentFlowDocumentsLibraryRouteImport
+      parentRoute: typeof DocumentFlowRoute
+    }
+    '/document-flow/documents/upload': {
+      id: '/document-flow/documents/upload'
+      path: '/documents/upload'
+      fullPath: '/document-flow/documents/upload'
+      preLoaderRoute: typeof DocumentFlowDocumentsUploadRouteImport
+      parentRoute: typeof DocumentFlowRoute
+    }
+    '/document-flow/ocr/': {
+      id: '/document-flow/ocr/'
+      path: '/ocr'
+      fullPath: '/document-flow/ocr/'
+      preLoaderRoute: typeof DocumentFlowOcrIndexRouteImport
+      parentRoute: typeof DocumentFlowRoute
+    }
+    '/document-flow/ocr/$id': {
+      id: '/document-flow/ocr/$id'
+      path: '/ocr/$id'
+      fullPath: '/document-flow/ocr/$id'
+      preLoaderRoute: typeof DocumentFlowOcrIdRouteImport
+      parentRoute: typeof DocumentFlowRoute
+    }
     '/inventory-flow/inventory/': {
       id: '/inventory-flow/inventory/'
       path: '/inventory'
@@ -2009,6 +2163,30 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface DocumentFlowRouteChildren {
+  DocumentFlowIndexRoute: typeof DocumentFlowIndexRoute
+  DocumentFlowDocumentsIdRoute: typeof DocumentFlowDocumentsIdRoute
+  DocumentFlowDocumentsLibraryRoute: typeof DocumentFlowDocumentsLibraryRoute
+  DocumentFlowDocumentsUploadRoute: typeof DocumentFlowDocumentsUploadRoute
+  DocumentFlowOcrIdRoute: typeof DocumentFlowOcrIdRoute
+  DocumentFlowDocumentsIndexRoute: typeof DocumentFlowDocumentsIndexRoute
+  DocumentFlowOcrIndexRoute: typeof DocumentFlowOcrIndexRoute
+}
+
+const DocumentFlowRouteChildren: DocumentFlowRouteChildren = {
+  DocumentFlowIndexRoute: DocumentFlowIndexRoute,
+  DocumentFlowDocumentsIdRoute: DocumentFlowDocumentsIdRoute,
+  DocumentFlowDocumentsLibraryRoute: DocumentFlowDocumentsLibraryRoute,
+  DocumentFlowDocumentsUploadRoute: DocumentFlowDocumentsUploadRoute,
+  DocumentFlowOcrIdRoute: DocumentFlowOcrIdRoute,
+  DocumentFlowDocumentsIndexRoute: DocumentFlowDocumentsIndexRoute,
+  DocumentFlowOcrIndexRoute: DocumentFlowOcrIndexRoute,
+}
+
+const DocumentFlowRouteWithChildren = DocumentFlowRoute._addFileChildren(
+  DocumentFlowRouteChildren,
+)
 
 interface InventoryFlowRouteChildren {
   InventoryFlowAdjustmentsRoute: typeof InventoryFlowAdjustmentsRoute
@@ -2243,6 +2421,7 @@ const rootRouteChildren: RootRouteChildren = {
   ArrivalSuccessRoute: ArrivalSuccessRoute,
   DashboardRoute: DashboardRoute,
   DockAssignmentRoute: DockAssignmentRoute,
+  DocumentFlowRoute: DocumentFlowRouteWithChildren,
   DriverVerificationRoute: DriverVerificationRoute,
   EmployeesRoute: EmployeesRoute,
   GateEntryRoute: GateEntryRoute,

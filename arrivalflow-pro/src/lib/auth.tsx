@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
-export type AppRole = "Administrator" | "Data Steward" | "Wave Planner" | "Production Manager" | "Inventory Controller" | "Warehouse Supervisor" | "Receiving Supervisor";
-export type ModuleKey = "arrival" | "master" | "wave" | "workcraft" | "inventory" | "warehouse" | "receiving";
+export type AppRole = "Administrator" | "Data Steward" | "Wave Planner" | "Production Manager" | "Inventory Controller" | "Warehouse Supervisor" | "Receiving Supervisor" | "Document Controller";
+export type ModuleKey = "arrival" | "master" | "wave" | "workcraft" | "inventory" | "warehouse" | "receiving" | "document";
 
 export interface AuthUser {
   id: string;
@@ -20,7 +20,7 @@ export const SEEDED_USERS: SeededUser[] = [
     email: "admin@nexuswms.com",
     password: "Admin@2026",
     role: "Administrator",
-    modules: ["arrival", "master", "wave", "workcraft", "inventory", "warehouse", "receiving"],
+    modules: ["arrival", "master", "wave", "workcraft", "inventory", "warehouse", "receiving", "document"],
     dashboard: "/dashboard",
   },
   {
@@ -76,6 +76,15 @@ export const SEEDED_USERS: SeededUser[] = [
     role: "Receiving Supervisor",
     modules: ["receiving"],
     dashboard: "/receiving-hub",
+  },
+  {
+    id: "DOC-1001",
+    name: "R. Deshmukh",
+    email: "deshmukh@nexuswms.com",
+    password: "document@2026",
+    role: "Document Controller",
+    modules: ["document"],
+    dashboard: "/document-flow",
   },
 ];
 
