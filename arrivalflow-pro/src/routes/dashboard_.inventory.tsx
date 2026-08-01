@@ -4,7 +4,7 @@ import { WmsProvider } from "@/apps/inventory-flow-pro/lib/wms/store";
 import { useAuth } from "@/lib/auth";
 import { DashboardScreen } from "./inventory-flow-pro.index";
 
-export const Route = createFileRoute("/dashboard/inventory")({
+export const Route = createFileRoute("/dashboard_/inventory")({
   head: () => ({
     meta: [
       { title: "Inventory Lifecycle Dashboard | AXIOM WMS" },

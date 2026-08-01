@@ -45,7 +45,7 @@ import { Route as AmsInsightsDispatchRouteImport } from './routes/ams-insights.d
 import { Route as AmsInsightsInventoryRouteImport } from './routes/ams-insights.inventory'
 import { Route as AmsInsightsReceivingRouteImport } from './routes/ams-insights.receiving'
 import { Route as AmsInsightsReportsRouteImport } from './routes/ams-insights.reports'
-import { Route as DashboardInventoryRouteImport } from './routes/dashboard.inventory'
+import { Route as DashboardInventoryRouteImport } from './routes/dashboard_.inventory'
 import { Route as DocumentFlowIndexRouteImport } from './routes/document-flow.index'
 import { Route as InventoryFlowProIndexRouteImport } from './routes/inventory-flow-pro.index'
 import { Route as InventoryFlowProDamagedRouteImport } from './routes/inventory-flow-pro.damaged'
@@ -354,9 +354,9 @@ const AmsInsightsReportsRoute = AmsInsightsReportsRouteImport.update({
   getParentRoute: () => AmsInsightsRoute,
 } as any)
 const DashboardInventoryRoute = DashboardInventoryRouteImport.update({
-  id: '/inventory',
-  path: '/inventory',
-  getParentRoute: () => DashboardRoute,
+  id: '/dashboard_/inventory',
+  path: '/dashboard/inventory',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const DocumentFlowIndexRoute = DocumentFlowIndexRouteImport.update({
   id: '/',
@@ -1049,7 +1049,7 @@ export interface FileRoutesByFullPath {
   '/accept-arrival': typeof AcceptArrivalRoute
   '/ams-insights': typeof AmsInsightsRouteWithChildren
   '/arrival-success': typeof ArrivalSuccessRoute
-  '/dashboard': typeof DashboardRouteWithChildren
+  '/dashboard': typeof DashboardRoute
   '/dock-assignment': typeof DockAssignmentRoute
   '/document-flow': typeof DocumentFlowRouteWithChildren
   '/driver-verification': typeof DriverVerificationRoute
@@ -1213,7 +1213,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/accept-arrival': typeof AcceptArrivalRoute
   '/arrival-success': typeof ArrivalSuccessRoute
-  '/dashboard': typeof DashboardRouteWithChildren
+  '/dashboard': typeof DashboardRoute
   '/dock-assignment': typeof DockAssignmentRoute
   '/driver-verification': typeof DriverVerificationRoute
   '/employees': typeof EmployeesRoute
@@ -1368,7 +1368,7 @@ export interface FileRoutesById {
   '/accept-arrival': typeof AcceptArrivalRoute
   '/ams-insights': typeof AmsInsightsRouteWithChildren
   '/arrival-success': typeof ArrivalSuccessRoute
-  '/dashboard': typeof DashboardRouteWithChildren
+  '/dashboard': typeof DashboardRoute
   '/dock-assignment': typeof DockAssignmentRoute
   '/document-flow': typeof DocumentFlowRouteWithChildren
   '/driver-verification': typeof DriverVerificationRoute
@@ -1399,7 +1399,7 @@ export interface FileRoutesById {
   '/ams-insights/inventory': typeof AmsInsightsInventoryRoute
   '/ams-insights/receiving': typeof AmsInsightsReceivingRoute
   '/ams-insights/reports': typeof AmsInsightsReportsRoute
-  '/dashboard/inventory': typeof DashboardInventoryRoute
+  '/dashboard_/inventory': typeof DashboardInventoryRoute
   '/inventory-flow-pro/damaged': typeof InventoryFlowProDamagedRoute
   '/inventory-flow-pro/picking': typeof InventoryFlowProPickingRoute
   '/inventory-flow-pro/quality-hold': typeof InventoryFlowProQualityHoldRoute
@@ -1884,7 +1884,7 @@ export interface FileRouteTypes {
     | '/ams-insights/inventory'
     | '/ams-insights/receiving'
     | '/ams-insights/reports'
-    | '/dashboard/inventory'
+    | '/dashboard_/inventory'
     | '/inventory-flow-pro/damaged'
     | '/inventory-flow-pro/picking'
     | '/inventory-flow-pro/quality-hold'
@@ -2019,7 +2019,7 @@ export interface RootRouteChildren {
   AcceptArrivalRoute: typeof AcceptArrivalRoute
   AmsInsightsRoute: typeof AmsInsightsRouteWithChildren
   ArrivalSuccessRoute: typeof ArrivalSuccessRoute
-  DashboardRoute: typeof DashboardRouteWithChildren
+  DashboardRoute: typeof DashboardRoute
   DockAssignmentRoute: typeof DockAssignmentRoute
   DocumentFlowRoute: typeof DocumentFlowRouteWithChildren
   DriverVerificationRoute: typeof DriverVerificationRoute
@@ -2045,6 +2045,7 @@ export interface RootRouteChildren {
   WarehouseFlowRoute: typeof WarehouseFlowRouteWithChildren
   WaveFlowRoute: typeof WaveFlowRouteWithChildren
   WorkCraftRoute: typeof WorkCraftRouteWithChildren
+  DashboardInventoryRoute: typeof DashboardInventoryRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -2301,12 +2302,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AmsInsightsReportsRouteImport
       parentRoute: typeof AmsInsightsRoute
     }
-    '/dashboard/inventory': {
-      id: '/dashboard/inventory'
-      path: '/inventory'
+    '/dashboard_/inventory': {
+      id: '/dashboard_/inventory'
+      path: '/dashboard/inventory'
       fullPath: '/dashboard/inventory'
       preLoaderRoute: typeof DashboardInventoryRouteImport
-      parentRoute: typeof DashboardRoute
+      parentRoute: typeof rootRouteImport
     }
     '/document-flow/': {
       id: '/document-flow/'
@@ -3233,18 +3234,6 @@ const AmsInsightsRouteWithChildren = AmsInsightsRoute._addFileChildren(
   AmsInsightsRouteChildren,
 )
 
-interface DashboardRouteChildren {
-  DashboardInventoryRoute: typeof DashboardInventoryRoute
-}
-
-const DashboardRouteChildren: DashboardRouteChildren = {
-  DashboardInventoryRoute: DashboardInventoryRoute,
-}
-
-const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
-  DashboardRouteChildren,
-)
-
 interface DocumentFlowRouteChildren {
   DocumentFlowIndexRoute: typeof DocumentFlowIndexRoute
   DocumentFlowDocumentsIdRoute: typeof DocumentFlowDocumentsIdRoute
@@ -3597,7 +3586,7 @@ const rootRouteChildren: RootRouteChildren = {
   AcceptArrivalRoute: AcceptArrivalRoute,
   AmsInsightsRoute: AmsInsightsRouteWithChildren,
   ArrivalSuccessRoute: ArrivalSuccessRoute,
-  DashboardRoute: DashboardRouteWithChildren,
+  DashboardRoute: DashboardRoute,
   DockAssignmentRoute: DockAssignmentRoute,
   DocumentFlowRoute: DocumentFlowRouteWithChildren,
   DriverVerificationRoute: DriverVerificationRoute,
@@ -3623,6 +3612,7 @@ const rootRouteChildren: RootRouteChildren = {
   WarehouseFlowRoute: WarehouseFlowRouteWithChildren,
   WaveFlowRoute: WaveFlowRouteWithChildren,
   WorkCraftRoute: WorkCraftRouteWithChildren,
+  DashboardInventoryRoute: DashboardInventoryRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
