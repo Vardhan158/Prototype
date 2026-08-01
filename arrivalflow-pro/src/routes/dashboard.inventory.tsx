@@ -1,29 +1,34 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Boxes } from "lucide-react";
-import { AppShell } from "@/components/wms/app-shell";
-import { ModulePlaceholder } from "@/components/wms/module-placeholder";
+import { createFileRoute, Navigate } from "@tanstack/react-router";
+import { AppShell } from "@/apps/inventory-flow-pro/components/wms/app-shell";
+import { WmsProvider } from "@/apps/inventory-flow-pro/lib/wms/store";
+import { useAuth } from "@/lib/auth";
+import { DashboardScreen } from "./inventory-flow-pro.index";
 
 export const Route = createFileRoute("/dashboard/inventory")({
   head: () => ({
     meta: [
-      { title: "Inventory · NexusWMS" },
+      { title: "Inventory Lifecycle Dashboard | AXIOM WMS" },
       {
         name: "description",
-        content: "Stock on hand, putaway locations and bin utilisation for Pune Distribution Centre.",
+        content:
+          "Real-time warehouse inventory lifecycle control, stock status, reservations, picking and dispatch.",
       },
     ],
   }),
-  component: InventoryPage,
+  component: InventoryDashboard,
 });
 
-function InventoryPage() {
+function InventoryDashboard() {
+  const { ready, canAccess } = useAuth();
+
+  if (!ready) return null;
+  if (!canAccess("lifecycle")) return <Navigate to="/dashboard" replace />;
+
   return (
-    <AppShell title="Inventory" subtitle="Stock on hand, bin utilisation and putaway locations">
-      <ModulePlaceholder
-        icon={Boxes}
-        title="Inventory module"
-        description="Live stock, bin utilisation and putaway suggestions are part of the wider WMS scope. This prototype focuses on the gate entry and arrival journey."
-      />
-    </AppShell>
+    <WmsProvider>
+      <AppShell>
+        <DashboardScreen />
+      </AppShell>
+    </WmsProvider>
   );
 }
