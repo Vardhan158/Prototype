@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
-export type AppRole = "Administrator" | "Data Steward" | "Wave Planner" | "Production Manager" | "Inventory Controller" | "Warehouse Supervisor" | "Receiving Supervisor" | "Document Controller" | "Procurement Manager" | "Storage Manager" | "Quality Inspector" | "Inventory Lifecycle Manager";
-export type ModuleKey = "arrival" | "master" | "wave" | "workcraft" | "inventory" | "warehouse" | "receiving" | "document" | "procurement" | "storage" | "quality" | "lifecycle";
+export type AppRole = "Administrator" | "Data Steward" | "Wave Planner" | "Production Manager" | "Inventory Controller" | "Warehouse Supervisor" | "Receiving Supervisor" | "Document Controller" | "Procurement Manager" | "Storage Manager" | "Quality Inspector" | "Inventory Lifecycle Manager" | "Supplier Manager";
+export type ModuleKey = "arrival" | "master" | "wave" | "workcraft" | "inventory" | "warehouse" | "receiving" | "document" | "procurement" | "storage" | "quality" | "lifecycle" | "supplier";
 
 export interface AuthUser {
   id: string;
@@ -20,7 +20,7 @@ export const SEEDED_USERS: SeededUser[] = [
     email: "admin@nexuswms.com",
     password: "Admin@2026",
     role: "Administrator",
-    modules: ["arrival", "master", "wave", "workcraft", "inventory", "warehouse", "receiving", "document", "procurement", "storage", "quality", "lifecycle"],
+    modules: ["arrival", "master", "wave", "workcraft", "inventory", "warehouse", "receiving", "document", "procurement", "storage", "quality", "lifecycle", "supplier"],
     dashboard: "/dashboard",
   },
   {
@@ -121,6 +121,15 @@ export const SEEDED_USERS: SeededUser[] = [
     role: "Inventory Lifecycle Manager",
     modules: ["lifecycle"],
     dashboard: "/inventory-flow-pro",
+  },
+  {
+    id: "SUP-1001",
+    name: "Ananya Gupta",
+    email: "supplier@nexuswms.com",
+    password: "supplier@2026",
+    role: "Supplier Manager",
+    modules: ["supplier"],
+    dashboard: "/supplier-flow",
   },
 ];
 

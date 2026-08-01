@@ -34,6 +34,7 @@ import { Route as ReceivingHubRouteImport } from './routes/receiving-hub'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as StorageGuardianRouteImport } from './routes/storage-guardian'
+import { Route as SupplierFlowRouteImport } from './routes/supplier-flow'
 import { Route as VehicleQueueRouteImport } from './routes/vehicle-queue'
 import { Route as VehicleVerificationRouteImport } from './routes/vehicle-verification'
 import { Route as WarehouseFlowRouteImport } from './routes/warehouse-flow'
@@ -99,6 +100,9 @@ import { Route as StorageGuardianOverflowRouteImport } from './routes/storage-gu
 import { Route as StorageGuardianPutawayRouteImport } from './routes/storage-guardian.putaway'
 import { Route as StorageGuardianReceivingRouteImport } from './routes/storage-guardian.receiving'
 import { Route as StorageGuardianReportsRouteImport } from './routes/storage-guardian.reports'
+import { Route as SupplierFlowIndexRouteImport } from './routes/supplier-flow.index'
+import { Route as SupplierFlowReportsRouteImport } from './routes/supplier-flow.reports'
+import { Route as SupplierFlowSettingsRouteImport } from './routes/supplier-flow.settings'
 import { Route as WarehouseFlowIndexRouteImport } from './routes/warehouse-flow.index'
 import { Route as WarehouseFlowApprovalsRouteImport } from './routes/warehouse-flow.approvals'
 import { Route as WarehouseFlowAuditLogsRouteImport } from './routes/warehouse-flow.audit-logs'
@@ -164,6 +168,19 @@ import { Route as ReceivingHubGrnNewRouteImport } from './routes/receiving-hub.g
 import { Route as ReceivingHubKpiDockToStockRouteImport } from './routes/receiving-hub.kpi.dock-to-stock'
 import { Route as ReceivingHubPurchaseOrdersIndexRouteImport } from './routes/receiving-hub.purchase-orders.index'
 import { Route as ReceivingHubPurchaseOrdersPoNumberRouteImport } from './routes/receiving-hub.purchase-orders.$poNumber'
+import { Route as SupplierFlowApprovalsIndexRouteImport } from './routes/supplier-flow.approvals.index'
+import { Route as SupplierFlowApprovalsPoIdRouteImport } from './routes/supplier-flow.approvals.$poId'
+import { Route as SupplierFlowAsnIndexRouteImport } from './routes/supplier-flow.asn.index'
+import { Route as SupplierFlowAsnAsnIdRouteImport } from './routes/supplier-flow.asn.$asnId'
+import { Route as SupplierFlowAsnNewRouteImport } from './routes/supplier-flow.asn.new'
+import { Route as SupplierFlowPurchaseOrdersIndexRouteImport } from './routes/supplier-flow.purchase-orders.index'
+import { Route as SupplierFlowPurchaseOrdersPoIdRouteImport } from './routes/supplier-flow.purchase-orders.$poId'
+import { Route as SupplierFlowPurchaseOrdersNewRouteImport } from './routes/supplier-flow.purchase-orders.new'
+import { Route as SupplierFlowSuppliersIndexRouteImport } from './routes/supplier-flow.suppliers.index'
+import { Route as SupplierFlowSuppliersSupplierIdRouteImport } from './routes/supplier-flow.suppliers.$supplierId'
+import { Route as SupplierFlowSuppliersNewRouteImport } from './routes/supplier-flow.suppliers.new'
+import { Route as SupplierFlowVendorPerformanceIndexRouteImport } from './routes/supplier-flow.vendor-performance.index'
+import { Route as SupplierFlowVendorPerformanceSupplierIdRouteImport } from './routes/supplier-flow.vendor-performance.$supplierId'
 import { Route as WarehouseFlowRequestsIndexRouteImport } from './routes/warehouse-flow.requests.index'
 import { Route as WarehouseFlowRequestsNewRouteImport } from './routes/warehouse-flow.requests.new'
 import { Route as WorkCraftCertificatesIndexRouteImport } from './routes/work-craft.certificates.index'
@@ -302,6 +319,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const StorageGuardianRoute = StorageGuardianRouteImport.update({
   id: '/storage-guardian',
   path: '/storage-guardian',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupplierFlowRoute = SupplierFlowRouteImport.update({
+  id: '/supplier-flow',
+  path: '/supplier-flow',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VehicleQueueRoute = VehicleQueueRouteImport.update({
@@ -646,6 +668,21 @@ const StorageGuardianReportsRoute = StorageGuardianReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
   getParentRoute: () => StorageGuardianRoute,
+} as any)
+const SupplierFlowIndexRoute = SupplierFlowIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SupplierFlowRoute,
+} as any)
+const SupplierFlowReportsRoute = SupplierFlowReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => SupplierFlowRoute,
+} as any)
+const SupplierFlowSettingsRoute = SupplierFlowSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => SupplierFlowRoute,
 } as any)
 const WarehouseFlowIndexRoute = WarehouseFlowIndexRouteImport.update({
   id: '/',
@@ -997,6 +1034,81 @@ const ReceivingHubPurchaseOrdersPoNumberRoute =
     path: '/purchase-orders/$poNumber',
     getParentRoute: () => ReceivingHubRoute,
   } as any)
+const SupplierFlowApprovalsIndexRoute =
+  SupplierFlowApprovalsIndexRouteImport.update({
+    id: '/approvals/',
+    path: '/approvals/',
+    getParentRoute: () => SupplierFlowRoute,
+  } as any)
+const SupplierFlowApprovalsPoIdRoute =
+  SupplierFlowApprovalsPoIdRouteImport.update({
+    id: '/approvals/$poId',
+    path: '/approvals/$poId',
+    getParentRoute: () => SupplierFlowRoute,
+  } as any)
+const SupplierFlowAsnIndexRoute = SupplierFlowAsnIndexRouteImport.update({
+  id: '/asn/',
+  path: '/asn/',
+  getParentRoute: () => SupplierFlowRoute,
+} as any)
+const SupplierFlowAsnAsnIdRoute = SupplierFlowAsnAsnIdRouteImport.update({
+  id: '/asn/$asnId',
+  path: '/asn/$asnId',
+  getParentRoute: () => SupplierFlowRoute,
+} as any)
+const SupplierFlowAsnNewRoute = SupplierFlowAsnNewRouteImport.update({
+  id: '/asn/new',
+  path: '/asn/new',
+  getParentRoute: () => SupplierFlowRoute,
+} as any)
+const SupplierFlowPurchaseOrdersIndexRoute =
+  SupplierFlowPurchaseOrdersIndexRouteImport.update({
+    id: '/purchase-orders/',
+    path: '/purchase-orders/',
+    getParentRoute: () => SupplierFlowRoute,
+  } as any)
+const SupplierFlowPurchaseOrdersPoIdRoute =
+  SupplierFlowPurchaseOrdersPoIdRouteImport.update({
+    id: '/purchase-orders/$poId',
+    path: '/purchase-orders/$poId',
+    getParentRoute: () => SupplierFlowRoute,
+  } as any)
+const SupplierFlowPurchaseOrdersNewRoute =
+  SupplierFlowPurchaseOrdersNewRouteImport.update({
+    id: '/purchase-orders/new',
+    path: '/purchase-orders/new',
+    getParentRoute: () => SupplierFlowRoute,
+  } as any)
+const SupplierFlowSuppliersIndexRoute =
+  SupplierFlowSuppliersIndexRouteImport.update({
+    id: '/suppliers/',
+    path: '/suppliers/',
+    getParentRoute: () => SupplierFlowRoute,
+  } as any)
+const SupplierFlowSuppliersSupplierIdRoute =
+  SupplierFlowSuppliersSupplierIdRouteImport.update({
+    id: '/suppliers/$supplierId',
+    path: '/suppliers/$supplierId',
+    getParentRoute: () => SupplierFlowRoute,
+  } as any)
+const SupplierFlowSuppliersNewRoute =
+  SupplierFlowSuppliersNewRouteImport.update({
+    id: '/suppliers/new',
+    path: '/suppliers/new',
+    getParentRoute: () => SupplierFlowRoute,
+  } as any)
+const SupplierFlowVendorPerformanceIndexRoute =
+  SupplierFlowVendorPerformanceIndexRouteImport.update({
+    id: '/vendor-performance/',
+    path: '/vendor-performance/',
+    getParentRoute: () => SupplierFlowRoute,
+  } as any)
+const SupplierFlowVendorPerformanceSupplierIdRoute =
+  SupplierFlowVendorPerformanceSupplierIdRouteImport.update({
+    id: '/vendor-performance/$supplierId',
+    path: '/vendor-performance/$supplierId',
+    getParentRoute: () => SupplierFlowRoute,
+  } as any)
 const WarehouseFlowRequestsIndexRoute =
   WarehouseFlowRequestsIndexRouteImport.update({
     id: '/requests/',
@@ -1106,6 +1218,7 @@ export interface FileRoutesByFullPath {
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
   '/storage-guardian': typeof StorageGuardianRouteWithChildren
+  '/supplier-flow': typeof SupplierFlowRouteWithChildren
   '/vehicle-queue': typeof VehicleQueueRoute
   '/vehicle-verification': typeof VehicleVerificationRoute
   '/warehouse-flow': typeof WarehouseFlowRouteWithChildren
@@ -1163,6 +1276,8 @@ export interface FileRoutesByFullPath {
   '/storage-guardian/putaway': typeof StorageGuardianPutawayRoute
   '/storage-guardian/receiving': typeof StorageGuardianReceivingRoute
   '/storage-guardian/reports': typeof StorageGuardianReportsRoute
+  '/supplier-flow/reports': typeof SupplierFlowReportsRoute
+  '/supplier-flow/settings': typeof SupplierFlowSettingsRoute
   '/warehouse-flow/approvals': typeof WarehouseFlowApprovalsRoute
   '/warehouse-flow/audit-logs': typeof WarehouseFlowAuditLogsRoute
   '/warehouse-flow/inspection': typeof WarehouseFlowInspectionRoute
@@ -1201,6 +1316,7 @@ export interface FileRoutesByFullPath {
   '/quality-gatekeeper/': typeof QualityGatekeeperIndexRoute
   '/receiving-hub/': typeof ReceivingHubIndexRoute
   '/storage-guardian/': typeof StorageGuardianIndexRoute
+  '/supplier-flow/': typeof SupplierFlowIndexRoute
   '/warehouse-flow/': typeof WarehouseFlowIndexRoute
   '/wave-flow/': typeof WaveFlowIndexRoute
   '/work-craft/': typeof WorkCraftIndexRoute
@@ -1227,6 +1343,14 @@ export interface FileRoutesByFullPath {
   '/receiving-hub/grn/new': typeof ReceivingHubGrnNewRoute
   '/receiving-hub/kpi/dock-to-stock': typeof ReceivingHubKpiDockToStockRoute
   '/receiving-hub/purchase-orders/$poNumber': typeof ReceivingHubPurchaseOrdersPoNumberRoute
+  '/supplier-flow/approvals/$poId': typeof SupplierFlowApprovalsPoIdRoute
+  '/supplier-flow/asn/$asnId': typeof SupplierFlowAsnAsnIdRoute
+  '/supplier-flow/asn/new': typeof SupplierFlowAsnNewRoute
+  '/supplier-flow/purchase-orders/$poId': typeof SupplierFlowPurchaseOrdersPoIdRoute
+  '/supplier-flow/purchase-orders/new': typeof SupplierFlowPurchaseOrdersNewRoute
+  '/supplier-flow/suppliers/$supplierId': typeof SupplierFlowSuppliersSupplierIdRoute
+  '/supplier-flow/suppliers/new': typeof SupplierFlowSuppliersNewRoute
+  '/supplier-flow/vendor-performance/$supplierId': typeof SupplierFlowVendorPerformanceSupplierIdRoute
   '/warehouse-flow/requests/new': typeof WarehouseFlowRequestsNewRoute
   '/work-craft/certificates/$number': typeof WorkCraftCertificatesNumberRoute
   '/work-craft/work-orders/$id': typeof WorkCraftWorkOrdersIdRouteWithChildren
@@ -1240,6 +1364,11 @@ export interface FileRoutesByFullPath {
   '/master-core/suppliers/': typeof MasterCoreSuppliersIndexRoute
   '/receiving-hub/grn/': typeof ReceivingHubGrnIndexRoute
   '/receiving-hub/purchase-orders/': typeof ReceivingHubPurchaseOrdersIndexRoute
+  '/supplier-flow/approvals/': typeof SupplierFlowApprovalsIndexRoute
+  '/supplier-flow/asn/': typeof SupplierFlowAsnIndexRoute
+  '/supplier-flow/purchase-orders/': typeof SupplierFlowPurchaseOrdersIndexRoute
+  '/supplier-flow/suppliers/': typeof SupplierFlowSuppliersIndexRoute
+  '/supplier-flow/vendor-performance/': typeof SupplierFlowVendorPerformanceIndexRoute
   '/warehouse-flow/requests/': typeof WarehouseFlowRequestsIndexRoute
   '/work-craft/certificates/': typeof WorkCraftCertificatesIndexRoute
   '/work-craft/work-orders/': typeof WorkCraftWorkOrdersIndexRoute
@@ -1323,6 +1452,8 @@ export interface FileRoutesByTo {
   '/storage-guardian/putaway': typeof StorageGuardianPutawayRoute
   '/storage-guardian/receiving': typeof StorageGuardianReceivingRoute
   '/storage-guardian/reports': typeof StorageGuardianReportsRoute
+  '/supplier-flow/reports': typeof SupplierFlowReportsRoute
+  '/supplier-flow/settings': typeof SupplierFlowSettingsRoute
   '/warehouse-flow/approvals': typeof WarehouseFlowApprovalsRoute
   '/warehouse-flow/audit-logs': typeof WarehouseFlowAuditLogsRoute
   '/warehouse-flow/inspection': typeof WarehouseFlowInspectionRoute
@@ -1361,6 +1492,7 @@ export interface FileRoutesByTo {
   '/quality-gatekeeper': typeof QualityGatekeeperIndexRoute
   '/receiving-hub': typeof ReceivingHubIndexRoute
   '/storage-guardian': typeof StorageGuardianIndexRoute
+  '/supplier-flow': typeof SupplierFlowIndexRoute
   '/warehouse-flow': typeof WarehouseFlowIndexRoute
   '/wave-flow': typeof WaveFlowIndexRoute
   '/work-craft': typeof WorkCraftIndexRoute
@@ -1387,6 +1519,14 @@ export interface FileRoutesByTo {
   '/receiving-hub/grn/new': typeof ReceivingHubGrnNewRoute
   '/receiving-hub/kpi/dock-to-stock': typeof ReceivingHubKpiDockToStockRoute
   '/receiving-hub/purchase-orders/$poNumber': typeof ReceivingHubPurchaseOrdersPoNumberRoute
+  '/supplier-flow/approvals/$poId': typeof SupplierFlowApprovalsPoIdRoute
+  '/supplier-flow/asn/$asnId': typeof SupplierFlowAsnAsnIdRoute
+  '/supplier-flow/asn/new': typeof SupplierFlowAsnNewRoute
+  '/supplier-flow/purchase-orders/$poId': typeof SupplierFlowPurchaseOrdersPoIdRoute
+  '/supplier-flow/purchase-orders/new': typeof SupplierFlowPurchaseOrdersNewRoute
+  '/supplier-flow/suppliers/$supplierId': typeof SupplierFlowSuppliersSupplierIdRoute
+  '/supplier-flow/suppliers/new': typeof SupplierFlowSuppliersNewRoute
+  '/supplier-flow/vendor-performance/$supplierId': typeof SupplierFlowVendorPerformanceSupplierIdRoute
   '/warehouse-flow/requests/new': typeof WarehouseFlowRequestsNewRoute
   '/work-craft/certificates/$number': typeof WorkCraftCertificatesNumberRoute
   '/work-craft/work-orders/new': typeof WorkCraftWorkOrdersNewRoute
@@ -1399,6 +1539,11 @@ export interface FileRoutesByTo {
   '/master-core/suppliers': typeof MasterCoreSuppliersIndexRoute
   '/receiving-hub/grn': typeof ReceivingHubGrnIndexRoute
   '/receiving-hub/purchase-orders': typeof ReceivingHubPurchaseOrdersIndexRoute
+  '/supplier-flow/approvals': typeof SupplierFlowApprovalsIndexRoute
+  '/supplier-flow/asn': typeof SupplierFlowAsnIndexRoute
+  '/supplier-flow/purchase-orders': typeof SupplierFlowPurchaseOrdersIndexRoute
+  '/supplier-flow/suppliers': typeof SupplierFlowSuppliersIndexRoute
+  '/supplier-flow/vendor-performance': typeof SupplierFlowVendorPerformanceIndexRoute
   '/warehouse-flow/requests': typeof WarehouseFlowRequestsIndexRoute
   '/work-craft/certificates': typeof WorkCraftCertificatesIndexRoute
   '/work-craft/work-orders': typeof WorkCraftWorkOrdersIndexRoute
@@ -1437,6 +1582,7 @@ export interface FileRoutesById {
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
   '/storage-guardian': typeof StorageGuardianRouteWithChildren
+  '/supplier-flow': typeof SupplierFlowRouteWithChildren
   '/vehicle-queue': typeof VehicleQueueRoute
   '/vehicle-verification': typeof VehicleVerificationRoute
   '/warehouse-flow': typeof WarehouseFlowRouteWithChildren
@@ -1494,6 +1640,8 @@ export interface FileRoutesById {
   '/storage-guardian/putaway': typeof StorageGuardianPutawayRoute
   '/storage-guardian/receiving': typeof StorageGuardianReceivingRoute
   '/storage-guardian/reports': typeof StorageGuardianReportsRoute
+  '/supplier-flow/reports': typeof SupplierFlowReportsRoute
+  '/supplier-flow/settings': typeof SupplierFlowSettingsRoute
   '/warehouse-flow/approvals': typeof WarehouseFlowApprovalsRoute
   '/warehouse-flow/audit-logs': typeof WarehouseFlowAuditLogsRoute
   '/warehouse-flow/inspection': typeof WarehouseFlowInspectionRoute
@@ -1532,6 +1680,7 @@ export interface FileRoutesById {
   '/quality-gatekeeper/': typeof QualityGatekeeperIndexRoute
   '/receiving-hub/': typeof ReceivingHubIndexRoute
   '/storage-guardian/': typeof StorageGuardianIndexRoute
+  '/supplier-flow/': typeof SupplierFlowIndexRoute
   '/warehouse-flow/': typeof WarehouseFlowIndexRoute
   '/wave-flow/': typeof WaveFlowIndexRoute
   '/work-craft/': typeof WorkCraftIndexRoute
@@ -1558,6 +1707,14 @@ export interface FileRoutesById {
   '/receiving-hub/grn/new': typeof ReceivingHubGrnNewRoute
   '/receiving-hub/kpi/dock-to-stock': typeof ReceivingHubKpiDockToStockRoute
   '/receiving-hub/purchase-orders/$poNumber': typeof ReceivingHubPurchaseOrdersPoNumberRoute
+  '/supplier-flow/approvals/$poId': typeof SupplierFlowApprovalsPoIdRoute
+  '/supplier-flow/asn/$asnId': typeof SupplierFlowAsnAsnIdRoute
+  '/supplier-flow/asn/new': typeof SupplierFlowAsnNewRoute
+  '/supplier-flow/purchase-orders/$poId': typeof SupplierFlowPurchaseOrdersPoIdRoute
+  '/supplier-flow/purchase-orders/new': typeof SupplierFlowPurchaseOrdersNewRoute
+  '/supplier-flow/suppliers/$supplierId': typeof SupplierFlowSuppliersSupplierIdRoute
+  '/supplier-flow/suppliers/new': typeof SupplierFlowSuppliersNewRoute
+  '/supplier-flow/vendor-performance/$supplierId': typeof SupplierFlowVendorPerformanceSupplierIdRoute
   '/warehouse-flow/requests/new': typeof WarehouseFlowRequestsNewRoute
   '/work-craft/certificates/$number': typeof WorkCraftCertificatesNumberRoute
   '/work-craft/work-orders/$id': typeof WorkCraftWorkOrdersIdRouteWithChildren
@@ -1571,6 +1728,11 @@ export interface FileRoutesById {
   '/master-core/suppliers/': typeof MasterCoreSuppliersIndexRoute
   '/receiving-hub/grn/': typeof ReceivingHubGrnIndexRoute
   '/receiving-hub/purchase-orders/': typeof ReceivingHubPurchaseOrdersIndexRoute
+  '/supplier-flow/approvals/': typeof SupplierFlowApprovalsIndexRoute
+  '/supplier-flow/asn/': typeof SupplierFlowAsnIndexRoute
+  '/supplier-flow/purchase-orders/': typeof SupplierFlowPurchaseOrdersIndexRoute
+  '/supplier-flow/suppliers/': typeof SupplierFlowSuppliersIndexRoute
+  '/supplier-flow/vendor-performance/': typeof SupplierFlowVendorPerformanceIndexRoute
   '/warehouse-flow/requests/': typeof WarehouseFlowRequestsIndexRoute
   '/work-craft/certificates/': typeof WorkCraftCertificatesIndexRoute
   '/work-craft/work-orders/': typeof WorkCraftWorkOrdersIndexRoute
@@ -1610,6 +1772,7 @@ export interface FileRouteTypes {
     | '/reports'
     | '/settings'
     | '/storage-guardian'
+    | '/supplier-flow'
     | '/vehicle-queue'
     | '/vehicle-verification'
     | '/warehouse-flow'
@@ -1667,6 +1830,8 @@ export interface FileRouteTypes {
     | '/storage-guardian/putaway'
     | '/storage-guardian/receiving'
     | '/storage-guardian/reports'
+    | '/supplier-flow/reports'
+    | '/supplier-flow/settings'
     | '/warehouse-flow/approvals'
     | '/warehouse-flow/audit-logs'
     | '/warehouse-flow/inspection'
@@ -1705,6 +1870,7 @@ export interface FileRouteTypes {
     | '/quality-gatekeeper/'
     | '/receiving-hub/'
     | '/storage-guardian/'
+    | '/supplier-flow/'
     | '/warehouse-flow/'
     | '/wave-flow/'
     | '/work-craft/'
@@ -1731,6 +1897,14 @@ export interface FileRouteTypes {
     | '/receiving-hub/grn/new'
     | '/receiving-hub/kpi/dock-to-stock'
     | '/receiving-hub/purchase-orders/$poNumber'
+    | '/supplier-flow/approvals/$poId'
+    | '/supplier-flow/asn/$asnId'
+    | '/supplier-flow/asn/new'
+    | '/supplier-flow/purchase-orders/$poId'
+    | '/supplier-flow/purchase-orders/new'
+    | '/supplier-flow/suppliers/$supplierId'
+    | '/supplier-flow/suppliers/new'
+    | '/supplier-flow/vendor-performance/$supplierId'
     | '/warehouse-flow/requests/new'
     | '/work-craft/certificates/$number'
     | '/work-craft/work-orders/$id'
@@ -1744,6 +1918,11 @@ export interface FileRouteTypes {
     | '/master-core/suppliers/'
     | '/receiving-hub/grn/'
     | '/receiving-hub/purchase-orders/'
+    | '/supplier-flow/approvals/'
+    | '/supplier-flow/asn/'
+    | '/supplier-flow/purchase-orders/'
+    | '/supplier-flow/suppliers/'
+    | '/supplier-flow/vendor-performance/'
     | '/warehouse-flow/requests/'
     | '/work-craft/certificates/'
     | '/work-craft/work-orders/'
@@ -1827,6 +2006,8 @@ export interface FileRouteTypes {
     | '/storage-guardian/putaway'
     | '/storage-guardian/receiving'
     | '/storage-guardian/reports'
+    | '/supplier-flow/reports'
+    | '/supplier-flow/settings'
     | '/warehouse-flow/approvals'
     | '/warehouse-flow/audit-logs'
     | '/warehouse-flow/inspection'
@@ -1865,6 +2046,7 @@ export interface FileRouteTypes {
     | '/quality-gatekeeper'
     | '/receiving-hub'
     | '/storage-guardian'
+    | '/supplier-flow'
     | '/warehouse-flow'
     | '/wave-flow'
     | '/work-craft'
@@ -1891,6 +2073,14 @@ export interface FileRouteTypes {
     | '/receiving-hub/grn/new'
     | '/receiving-hub/kpi/dock-to-stock'
     | '/receiving-hub/purchase-orders/$poNumber'
+    | '/supplier-flow/approvals/$poId'
+    | '/supplier-flow/asn/$asnId'
+    | '/supplier-flow/asn/new'
+    | '/supplier-flow/purchase-orders/$poId'
+    | '/supplier-flow/purchase-orders/new'
+    | '/supplier-flow/suppliers/$supplierId'
+    | '/supplier-flow/suppliers/new'
+    | '/supplier-flow/vendor-performance/$supplierId'
     | '/warehouse-flow/requests/new'
     | '/work-craft/certificates/$number'
     | '/work-craft/work-orders/new'
@@ -1903,6 +2093,11 @@ export interface FileRouteTypes {
     | '/master-core/suppliers'
     | '/receiving-hub/grn'
     | '/receiving-hub/purchase-orders'
+    | '/supplier-flow/approvals'
+    | '/supplier-flow/asn'
+    | '/supplier-flow/purchase-orders'
+    | '/supplier-flow/suppliers'
+    | '/supplier-flow/vendor-performance'
     | '/warehouse-flow/requests'
     | '/work-craft/certificates'
     | '/work-craft/work-orders'
@@ -1940,6 +2135,7 @@ export interface FileRouteTypes {
     | '/reports'
     | '/settings'
     | '/storage-guardian'
+    | '/supplier-flow'
     | '/vehicle-queue'
     | '/vehicle-verification'
     | '/warehouse-flow'
@@ -1997,6 +2193,8 @@ export interface FileRouteTypes {
     | '/storage-guardian/putaway'
     | '/storage-guardian/receiving'
     | '/storage-guardian/reports'
+    | '/supplier-flow/reports'
+    | '/supplier-flow/settings'
     | '/warehouse-flow/approvals'
     | '/warehouse-flow/audit-logs'
     | '/warehouse-flow/inspection'
@@ -2035,6 +2233,7 @@ export interface FileRouteTypes {
     | '/quality-gatekeeper/'
     | '/receiving-hub/'
     | '/storage-guardian/'
+    | '/supplier-flow/'
     | '/warehouse-flow/'
     | '/wave-flow/'
     | '/work-craft/'
@@ -2061,6 +2260,14 @@ export interface FileRouteTypes {
     | '/receiving-hub/grn/new'
     | '/receiving-hub/kpi/dock-to-stock'
     | '/receiving-hub/purchase-orders/$poNumber'
+    | '/supplier-flow/approvals/$poId'
+    | '/supplier-flow/asn/$asnId'
+    | '/supplier-flow/asn/new'
+    | '/supplier-flow/purchase-orders/$poId'
+    | '/supplier-flow/purchase-orders/new'
+    | '/supplier-flow/suppliers/$supplierId'
+    | '/supplier-flow/suppliers/new'
+    | '/supplier-flow/vendor-performance/$supplierId'
     | '/warehouse-flow/requests/new'
     | '/work-craft/certificates/$number'
     | '/work-craft/work-orders/$id'
@@ -2074,6 +2281,11 @@ export interface FileRouteTypes {
     | '/master-core/suppliers/'
     | '/receiving-hub/grn/'
     | '/receiving-hub/purchase-orders/'
+    | '/supplier-flow/approvals/'
+    | '/supplier-flow/asn/'
+    | '/supplier-flow/purchase-orders/'
+    | '/supplier-flow/suppliers/'
+    | '/supplier-flow/vendor-performance/'
     | '/warehouse-flow/requests/'
     | '/work-craft/certificates/'
     | '/work-craft/work-orders/'
@@ -2112,6 +2324,7 @@ export interface RootRouteChildren {
   ReportsRoute: typeof ReportsRoute
   SettingsRoute: typeof SettingsRoute
   StorageGuardianRoute: typeof StorageGuardianRouteWithChildren
+  SupplierFlowRoute: typeof SupplierFlowRouteWithChildren
   VehicleQueueRoute: typeof VehicleQueueRoute
   VehicleVerificationRoute: typeof VehicleVerificationRoute
   WarehouseFlowRoute: typeof WarehouseFlowRouteWithChildren
@@ -2295,6 +2508,13 @@ declare module '@tanstack/react-router' {
       path: '/storage-guardian'
       fullPath: '/storage-guardian'
       preLoaderRoute: typeof StorageGuardianRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/supplier-flow': {
+      id: '/supplier-flow'
+      path: '/supplier-flow'
+      fullPath: '/supplier-flow'
+      preLoaderRoute: typeof SupplierFlowRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/vehicle-queue': {
@@ -2752,6 +2972,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StorageGuardianReportsRouteImport
       parentRoute: typeof StorageGuardianRoute
     }
+    '/supplier-flow/': {
+      id: '/supplier-flow/'
+      path: '/'
+      fullPath: '/supplier-flow/'
+      preLoaderRoute: typeof SupplierFlowIndexRouteImport
+      parentRoute: typeof SupplierFlowRoute
+    }
+    '/supplier-flow/reports': {
+      id: '/supplier-flow/reports'
+      path: '/reports'
+      fullPath: '/supplier-flow/reports'
+      preLoaderRoute: typeof SupplierFlowReportsRouteImport
+      parentRoute: typeof SupplierFlowRoute
+    }
+    '/supplier-flow/settings': {
+      id: '/supplier-flow/settings'
+      path: '/settings'
+      fullPath: '/supplier-flow/settings'
+      preLoaderRoute: typeof SupplierFlowSettingsRouteImport
+      parentRoute: typeof SupplierFlowRoute
+    }
     '/warehouse-flow/': {
       id: '/warehouse-flow/'
       path: '/'
@@ -3207,6 +3448,97 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReceivingHubPurchaseOrdersPoNumberRouteImport
       parentRoute: typeof ReceivingHubRoute
     }
+    '/supplier-flow/approvals/': {
+      id: '/supplier-flow/approvals/'
+      path: '/approvals'
+      fullPath: '/supplier-flow/approvals/'
+      preLoaderRoute: typeof SupplierFlowApprovalsIndexRouteImport
+      parentRoute: typeof SupplierFlowRoute
+    }
+    '/supplier-flow/approvals/$poId': {
+      id: '/supplier-flow/approvals/$poId'
+      path: '/approvals/$poId'
+      fullPath: '/supplier-flow/approvals/$poId'
+      preLoaderRoute: typeof SupplierFlowApprovalsPoIdRouteImport
+      parentRoute: typeof SupplierFlowRoute
+    }
+    '/supplier-flow/asn/': {
+      id: '/supplier-flow/asn/'
+      path: '/asn'
+      fullPath: '/supplier-flow/asn/'
+      preLoaderRoute: typeof SupplierFlowAsnIndexRouteImport
+      parentRoute: typeof SupplierFlowRoute
+    }
+    '/supplier-flow/asn/$asnId': {
+      id: '/supplier-flow/asn/$asnId'
+      path: '/asn/$asnId'
+      fullPath: '/supplier-flow/asn/$asnId'
+      preLoaderRoute: typeof SupplierFlowAsnAsnIdRouteImport
+      parentRoute: typeof SupplierFlowRoute
+    }
+    '/supplier-flow/asn/new': {
+      id: '/supplier-flow/asn/new'
+      path: '/asn/new'
+      fullPath: '/supplier-flow/asn/new'
+      preLoaderRoute: typeof SupplierFlowAsnNewRouteImport
+      parentRoute: typeof SupplierFlowRoute
+    }
+    '/supplier-flow/purchase-orders/': {
+      id: '/supplier-flow/purchase-orders/'
+      path: '/purchase-orders'
+      fullPath: '/supplier-flow/purchase-orders/'
+      preLoaderRoute: typeof SupplierFlowPurchaseOrdersIndexRouteImport
+      parentRoute: typeof SupplierFlowRoute
+    }
+    '/supplier-flow/purchase-orders/$poId': {
+      id: '/supplier-flow/purchase-orders/$poId'
+      path: '/purchase-orders/$poId'
+      fullPath: '/supplier-flow/purchase-orders/$poId'
+      preLoaderRoute: typeof SupplierFlowPurchaseOrdersPoIdRouteImport
+      parentRoute: typeof SupplierFlowRoute
+    }
+    '/supplier-flow/purchase-orders/new': {
+      id: '/supplier-flow/purchase-orders/new'
+      path: '/purchase-orders/new'
+      fullPath: '/supplier-flow/purchase-orders/new'
+      preLoaderRoute: typeof SupplierFlowPurchaseOrdersNewRouteImport
+      parentRoute: typeof SupplierFlowRoute
+    }
+    '/supplier-flow/suppliers/': {
+      id: '/supplier-flow/suppliers/'
+      path: '/suppliers'
+      fullPath: '/supplier-flow/suppliers/'
+      preLoaderRoute: typeof SupplierFlowSuppliersIndexRouteImport
+      parentRoute: typeof SupplierFlowRoute
+    }
+    '/supplier-flow/suppliers/$supplierId': {
+      id: '/supplier-flow/suppliers/$supplierId'
+      path: '/suppliers/$supplierId'
+      fullPath: '/supplier-flow/suppliers/$supplierId'
+      preLoaderRoute: typeof SupplierFlowSuppliersSupplierIdRouteImport
+      parentRoute: typeof SupplierFlowRoute
+    }
+    '/supplier-flow/suppliers/new': {
+      id: '/supplier-flow/suppliers/new'
+      path: '/suppliers/new'
+      fullPath: '/supplier-flow/suppliers/new'
+      preLoaderRoute: typeof SupplierFlowSuppliersNewRouteImport
+      parentRoute: typeof SupplierFlowRoute
+    }
+    '/supplier-flow/vendor-performance/': {
+      id: '/supplier-flow/vendor-performance/'
+      path: '/vendor-performance'
+      fullPath: '/supplier-flow/vendor-performance/'
+      preLoaderRoute: typeof SupplierFlowVendorPerformanceIndexRouteImport
+      parentRoute: typeof SupplierFlowRoute
+    }
+    '/supplier-flow/vendor-performance/$supplierId': {
+      id: '/supplier-flow/vendor-performance/$supplierId'
+      path: '/vendor-performance/$supplierId'
+      fullPath: '/supplier-flow/vendor-performance/$supplierId'
+      preLoaderRoute: typeof SupplierFlowVendorPerformanceSupplierIdRouteImport
+      parentRoute: typeof SupplierFlowRoute
+    }
     '/warehouse-flow/requests/': {
       id: '/warehouse-flow/requests/'
       path: '/requests'
@@ -3571,6 +3903,50 @@ const StorageGuardianRouteWithChildren = StorageGuardianRoute._addFileChildren(
   StorageGuardianRouteChildren,
 )
 
+interface SupplierFlowRouteChildren {
+  SupplierFlowReportsRoute: typeof SupplierFlowReportsRoute
+  SupplierFlowSettingsRoute: typeof SupplierFlowSettingsRoute
+  SupplierFlowIndexRoute: typeof SupplierFlowIndexRoute
+  SupplierFlowApprovalsPoIdRoute: typeof SupplierFlowApprovalsPoIdRoute
+  SupplierFlowAsnAsnIdRoute: typeof SupplierFlowAsnAsnIdRoute
+  SupplierFlowAsnNewRoute: typeof SupplierFlowAsnNewRoute
+  SupplierFlowPurchaseOrdersPoIdRoute: typeof SupplierFlowPurchaseOrdersPoIdRoute
+  SupplierFlowPurchaseOrdersNewRoute: typeof SupplierFlowPurchaseOrdersNewRoute
+  SupplierFlowSuppliersSupplierIdRoute: typeof SupplierFlowSuppliersSupplierIdRoute
+  SupplierFlowSuppliersNewRoute: typeof SupplierFlowSuppliersNewRoute
+  SupplierFlowVendorPerformanceSupplierIdRoute: typeof SupplierFlowVendorPerformanceSupplierIdRoute
+  SupplierFlowApprovalsIndexRoute: typeof SupplierFlowApprovalsIndexRoute
+  SupplierFlowAsnIndexRoute: typeof SupplierFlowAsnIndexRoute
+  SupplierFlowPurchaseOrdersIndexRoute: typeof SupplierFlowPurchaseOrdersIndexRoute
+  SupplierFlowSuppliersIndexRoute: typeof SupplierFlowSuppliersIndexRoute
+  SupplierFlowVendorPerformanceIndexRoute: typeof SupplierFlowVendorPerformanceIndexRoute
+}
+
+const SupplierFlowRouteChildren: SupplierFlowRouteChildren = {
+  SupplierFlowReportsRoute: SupplierFlowReportsRoute,
+  SupplierFlowSettingsRoute: SupplierFlowSettingsRoute,
+  SupplierFlowIndexRoute: SupplierFlowIndexRoute,
+  SupplierFlowApprovalsPoIdRoute: SupplierFlowApprovalsPoIdRoute,
+  SupplierFlowAsnAsnIdRoute: SupplierFlowAsnAsnIdRoute,
+  SupplierFlowAsnNewRoute: SupplierFlowAsnNewRoute,
+  SupplierFlowPurchaseOrdersPoIdRoute: SupplierFlowPurchaseOrdersPoIdRoute,
+  SupplierFlowPurchaseOrdersNewRoute: SupplierFlowPurchaseOrdersNewRoute,
+  SupplierFlowSuppliersSupplierIdRoute: SupplierFlowSuppliersSupplierIdRoute,
+  SupplierFlowSuppliersNewRoute: SupplierFlowSuppliersNewRoute,
+  SupplierFlowVendorPerformanceSupplierIdRoute:
+    SupplierFlowVendorPerformanceSupplierIdRoute,
+  SupplierFlowApprovalsIndexRoute: SupplierFlowApprovalsIndexRoute,
+  SupplierFlowAsnIndexRoute: SupplierFlowAsnIndexRoute,
+  SupplierFlowPurchaseOrdersIndexRoute: SupplierFlowPurchaseOrdersIndexRoute,
+  SupplierFlowSuppliersIndexRoute: SupplierFlowSuppliersIndexRoute,
+  SupplierFlowVendorPerformanceIndexRoute:
+    SupplierFlowVendorPerformanceIndexRoute,
+}
+
+const SupplierFlowRouteWithChildren = SupplierFlowRoute._addFileChildren(
+  SupplierFlowRouteChildren,
+)
+
 interface WarehouseFlowRouteChildren {
   WarehouseFlowApprovalsRoute: typeof WarehouseFlowApprovalsRoute
   WarehouseFlowAuditLogsRoute: typeof WarehouseFlowAuditLogsRoute
@@ -3733,6 +4109,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReportsRoute: ReportsRoute,
   SettingsRoute: SettingsRoute,
   StorageGuardianRoute: StorageGuardianRouteWithChildren,
+  SupplierFlowRoute: SupplierFlowRouteWithChildren,
   VehicleQueueRoute: VehicleQueueRoute,
   VehicleVerificationRoute: VehicleVerificationRoute,
   WarehouseFlowRoute: WarehouseFlowRouteWithChildren,
