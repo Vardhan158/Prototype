@@ -135,7 +135,7 @@ export function WarehouseProvider({ children }: { children: ReactNode }) {
         createdAt: now(),
       };
       setItems((prev) => [item, ...prev]);
-      log("Goods Receiving", id, `${input.asn} expected ${input.expectedQty}`, `Received ${input.receivedQty}`);
+      log("Document Management & OCR", id, `${input.asn} expected ${input.expectedQty}`, `Received ${input.receivedQty}`);
       if (variance !== 0) {
         raise(
           "warning",

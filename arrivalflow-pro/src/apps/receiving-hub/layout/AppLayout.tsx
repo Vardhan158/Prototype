@@ -79,7 +79,7 @@ function SidebarContent({ collapsed }: { collapsed: boolean }) {
         {!collapsed && (
           <div className="leading-tight">
             <p className="text-[15px] font-semibold tracking-tight">NexusWMS</p>
-            <p className="text-[11px] text-muted-foreground">Goods Receiving</p>
+            <p className="text-[11px] text-muted-foreground">Document Management & OCR</p>
           </div>
         )}
       </div>

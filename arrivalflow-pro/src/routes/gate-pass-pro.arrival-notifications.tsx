@@ -131,7 +131,7 @@ function ArrivalNotifications() {
                 }
                 setDrawer(null);
                 toast.success(`${active?.truck} accepted · receiving can start`, {
-                  description: "Handed off to Goods Receiving & GRN Management",
+                  description: "Handed off to Document Management & OCR & GRN Management",
                 });
               }}
             >

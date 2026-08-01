@@ -87,7 +87,7 @@ function QueueBoard() {
 
       <div className="mt-4 surface-card flex flex-wrap items-center justify-between gap-3 p-5">
         <div>
-          <p className="text-sm font-semibold">Completed trucks flow into Goods Receiving &amp; GRN Management</p>
+          <p className="text-sm font-semibold">Completed trucks flow into Document Management & OCR &amp; GRN Management</p>
           <p className="text-[11px] text-muted-foreground">Module 03 picks up the accepted consignment for putaway.</p>
         </div>
         <Button asChild><Link to="/gate-pass-pro/receiving">Open Module 03 <ArrowRight className="ml-2 h-4 w-4" /></Link></Button>

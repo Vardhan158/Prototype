@@ -178,7 +178,7 @@ export function allocate(
 
 export const STAGES: { id: Item["stage"]; label: string }[] = [
   { id: "delivery", label: "Supplier Delivery" },
-  { id: "receiving", label: "Goods Receiving" },
+  { id: "receiving", label: "Document Management & OCR" },
   { id: "inspection", label: "Quality Inspection" },
   { id: "qr", label: "QR / Barcode Generation" },
   { id: "rules", label: "Storage Rule Validation" },

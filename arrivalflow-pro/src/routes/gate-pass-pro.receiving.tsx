@@ -6,9 +6,9 @@ import { AppShell } from "@/apps/gate-pass-pro/components/wms/AppShell";
 export const Route = createFileRoute("/gate-pass-pro/receiving")({
   head: () => ({
     meta: [
-      { title: "Goods Receiving & GRN — NexusWMS" },
-      { name: "description", content: "Handoff from gate entry into Module 03: Goods Receiving and GRN management." },
-      { property: "og:title", content: "Goods Receiving & GRN — NexusWMS" },
+      { title: "Document Management & OCR & GRN — NexusWMS" },
+      { name: "description", content: "Handoff from gate entry into Module 03: Document Management & OCR and GRN management." },
+      { property: "og:title", content: "Document Management & OCR & GRN — NexusWMS" },
       { property: "og:description", content: "Next module in the inbound flow." },
     ],
   }),
@@ -17,7 +17,7 @@ export const Route = createFileRoute("/gate-pass-pro/receiving")({
 
 function Receiving() {
   return (
-    <AppShell title="Goods Receiving &amp; GRN Management" subtitle="Module 03 · continues from Gate Entry &amp; Arrival Management">
+    <AppShell title="Document Management & OCR &amp; GRN Management" subtitle="Module 03 · continues from Gate Entry &amp; Arrival Management">
       <div className="surface-card mx-auto max-w-xl p-10 text-center">
         <span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-primary/10 text-primary">
           <PackageCheck className="h-6 w-6" />

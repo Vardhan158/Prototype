@@ -408,7 +408,7 @@ export const SEED_AUDIT: AuditEntry[] = [
   {
     id: "AUD-4004",
     actor: "M. Osei",
-    action: "Goods Receiving",
+    action: "Document Management & OCR",
     entity: "ITM-1004",
     before: "ASN-55151 expected 50",
     after: "Received 48 (variance -2)",

@@ -249,7 +249,7 @@ function GateEntryDetail() {
           </div>
           <div className="surface-card p-5">
             <p className="flex items-center gap-2 text-xs font-semibold"><PackageCheck className="h-4 w-4 text-secondary" />Next module</p>
-            <Button size="sm" className="mt-3 w-full" asChild><Link to="/gate-pass-pro/receiving">Start goods receiving</Link></Button>
+            <Button size="sm" className="mt-3 w-full" asChild><Link to="/gate-pass-pro/receiving">Start Document Management & OCR</Link></Button>
           </div>
           <div className="surface-card p-5">
             <p className="flex items-center gap-2 text-xs font-semibold"><ScrollText className="h-4 w-4" />Audit</p>

@@ -100,7 +100,7 @@ function ReceivingPage() {
 
       <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
         <form onSubmit={submit} className="panel h-fit space-y-4 p-5">
-          <h2 className="text-lg font-semibold">Goods receiving</h2>
+          <h2 className="text-lg font-semibold">Document Management & OCR</h2>
 
           <div className="space-y-1.5">
             <Label htmlFor="name">Item description</Label>

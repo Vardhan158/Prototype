@@ -71,7 +71,7 @@ function NavList({ onNavigate }: { onNavigate?: () => void }) {
         className="flex items-center gap-3 rounded-lg border border-dashed border-secondary/50 px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-secondary/10"
       >
         <PackageCheck className="h-4 w-4 text-secondary" />
-        Goods Receiving &amp; GRN
+        Document Management & OCR &amp; GRN
       </Link>
     </nav>
   );

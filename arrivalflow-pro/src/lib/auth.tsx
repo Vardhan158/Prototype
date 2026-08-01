@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
-export type AppRole = "Warehouse Gate Entry & Arrival Management" | "Data Steward" | "Wave Planner" | "Production Manager" | "Inventory Controller" | "Warehouse Supervisor" | "Receiving Supervisor" | "Goods Receiving" | "Storage Manager" | "Quality Inspector" | "Inventory Lifecycle Manager" | "Supplier & Purchase Order Management";
+export type AppRole = "Warehouse Gate Entry & Arrival Management" | "Data Steward" | "Wave Planner" | "Production Manager" | "Inventory Controller" | "Warehouse Supervisor" | "Receiving Supervisor" | "Document Management & OCR" | "Storage Manager" | "Quality Inspector" | "Inventory Lifecycle Manager" | "Supplier & Purchase Order Management";
 export type ModuleKey = "arrival" | "master" | "wave" | "workcraft" | "inventory" | "warehouse" | "receiving" | "document" | "storage" | "quality" | "lifecycle" | "supplier";
 
 export interface AuthUser {
@@ -82,7 +82,7 @@ export const SEEDED_USERS: SeededUser[] = [
     name: "R. Deshmukh",
     email: "deshmukh@nexuswms.com",
     password: "document@2026",
-    role: "Goods Receiving",
+    role: "Document Management & OCR",
     modules: ["document"],
     dashboard: "/document-flow",
   },
