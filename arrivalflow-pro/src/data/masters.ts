@@ -275,13 +275,13 @@ export const warehouseTree: WarehouseTree[] = warehouses.slice(0, 4).map((w, wi)
 }));
 
 export const employees: Employee[] = [
-  ["EMP-4001","Bram de Vries","Warehouse Operations","Site Manager","Administrator","bram.devries@meridia.com","+31 10 883 2200","2018-04-16","Regional Director","Shift A (06:00-14:00)","WH-01 Rotterdam"],
+  ["EMP-4001","Bram de Vries","Warehouse Operations","Site Manager","Warehouse Gate Entry & Arrival Management","bram.devries@meridia.com","+31 10 883 2200","2018-04-16","Regional Director","Shift A (06:00-14:00)","WH-01 Rotterdam"],
   ["EMP-4002","Sunita Kulkarni","Warehouse Operations","Store Manager","Manager","sunita.k@meridia.com","+91 20 6677 1120","2019-08-01","Bram de Vries","Shift A (06:00-14:00)","WH-02 Pune"],
   ["EMP-4003","Marcus Elliot","Logistics","Hub Supervisor","Manager","marcus.e@meridia.com","+1 216 555 0190","2020-02-10","Bram de Vries","Shift B (14:00-22:00)","WH-03 Cleveland"],
   ["EMP-4004","Kenji Sato","Inventory","Inventory Controller","Editor","kenji.sato@meridia.com","+81 6 6210 9911","2021-06-22","Sunita Kulkarni","Shift A (06:00-14:00)","WH-04 Osaka"],
   ["EMP-4005","Farah Siddiqui","Procurement","Category Buyer","Editor","farah.s@meridia.com","+971 4 883 4412","2022-01-09","Regional Director","Shift A (06:00-14:00)","WH-05 Jebel Ali"],
   ["EMP-4006","Piotr Zieliński","Quality","QA Inspector","Viewer","piotr.z@meridia.com","+48 58 771 8890","2022-11-14","Marcus Elliot","Shift C (22:00-06:00)","WH-06 Gdańsk"],
-  ["EMP-4007","Amara Okafor","Master Data","Data Steward","Administrator","amara.o@meridia.com","+44 161 496 7712","2023-03-27","Regional Director","Shift B (14:00-22:00)","Head Office"],
+  ["EMP-4007","Amara Okafor","Master Data","Data Steward","Warehouse Gate Entry & Arrival Management","amara.o@meridia.com","+44 161 496 7712","2023-03-27","Regional Director","Shift B (14:00-22:00)","Head Office"],
   ["EMP-4008","Diego Fernández","Manufacturing","Line Supervisor","Manager","diego.f@meridia.com","+34 93 220 5510","2021-09-06","Sunita Kulkarni","Shift B (14:00-22:00)","WH-02 Pune"],
   ["EMP-4009","Chloé Martin","Finance","AP Analyst","Viewer","chloe.m@meridia.com","+33 4 72 11 4402","2024-05-20","Regional Director","Shift A (06:00-14:00)","Head Office"],
   ["EMP-4010","Ravi Prasad","Logistics","Fleet Coordinator","Editor","ravi.p@meridia.com","+91 22 4988 3312","2023-07-11","Marcus Elliot","Shift C (22:00-06:00)","WH-02 Pune"],

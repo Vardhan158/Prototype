@@ -15,7 +15,7 @@ interface RoleContextValue {
 }
 
 const NAV_BY_ROLE: Record<Role, string[] | "*"> = {
-  Administrator: "*",
+  "Warehouse Gate Entry & Arrival Management": "*",
   "Warehouse Manager": "*",
   "Warehouse Executive": [
     "dashboard",
@@ -35,7 +35,7 @@ const NAV_BY_ROLE: Record<Role, string[] | "*"> = {
 };
 
 const ACTIONS_BY_ROLE: Record<Role, string[] | "*"> = {
-  Administrator: "*",
+  "Warehouse Gate Entry & Arrival Management": "*",
   "Warehouse Manager": "*",
   "Warehouse Executive": ["order.create", "order.validate", "inventory.reserve", "wave.create", "wave.release", "picklist.generate"],
   Picker: ["pick.execute"],
@@ -46,7 +46,7 @@ const ACTIONS_BY_ROLE: Record<Role, string[] | "*"> = {
 
 const Ctx = createContext<RoleContextValue | null>(null);
 
-export function RoleProvider({ children, initialRole = "Administrator" }: { children: ReactNode; initialRole?: Role }) {
+export function RoleProvider({ children, initialRole = "Warehouse Gate Entry & Arrival Management" }: { children: ReactNode; initialRole?: Role }) {
   const [role, setRole] = useState<Role>(initialRole);
 
   const value = useMemo<RoleContextValue>(

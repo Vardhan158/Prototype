@@ -279,7 +279,7 @@ export const roles = [
   "Store Keeper",
   "Procurement Manager",
   "Asset Manager",
-  "Administrator",
+  "Warehouse Gate Entry & Arrival Management",
 ];
 
 export const queueColumns: { key: string; title: string; tone: string; ids: string[] }[] = [

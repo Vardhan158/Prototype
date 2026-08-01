@@ -18,7 +18,7 @@ export const Route = createFileRoute("/gate-pass-pro/settings")({
       { title: "Gate Module Settings — NexusWMS" },
       { name: "description", content: "Configure gates, security users, vehicle types, hold reasons, approval matrix, notifications and OCR thresholds." },
       { property: "og:title", content: "Gate Module Settings — NexusWMS" },
-      { property: "og:description", content: "Administrator configuration for gate entry operations." },
+      { property: "og:description", content: "Warehouse Gate Entry & Arrival Management configuration for gate entry operations." },
     ],
   }),
   component: SettingsPage,
@@ -37,7 +37,7 @@ const users = [
   { id: "SEC-10430", name: "R. Nair", role: "Security Officer", gate: "Gate 03", status: "Active" },
   { id: "SUP-2201", name: "M. Deshpande", role: "Security Supervisor", gate: "All gates", status: "Active" },
   { id: "WHM-3310", name: "P. Bhosale", role: "Store Keeper", gate: "WH-01", status: "Active" },
-  { id: "ADM-1000", name: "N. Iyer", role: "Administrator", gate: "Global", status: "Locked" },
+  { id: "ADM-1000", name: "N. Iyer", role: "Warehouse Gate Entry & Arrival Management", gate: "Global", status: "Locked" },
 ];
 
 const vehicleTypes = ["Trailer 40ft", "Container 32ft MXL", "Truck 24ft", "Truck 22ft", "Truck 19ft", "Tipper 16 Wheeler", "LCV", "Tanker"];
@@ -48,7 +48,7 @@ function SettingsPage() {
   return (
     <AppShell
       title="Settings"
-      subtitle="Administrator · gate module configuration"
+      subtitle="Warehouse Gate Entry & Arrival Management · gate module configuration"
       actions={<Button onClick={() => toast.success("Configuration saved")}><Save className="mr-2 h-4 w-4" />Save changes</Button>}
     >
       <Tabs defaultValue="gates">
@@ -153,7 +153,7 @@ function SettingsPage() {
                   ["No appointment / walk-in", "Security Supervisor", "Warehouse Manager", "30 min"],
                   ["Missing or expired documents", "Security Supervisor", "Procurement Manager", "30 min"],
                   ["Hazardous consignment", "Warehouse Manager", "Asset Manager", "20 min"],
-                  ["Blacklisted driver or vehicle", "Administrator", "—", "Immediate"],
+                  ["Blacklisted driver or vehicle", "Warehouse Gate Entry & Arrival Management", "—", "Immediate"],
                 ].map((r) => (
                   <tr key={r[0]}>
                     <td className="px-4 py-3 text-xs font-medium">{r[0]}</td>

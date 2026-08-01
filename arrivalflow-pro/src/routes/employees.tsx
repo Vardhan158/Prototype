@@ -66,7 +66,7 @@ const steps: FormStep[] = [
         name: "role",
         label: "Role Based Access",
         type: "select",
-        options: ["Administrator", "Manager", "Editor", "Viewer"],
+        options: ["Warehouse Gate Entry & Arrival Management", "Manager", "Editor", "Viewer"],
       },
     ],
   },
@@ -154,7 +154,7 @@ function EmployeeMaster() {
     {
       key: "role",
       label: "Role",
-      options: ["Administrator", "Manager", "Editor", "Viewer"],
+      options: ["Warehouse Gate Entry & Arrival Management", "Manager", "Editor", "Viewer"],
       match: (r, v) => r.role === v,
     },
   ];

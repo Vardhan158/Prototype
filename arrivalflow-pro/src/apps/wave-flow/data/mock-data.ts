@@ -15,10 +15,10 @@ export type Role =
   | "Packing Operator"
   | "Loading Supervisor"
   | "Dispatcher"
-  | "Administrator";
+  | "Warehouse Gate Entry & Arrival Management";
 
 export const ROLES: Role[] = [
-  "Administrator",
+  "Warehouse Gate Entry & Arrival Management",
   "Warehouse Manager",
   "Warehouse Executive",
   "Picker",

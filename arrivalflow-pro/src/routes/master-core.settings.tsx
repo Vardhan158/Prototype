@@ -32,7 +32,7 @@ export const Route = createFileRoute("/master-core/settings")({
 });
 
 const roles = [
-  { role: "Administrator", scope: "All masters", create: true, edit: true, del: true, approve: true },
+  { role: "Warehouse Gate Entry & Arrival Management", scope: "All masters", create: true, edit: true, del: true, approve: true },
   { role: "Manager", scope: "Assigned masters", create: true, edit: true, del: false, approve: true },
   { role: "Editor", scope: "Assigned masters", create: true, edit: true, del: false, approve: false },
   { role: "Viewer", scope: "Read only", create: false, edit: false, del: false, approve: false },

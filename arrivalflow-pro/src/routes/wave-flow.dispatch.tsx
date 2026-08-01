@@ -26,7 +26,7 @@ export const Route = createFileRoute("/wave-flow/dispatch")({
 function DispatchPage() {
   const { can, role } = useRole();
   const [rows, setRows] = useState<Shipment[]>(shipments);
-  const isManager = role === "Warehouse Manager" || role === "Administrator";
+  const isManager = role === "Warehouse Manager" || role === "Warehouse Gate Entry & Arrival Management";
 
   const decide = (r: Shipment, approve: boolean) => {
     if (!isManager) {

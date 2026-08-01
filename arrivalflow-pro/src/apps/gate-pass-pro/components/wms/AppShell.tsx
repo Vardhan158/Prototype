@@ -186,7 +186,7 @@ export function AppShell({
                     <AvatarFallback className="bg-primary text-[11px] text-primary-foreground">NA</AvatarFallback>
                   </Avatar>
                   <span className="hidden text-left leading-tight sm:block">
-                    <span className="block text-xs font-semibold">Administrator</span>
+                    <span className="block text-xs font-semibold">Warehouse Gate Entry & Arrival Management</span>
                     <span className="block text-[10px] text-muted-foreground">admin@nexuswms.com</span>
                   </span>
                   <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
@@ -194,7 +194,7 @@ export function AppShell({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-60">
                 <DropdownMenuLabel>
-                  <span className="block text-sm">Administrator</span>
+                  <span className="block text-sm">Warehouse Gate Entry & Arrival Management</span>
                   <span className="block text-xs font-normal text-muted-foreground">{user?.email ?? "admin@nexuswms.com"}</span>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />

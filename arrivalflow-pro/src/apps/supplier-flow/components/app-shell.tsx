@@ -71,7 +71,7 @@ const roles = [
   "Warehouse Manager",
   "Finance Controller",
   "Approver",
-  "Administrator",
+  "Warehouse Gate Entry & Arrival Management",
 ];
 
 function useDark() {

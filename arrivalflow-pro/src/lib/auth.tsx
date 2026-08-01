@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
-export type AppRole = "Administrator" | "Data Steward" | "Wave Planner" | "Production Manager" | "Inventory Controller" | "Warehouse Supervisor" | "Receiving Supervisor" | "Document Controller" | "Storage Manager" | "Quality Inspector" | "Inventory Lifecycle Manager" | "Supplier Manager";
+export type AppRole = "Warehouse Gate Entry & Arrival Management" | "Data Steward" | "Wave Planner" | "Production Manager" | "Inventory Controller" | "Warehouse Supervisor" | "Receiving Supervisor" | "Goods Receiving" | "Storage Manager" | "Quality Inspector" | "Inventory Lifecycle Manager" | "Supplier & Purchase Order Management";
 export type ModuleKey = "arrival" | "master" | "wave" | "workcraft" | "inventory" | "warehouse" | "receiving" | "document" | "storage" | "quality" | "lifecycle" | "supplier";
 
 export interface AuthUser {
@@ -16,10 +16,10 @@ type SeededUser = AuthUser & { password: string };
 export const SEEDED_USERS: SeededUser[] = [
   {
     id: "ADM-0001",
-    name: "Nexus Administrator",
+    name: "Nexus Warehouse Gate Entry & Arrival Management",
     email: "admin@nexuswms.com",
     password: "Admin@2026",
-    role: "Administrator",
+    role: "Warehouse Gate Entry & Arrival Management",
     modules: ["arrival", "master", "wave", "workcraft", "inventory", "warehouse", "receiving", "document", "storage", "quality", "lifecycle", "supplier"],
     dashboard: "/dashboard",
   },
@@ -82,7 +82,7 @@ export const SEEDED_USERS: SeededUser[] = [
     name: "R. Deshmukh",
     email: "deshmukh@nexuswms.com",
     password: "document@2026",
-    role: "Document Controller",
+    role: "Goods Receiving",
     modules: ["document"],
     dashboard: "/document-flow",
   },
@@ -118,7 +118,7 @@ export const SEEDED_USERS: SeededUser[] = [
     name: "Ananya Gupta",
     email: "supplier@nexuswms.com",
     password: "supplier@2026",
-    role: "Supplier Manager",
+    role: "Supplier & Purchase Order Management",
     modules: ["supplier"],
     dashboard: "/supplier-flow",
   },

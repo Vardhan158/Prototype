@@ -219,7 +219,7 @@ export function AppShell({
                   </span>
                   <span className="hidden text-left leading-tight sm:block">
                     <span className="block text-xs font-semibold">{user?.name ?? "R. Deshmukh"}</span>
-                    <span className="block text-[11px] text-muted-foreground">{user?.role ?? "Document Controller"}</span>
+                    <span className="block text-[11px] text-muted-foreground">{user?.role ?? "Goods Receiving"}</span>
                   </span>
                   <ChevronDown className="size-4 text-muted-foreground" />
                 </Button>

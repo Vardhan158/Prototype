@@ -9,7 +9,7 @@ function GatePassProLayout() {
   const { ready, user } = useAuth();
 
   if (!ready) return null;
-  if (user?.role !== "Administrator") return <Navigate to="/dashboard" replace />;
+  if (user?.role !== "Warehouse Gate Entry & Arrival Management") return <Navigate to="/dashboard" replace />;
 
   return <Outlet />;
 }
