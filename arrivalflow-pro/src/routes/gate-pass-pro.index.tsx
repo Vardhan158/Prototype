@@ -32,7 +32,7 @@ const kpiTone: Record<string, string> = {
   success: "bg-success/12 text-success",
 };
 
-function Dashboard() {
+export function Dashboard() {
   const queue = gateEntries.filter((e) =>
     ["Draft", "Pending Approval", "On Hold", "Waiting Warehouse", "Vehicle Verified"].includes(e.status),
   );

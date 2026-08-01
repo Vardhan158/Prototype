@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 
 const nav = [
-  { to: "/gate-pass-pro", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/gate-pass-pro/gate-entry", label: "Gate Entry", icon: ClipboardList },
   { to: "/gate-pass-pro/queue", label: "Vehicle Queue", icon: Columns3 },
   { to: "/gate-pass-pro/appointments", label: "Appointments", icon: CalendarClock },
@@ -79,7 +79,7 @@ function NavList({ onNavigate }: { onNavigate?: () => void }) {
 
 function Brand() {
   return (
-    <Link to="/gate-pass-pro" className="flex items-center gap-3 border-b border-sidebar-border px-5 py-4">
+    <Link to="/dashboard" className="flex items-center gap-3 border-b border-sidebar-border px-5 py-4">
       <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-primary-foreground shadow-card">
         <Truck className="h-5 w-5" />
       </span>
