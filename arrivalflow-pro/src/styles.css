@@ -40,7 +40,6 @@
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
   --color-warning-soft: var(--warning-soft);
-  --color-surface-2: var(--surface-2);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -331,46 +330,4 @@
 
 @utility animate-scanline {
   animation: document-scanline 2.1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-}
-
-/* Gatepass Pro mobile UI theme */
-.gatepass-theme {
-  --radius: 1rem;
-  --background: oklch(0.984 0.004 247.9);
-  --foreground: oklch(0.21 0.035 264.7);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.21 0.035 264.7);
-  --primary: oklch(0.546 0.215 262.9);
-  --primary-foreground: oklch(0.99 0.005 250);
-  --secondary: oklch(0.7 0.113 183.2);
-  --secondary-foreground: oklch(0.21 0.035 264.7);
-  --muted: oklch(0.966 0.008 247.9);
-  --muted-foreground: oklch(0.53 0.04 257.4);
-  --accent: oklch(0.94 0.03 250);
-  --accent-foreground: oklch(0.42 0.18 262.9);
-  --success: oklch(0.72 0.19 145.5);
-  --warning: oklch(0.77 0.16 70.1);
-  --warning-foreground: oklch(0.24 0.05 70);
-  --destructive: oklch(0.63 0.22 26.4);
-  --border: oklch(0.918 0.014 255.5);
-  --input: oklch(0.918 0.014 255.5);
-  --ring: oklch(0.546 0.215 262.9);
-  --surface-2: oklch(0.972 0.008 250);
-  --gatepass-shadow-card: 0 1px 2px oklch(0.21 0.035 264.7 / 0.06), 0 8px 24px oklch(0.21 0.035 264.7 / 0.08);
-}
-
-@utility card-elevated {
-  background-color: var(--color-card);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--gatepass-shadow-card, var(--shadow-soft));
-}
-
-@keyframes gatepass-pop-in {
-  0% { transform: scale(0.6); opacity: 0; }
-  60% { transform: scale(1.08); opacity: 1; }
-  100% { transform: scale(1); }
-}
-
-@utility animate-pop-in {
-  animation: gatepass-pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
