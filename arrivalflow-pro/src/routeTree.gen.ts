@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AcceptArrivalRouteImport } from './routes/accept-arrival'
-import { Route as AmsInsightsRouteImport } from './routes/ams-insights'
 import { Route as ArrivalSuccessRouteImport } from './routes/arrival-success'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DockAssignmentRouteImport } from './routes/dock-assignment'
@@ -41,12 +40,6 @@ import { Route as VehicleVerificationRouteImport } from './routes/vehicle-verifi
 import { Route as WarehouseFlowRouteImport } from './routes/warehouse-flow'
 import { Route as WaveFlowRouteImport } from './routes/wave-flow'
 import { Route as WorkCraftRouteImport } from './routes/work-craft'
-import { Route as AmsInsightsIndexRouteImport } from './routes/ams-insights.index'
-import { Route as AmsInsightsAssemblyRouteImport } from './routes/ams-insights.assembly'
-import { Route as AmsInsightsDispatchRouteImport } from './routes/ams-insights.dispatch'
-import { Route as AmsInsightsInventoryRouteImport } from './routes/ams-insights.inventory'
-import { Route as AmsInsightsReceivingRouteImport } from './routes/ams-insights.receiving'
-import { Route as AmsInsightsReportsRouteImport } from './routes/ams-insights.reports'
 import { Route as DashboardInventoryRouteImport } from './routes/dashboard_.inventory'
 import { Route as DocumentFlowIndexRouteImport } from './routes/document-flow.index'
 import { Route as GatePassProIndexRouteImport } from './routes/gate-pass-pro.index'
@@ -148,14 +141,6 @@ import { Route as WorkCraftIndexRouteImport } from './routes/work-craft.index'
 import { Route as WorkCraftExceptionsRouteImport } from './routes/work-craft.exceptions'
 import { Route as WorkCraftFinishedGoodsRouteImport } from './routes/work-craft.finished-goods'
 import { Route as WorkCraftReworkScrapRouteImport } from './routes/work-craft.rework-scrap'
-import { Route as AmsInsightsProcurementApprovalsRouteImport } from './routes/ams-insights.procurement.approvals'
-import { Route as AmsInsightsProcurementAsnRouteImport } from './routes/ams-insights.procurement.asn'
-import { Route as AmsInsightsProcurementContractsRouteImport } from './routes/ams-insights.procurement.contracts'
-import { Route as AmsInsightsProcurementPerformanceRouteImport } from './routes/ams-insights.procurement.performance'
-import { Route as AmsInsightsProcurementPurchaseOrdersRouteImport } from './routes/ams-insights.procurement.purchase-orders'
-import { Route as AmsInsightsProcurementSuppliersRouteImport } from './routes/ams-insights.procurement.suppliers'
-import { Route as AmsInsightsSettingsSystemRouteImport } from './routes/ams-insights.settings.system'
-import { Route as AmsInsightsSettingsUsersRouteImport } from './routes/ams-insights.settings.users'
 import { Route as DocumentFlowDocumentsIndexRouteImport } from './routes/document-flow.documents.index'
 import { Route as DocumentFlowDocumentsIdRouteImport } from './routes/document-flow.documents.$id'
 import { Route as DocumentFlowDocumentsLibraryRouteImport } from './routes/document-flow.documents.library'
@@ -221,11 +206,6 @@ const IndexRoute = IndexRouteImport.update({
 const AcceptArrivalRoute = AcceptArrivalRouteImport.update({
   id: '/accept-arrival',
   path: '/accept-arrival',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AmsInsightsRoute = AmsInsightsRouteImport.update({
-  id: '/ams-insights',
-  path: '/ams-insights',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ArrivalSuccessRoute = ArrivalSuccessRouteImport.update({
@@ -372,36 +352,6 @@ const WorkCraftRoute = WorkCraftRouteImport.update({
   id: '/work-craft',
   path: '/work-craft',
   getParentRoute: () => rootRouteImport,
-} as any)
-const AmsInsightsIndexRoute = AmsInsightsIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AmsInsightsRoute,
-} as any)
-const AmsInsightsAssemblyRoute = AmsInsightsAssemblyRouteImport.update({
-  id: '/assembly',
-  path: '/assembly',
-  getParentRoute: () => AmsInsightsRoute,
-} as any)
-const AmsInsightsDispatchRoute = AmsInsightsDispatchRouteImport.update({
-  id: '/dispatch',
-  path: '/dispatch',
-  getParentRoute: () => AmsInsightsRoute,
-} as any)
-const AmsInsightsInventoryRoute = AmsInsightsInventoryRouteImport.update({
-  id: '/inventory',
-  path: '/inventory',
-  getParentRoute: () => AmsInsightsRoute,
-} as any)
-const AmsInsightsReceivingRoute = AmsInsightsReceivingRouteImport.update({
-  id: '/receiving',
-  path: '/receiving',
-  getParentRoute: () => AmsInsightsRoute,
-} as any)
-const AmsInsightsReportsRoute = AmsInsightsReportsRouteImport.update({
-  id: '/reports',
-  path: '/reports',
-  getParentRoute: () => AmsInsightsRoute,
 } as any)
 const DashboardInventoryRoute = DashboardInventoryRouteImport.update({
   id: '/dashboard_/inventory',
@@ -932,54 +882,6 @@ const WorkCraftReworkScrapRoute = WorkCraftReworkScrapRouteImport.update({
   path: '/rework-scrap',
   getParentRoute: () => WorkCraftRoute,
 } as any)
-const AmsInsightsProcurementApprovalsRoute =
-  AmsInsightsProcurementApprovalsRouteImport.update({
-    id: '/procurement/approvals',
-    path: '/procurement/approvals',
-    getParentRoute: () => AmsInsightsRoute,
-  } as any)
-const AmsInsightsProcurementAsnRoute =
-  AmsInsightsProcurementAsnRouteImport.update({
-    id: '/procurement/asn',
-    path: '/procurement/asn',
-    getParentRoute: () => AmsInsightsRoute,
-  } as any)
-const AmsInsightsProcurementContractsRoute =
-  AmsInsightsProcurementContractsRouteImport.update({
-    id: '/procurement/contracts',
-    path: '/procurement/contracts',
-    getParentRoute: () => AmsInsightsRoute,
-  } as any)
-const AmsInsightsProcurementPerformanceRoute =
-  AmsInsightsProcurementPerformanceRouteImport.update({
-    id: '/procurement/performance',
-    path: '/procurement/performance',
-    getParentRoute: () => AmsInsightsRoute,
-  } as any)
-const AmsInsightsProcurementPurchaseOrdersRoute =
-  AmsInsightsProcurementPurchaseOrdersRouteImport.update({
-    id: '/procurement/purchase-orders',
-    path: '/procurement/purchase-orders',
-    getParentRoute: () => AmsInsightsRoute,
-  } as any)
-const AmsInsightsProcurementSuppliersRoute =
-  AmsInsightsProcurementSuppliersRouteImport.update({
-    id: '/procurement/suppliers',
-    path: '/procurement/suppliers',
-    getParentRoute: () => AmsInsightsRoute,
-  } as any)
-const AmsInsightsSettingsSystemRoute =
-  AmsInsightsSettingsSystemRouteImport.update({
-    id: '/settings/system',
-    path: '/settings/system',
-    getParentRoute: () => AmsInsightsRoute,
-  } as any)
-const AmsInsightsSettingsUsersRoute =
-  AmsInsightsSettingsUsersRouteImport.update({
-    id: '/settings/users',
-    path: '/settings/users',
-    getParentRoute: () => AmsInsightsRoute,
-  } as any)
 const DocumentFlowDocumentsIndexRoute =
   DocumentFlowDocumentsIndexRouteImport.update({
     id: '/documents/',
@@ -1301,7 +1203,6 @@ const WorkCraftWorkOrdersIdStagesRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/accept-arrival': typeof AcceptArrivalRoute
-  '/ams-insights': typeof AmsInsightsRouteWithChildren
   '/arrival-success': typeof ArrivalSuccessRoute
   '/dashboard': typeof DashboardRoute
   '/dock-assignment': typeof DockAssignmentRoute
@@ -1331,11 +1232,6 @@ export interface FileRoutesByFullPath {
   '/warehouse-flow': typeof WarehouseFlowRouteWithChildren
   '/wave-flow': typeof WaveFlowRouteWithChildren
   '/work-craft': typeof WorkCraftRouteWithChildren
-  '/ams-insights/assembly': typeof AmsInsightsAssemblyRoute
-  '/ams-insights/dispatch': typeof AmsInsightsDispatchRoute
-  '/ams-insights/inventory': typeof AmsInsightsInventoryRoute
-  '/ams-insights/receiving': typeof AmsInsightsReceivingRoute
-  '/ams-insights/reports': typeof AmsInsightsReportsRoute
   '/dashboard/inventory': typeof DashboardInventoryRoute
   '/gate-pass-pro/appointments': typeof GatePassProAppointmentsRoute
   '/gate-pass-pro/arrival-notifications': typeof GatePassProArrivalNotificationsRoute
@@ -1425,7 +1321,6 @@ export interface FileRoutesByFullPath {
   '/work-craft/exceptions': typeof WorkCraftExceptionsRoute
   '/work-craft/finished-goods': typeof WorkCraftFinishedGoodsRoute
   '/work-craft/rework-scrap': typeof WorkCraftReworkScrapRoute
-  '/ams-insights/': typeof AmsInsightsIndexRoute
   '/document-flow/': typeof DocumentFlowIndexRoute
   '/gate-pass-pro/': typeof GatePassProIndexRoute
   '/inventory-flow-pro/': typeof InventoryFlowProIndexRoute
@@ -1438,14 +1333,6 @@ export interface FileRoutesByFullPath {
   '/warehouse-flow/': typeof WarehouseFlowIndexRoute
   '/wave-flow/': typeof WaveFlowIndexRoute
   '/work-craft/': typeof WorkCraftIndexRoute
-  '/ams-insights/procurement/approvals': typeof AmsInsightsProcurementApprovalsRoute
-  '/ams-insights/procurement/asn': typeof AmsInsightsProcurementAsnRoute
-  '/ams-insights/procurement/contracts': typeof AmsInsightsProcurementContractsRoute
-  '/ams-insights/procurement/performance': typeof AmsInsightsProcurementPerformanceRoute
-  '/ams-insights/procurement/purchase-orders': typeof AmsInsightsProcurementPurchaseOrdersRoute
-  '/ams-insights/procurement/suppliers': typeof AmsInsightsProcurementSuppliersRoute
-  '/ams-insights/settings/system': typeof AmsInsightsSettingsSystemRoute
-  '/ams-insights/settings/users': typeof AmsInsightsSettingsUsersRoute
   '/document-flow/documents/$id': typeof DocumentFlowDocumentsIdRoute
   '/document-flow/documents/library': typeof DocumentFlowDocumentsLibraryRoute
   '/document-flow/documents/upload': typeof DocumentFlowDocumentsUploadRoute
@@ -1523,11 +1410,6 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/vehicle-queue': typeof VehicleQueueRoute
   '/vehicle-verification': typeof VehicleVerificationRoute
-  '/ams-insights/assembly': typeof AmsInsightsAssemblyRoute
-  '/ams-insights/dispatch': typeof AmsInsightsDispatchRoute
-  '/ams-insights/inventory': typeof AmsInsightsInventoryRoute
-  '/ams-insights/receiving': typeof AmsInsightsReceivingRoute
-  '/ams-insights/reports': typeof AmsInsightsReportsRoute
   '/dashboard/inventory': typeof DashboardInventoryRoute
   '/gate-pass-pro/appointments': typeof GatePassProAppointmentsRoute
   '/gate-pass-pro/arrival-notifications': typeof GatePassProArrivalNotificationsRoute
@@ -1617,7 +1499,6 @@ export interface FileRoutesByTo {
   '/work-craft/exceptions': typeof WorkCraftExceptionsRoute
   '/work-craft/finished-goods': typeof WorkCraftFinishedGoodsRoute
   '/work-craft/rework-scrap': typeof WorkCraftReworkScrapRoute
-  '/ams-insights': typeof AmsInsightsIndexRoute
   '/document-flow': typeof DocumentFlowIndexRoute
   '/gate-pass-pro': typeof GatePassProIndexRoute
   '/inventory-flow-pro': typeof InventoryFlowProIndexRoute
@@ -1630,14 +1511,6 @@ export interface FileRoutesByTo {
   '/warehouse-flow': typeof WarehouseFlowIndexRoute
   '/wave-flow': typeof WaveFlowIndexRoute
   '/work-craft': typeof WorkCraftIndexRoute
-  '/ams-insights/procurement/approvals': typeof AmsInsightsProcurementApprovalsRoute
-  '/ams-insights/procurement/asn': typeof AmsInsightsProcurementAsnRoute
-  '/ams-insights/procurement/contracts': typeof AmsInsightsProcurementContractsRoute
-  '/ams-insights/procurement/performance': typeof AmsInsightsProcurementPerformanceRoute
-  '/ams-insights/procurement/purchase-orders': typeof AmsInsightsProcurementPurchaseOrdersRoute
-  '/ams-insights/procurement/suppliers': typeof AmsInsightsProcurementSuppliersRoute
-  '/ams-insights/settings/system': typeof AmsInsightsSettingsSystemRoute
-  '/ams-insights/settings/users': typeof AmsInsightsSettingsUsersRoute
   '/document-flow/documents/$id': typeof DocumentFlowDocumentsIdRoute
   '/document-flow/documents/library': typeof DocumentFlowDocumentsLibraryRoute
   '/document-flow/documents/upload': typeof DocumentFlowDocumentsUploadRoute
@@ -1698,7 +1571,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/accept-arrival': typeof AcceptArrivalRoute
-  '/ams-insights': typeof AmsInsightsRouteWithChildren
   '/arrival-success': typeof ArrivalSuccessRoute
   '/dashboard': typeof DashboardRoute
   '/dock-assignment': typeof DockAssignmentRoute
@@ -1728,11 +1600,6 @@ export interface FileRoutesById {
   '/warehouse-flow': typeof WarehouseFlowRouteWithChildren
   '/wave-flow': typeof WaveFlowRouteWithChildren
   '/work-craft': typeof WorkCraftRouteWithChildren
-  '/ams-insights/assembly': typeof AmsInsightsAssemblyRoute
-  '/ams-insights/dispatch': typeof AmsInsightsDispatchRoute
-  '/ams-insights/inventory': typeof AmsInsightsInventoryRoute
-  '/ams-insights/receiving': typeof AmsInsightsReceivingRoute
-  '/ams-insights/reports': typeof AmsInsightsReportsRoute
   '/dashboard_/inventory': typeof DashboardInventoryRoute
   '/gate-pass-pro/appointments': typeof GatePassProAppointmentsRoute
   '/gate-pass-pro/arrival-notifications': typeof GatePassProArrivalNotificationsRoute
@@ -1822,7 +1689,6 @@ export interface FileRoutesById {
   '/work-craft/exceptions': typeof WorkCraftExceptionsRoute
   '/work-craft/finished-goods': typeof WorkCraftFinishedGoodsRoute
   '/work-craft/rework-scrap': typeof WorkCraftReworkScrapRoute
-  '/ams-insights/': typeof AmsInsightsIndexRoute
   '/document-flow/': typeof DocumentFlowIndexRoute
   '/gate-pass-pro/': typeof GatePassProIndexRoute
   '/inventory-flow-pro/': typeof InventoryFlowProIndexRoute
@@ -1835,14 +1701,6 @@ export interface FileRoutesById {
   '/warehouse-flow/': typeof WarehouseFlowIndexRoute
   '/wave-flow/': typeof WaveFlowIndexRoute
   '/work-craft/': typeof WorkCraftIndexRoute
-  '/ams-insights/procurement/approvals': typeof AmsInsightsProcurementApprovalsRoute
-  '/ams-insights/procurement/asn': typeof AmsInsightsProcurementAsnRoute
-  '/ams-insights/procurement/contracts': typeof AmsInsightsProcurementContractsRoute
-  '/ams-insights/procurement/performance': typeof AmsInsightsProcurementPerformanceRoute
-  '/ams-insights/procurement/purchase-orders': typeof AmsInsightsProcurementPurchaseOrdersRoute
-  '/ams-insights/procurement/suppliers': typeof AmsInsightsProcurementSuppliersRoute
-  '/ams-insights/settings/system': typeof AmsInsightsSettingsSystemRoute
-  '/ams-insights/settings/users': typeof AmsInsightsSettingsUsersRoute
   '/document-flow/documents/$id': typeof DocumentFlowDocumentsIdRoute
   '/document-flow/documents/library': typeof DocumentFlowDocumentsLibraryRoute
   '/document-flow/documents/upload': typeof DocumentFlowDocumentsUploadRoute
@@ -1905,7 +1763,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/accept-arrival'
-    | '/ams-insights'
     | '/arrival-success'
     | '/dashboard'
     | '/dock-assignment'
@@ -1935,11 +1792,6 @@ export interface FileRouteTypes {
     | '/warehouse-flow'
     | '/wave-flow'
     | '/work-craft'
-    | '/ams-insights/assembly'
-    | '/ams-insights/dispatch'
-    | '/ams-insights/inventory'
-    | '/ams-insights/receiving'
-    | '/ams-insights/reports'
     | '/dashboard/inventory'
     | '/gate-pass-pro/appointments'
     | '/gate-pass-pro/arrival-notifications'
@@ -2029,7 +1881,6 @@ export interface FileRouteTypes {
     | '/work-craft/exceptions'
     | '/work-craft/finished-goods'
     | '/work-craft/rework-scrap'
-    | '/ams-insights/'
     | '/document-flow/'
     | '/gate-pass-pro/'
     | '/inventory-flow-pro/'
@@ -2042,14 +1893,6 @@ export interface FileRouteTypes {
     | '/warehouse-flow/'
     | '/wave-flow/'
     | '/work-craft/'
-    | '/ams-insights/procurement/approvals'
-    | '/ams-insights/procurement/asn'
-    | '/ams-insights/procurement/contracts'
-    | '/ams-insights/procurement/performance'
-    | '/ams-insights/procurement/purchase-orders'
-    | '/ams-insights/procurement/suppliers'
-    | '/ams-insights/settings/system'
-    | '/ams-insights/settings/users'
     | '/document-flow/documents/$id'
     | '/document-flow/documents/library'
     | '/document-flow/documents/upload'
@@ -2127,11 +1970,6 @@ export interface FileRouteTypes {
     | '/settings'
     | '/vehicle-queue'
     | '/vehicle-verification'
-    | '/ams-insights/assembly'
-    | '/ams-insights/dispatch'
-    | '/ams-insights/inventory'
-    | '/ams-insights/receiving'
-    | '/ams-insights/reports'
     | '/dashboard/inventory'
     | '/gate-pass-pro/appointments'
     | '/gate-pass-pro/arrival-notifications'
@@ -2221,7 +2059,6 @@ export interface FileRouteTypes {
     | '/work-craft/exceptions'
     | '/work-craft/finished-goods'
     | '/work-craft/rework-scrap'
-    | '/ams-insights'
     | '/document-flow'
     | '/gate-pass-pro'
     | '/inventory-flow-pro'
@@ -2234,14 +2071,6 @@ export interface FileRouteTypes {
     | '/warehouse-flow'
     | '/wave-flow'
     | '/work-craft'
-    | '/ams-insights/procurement/approvals'
-    | '/ams-insights/procurement/asn'
-    | '/ams-insights/procurement/contracts'
-    | '/ams-insights/procurement/performance'
-    | '/ams-insights/procurement/purchase-orders'
-    | '/ams-insights/procurement/suppliers'
-    | '/ams-insights/settings/system'
-    | '/ams-insights/settings/users'
     | '/document-flow/documents/$id'
     | '/document-flow/documents/library'
     | '/document-flow/documents/upload'
@@ -2301,7 +2130,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/accept-arrival'
-    | '/ams-insights'
     | '/arrival-success'
     | '/dashboard'
     | '/dock-assignment'
@@ -2331,11 +2159,6 @@ export interface FileRouteTypes {
     | '/warehouse-flow'
     | '/wave-flow'
     | '/work-craft'
-    | '/ams-insights/assembly'
-    | '/ams-insights/dispatch'
-    | '/ams-insights/inventory'
-    | '/ams-insights/receiving'
-    | '/ams-insights/reports'
     | '/dashboard_/inventory'
     | '/gate-pass-pro/appointments'
     | '/gate-pass-pro/arrival-notifications'
@@ -2425,7 +2248,6 @@ export interface FileRouteTypes {
     | '/work-craft/exceptions'
     | '/work-craft/finished-goods'
     | '/work-craft/rework-scrap'
-    | '/ams-insights/'
     | '/document-flow/'
     | '/gate-pass-pro/'
     | '/inventory-flow-pro/'
@@ -2438,14 +2260,6 @@ export interface FileRouteTypes {
     | '/warehouse-flow/'
     | '/wave-flow/'
     | '/work-craft/'
-    | '/ams-insights/procurement/approvals'
-    | '/ams-insights/procurement/asn'
-    | '/ams-insights/procurement/contracts'
-    | '/ams-insights/procurement/performance'
-    | '/ams-insights/procurement/purchase-orders'
-    | '/ams-insights/procurement/suppliers'
-    | '/ams-insights/settings/system'
-    | '/ams-insights/settings/users'
     | '/document-flow/documents/$id'
     | '/document-flow/documents/library'
     | '/document-flow/documents/upload'
@@ -2507,7 +2321,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AcceptArrivalRoute: typeof AcceptArrivalRoute
-  AmsInsightsRoute: typeof AmsInsightsRouteWithChildren
   ArrivalSuccessRoute: typeof ArrivalSuccessRoute
   DashboardRoute: typeof DashboardRoute
   DockAssignmentRoute: typeof DockAssignmentRoute
@@ -2554,13 +2367,6 @@ declare module '@tanstack/react-router' {
       path: '/accept-arrival'
       fullPath: '/accept-arrival'
       preLoaderRoute: typeof AcceptArrivalRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ams-insights': {
-      id: '/ams-insights'
-      path: '/ams-insights'
-      fullPath: '/ams-insights'
-      preLoaderRoute: typeof AmsInsightsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/arrival-success': {
@@ -2765,48 +2571,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/work-craft'
       preLoaderRoute: typeof WorkCraftRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/ams-insights/': {
-      id: '/ams-insights/'
-      path: '/'
-      fullPath: '/ams-insights/'
-      preLoaderRoute: typeof AmsInsightsIndexRouteImport
-      parentRoute: typeof AmsInsightsRoute
-    }
-    '/ams-insights/assembly': {
-      id: '/ams-insights/assembly'
-      path: '/assembly'
-      fullPath: '/ams-insights/assembly'
-      preLoaderRoute: typeof AmsInsightsAssemblyRouteImport
-      parentRoute: typeof AmsInsightsRoute
-    }
-    '/ams-insights/dispatch': {
-      id: '/ams-insights/dispatch'
-      path: '/dispatch'
-      fullPath: '/ams-insights/dispatch'
-      preLoaderRoute: typeof AmsInsightsDispatchRouteImport
-      parentRoute: typeof AmsInsightsRoute
-    }
-    '/ams-insights/inventory': {
-      id: '/ams-insights/inventory'
-      path: '/inventory'
-      fullPath: '/ams-insights/inventory'
-      preLoaderRoute: typeof AmsInsightsInventoryRouteImport
-      parentRoute: typeof AmsInsightsRoute
-    }
-    '/ams-insights/receiving': {
-      id: '/ams-insights/receiving'
-      path: '/receiving'
-      fullPath: '/ams-insights/receiving'
-      preLoaderRoute: typeof AmsInsightsReceivingRouteImport
-      parentRoute: typeof AmsInsightsRoute
-    }
-    '/ams-insights/reports': {
-      id: '/ams-insights/reports'
-      path: '/reports'
-      fullPath: '/ams-insights/reports'
-      preLoaderRoute: typeof AmsInsightsReportsRouteImport
-      parentRoute: typeof AmsInsightsRoute
     }
     '/dashboard_/inventory': {
       id: '/dashboard_/inventory'
@@ -3515,62 +3279,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorkCraftReworkScrapRouteImport
       parentRoute: typeof WorkCraftRoute
     }
-    '/ams-insights/procurement/approvals': {
-      id: '/ams-insights/procurement/approvals'
-      path: '/procurement/approvals'
-      fullPath: '/ams-insights/procurement/approvals'
-      preLoaderRoute: typeof AmsInsightsProcurementApprovalsRouteImport
-      parentRoute: typeof AmsInsightsRoute
-    }
-    '/ams-insights/procurement/asn': {
-      id: '/ams-insights/procurement/asn'
-      path: '/procurement/asn'
-      fullPath: '/ams-insights/procurement/asn'
-      preLoaderRoute: typeof AmsInsightsProcurementAsnRouteImport
-      parentRoute: typeof AmsInsightsRoute
-    }
-    '/ams-insights/procurement/contracts': {
-      id: '/ams-insights/procurement/contracts'
-      path: '/procurement/contracts'
-      fullPath: '/ams-insights/procurement/contracts'
-      preLoaderRoute: typeof AmsInsightsProcurementContractsRouteImport
-      parentRoute: typeof AmsInsightsRoute
-    }
-    '/ams-insights/procurement/performance': {
-      id: '/ams-insights/procurement/performance'
-      path: '/procurement/performance'
-      fullPath: '/ams-insights/procurement/performance'
-      preLoaderRoute: typeof AmsInsightsProcurementPerformanceRouteImport
-      parentRoute: typeof AmsInsightsRoute
-    }
-    '/ams-insights/procurement/purchase-orders': {
-      id: '/ams-insights/procurement/purchase-orders'
-      path: '/procurement/purchase-orders'
-      fullPath: '/ams-insights/procurement/purchase-orders'
-      preLoaderRoute: typeof AmsInsightsProcurementPurchaseOrdersRouteImport
-      parentRoute: typeof AmsInsightsRoute
-    }
-    '/ams-insights/procurement/suppliers': {
-      id: '/ams-insights/procurement/suppliers'
-      path: '/procurement/suppliers'
-      fullPath: '/ams-insights/procurement/suppliers'
-      preLoaderRoute: typeof AmsInsightsProcurementSuppliersRouteImport
-      parentRoute: typeof AmsInsightsRoute
-    }
-    '/ams-insights/settings/system': {
-      id: '/ams-insights/settings/system'
-      path: '/settings/system'
-      fullPath: '/ams-insights/settings/system'
-      preLoaderRoute: typeof AmsInsightsSettingsSystemRouteImport
-      parentRoute: typeof AmsInsightsRoute
-    }
-    '/ams-insights/settings/users': {
-      id: '/ams-insights/settings/users'
-      path: '/settings/users'
-      fullPath: '/ams-insights/settings/users'
-      preLoaderRoute: typeof AmsInsightsSettingsUsersRouteImport
-      parentRoute: typeof AmsInsightsRoute
-    }
     '/document-flow/documents/': {
       id: '/document-flow/documents/'
       path: '/documents'
@@ -3965,46 +3673,6 @@ declare module '@tanstack/react-router' {
     }
   }
 }
-
-interface AmsInsightsRouteChildren {
-  AmsInsightsAssemblyRoute: typeof AmsInsightsAssemblyRoute
-  AmsInsightsDispatchRoute: typeof AmsInsightsDispatchRoute
-  AmsInsightsInventoryRoute: typeof AmsInsightsInventoryRoute
-  AmsInsightsReceivingRoute: typeof AmsInsightsReceivingRoute
-  AmsInsightsReportsRoute: typeof AmsInsightsReportsRoute
-  AmsInsightsIndexRoute: typeof AmsInsightsIndexRoute
-  AmsInsightsProcurementApprovalsRoute: typeof AmsInsightsProcurementApprovalsRoute
-  AmsInsightsProcurementAsnRoute: typeof AmsInsightsProcurementAsnRoute
-  AmsInsightsProcurementContractsRoute: typeof AmsInsightsProcurementContractsRoute
-  AmsInsightsProcurementPerformanceRoute: typeof AmsInsightsProcurementPerformanceRoute
-  AmsInsightsProcurementPurchaseOrdersRoute: typeof AmsInsightsProcurementPurchaseOrdersRoute
-  AmsInsightsProcurementSuppliersRoute: typeof AmsInsightsProcurementSuppliersRoute
-  AmsInsightsSettingsSystemRoute: typeof AmsInsightsSettingsSystemRoute
-  AmsInsightsSettingsUsersRoute: typeof AmsInsightsSettingsUsersRoute
-}
-
-const AmsInsightsRouteChildren: AmsInsightsRouteChildren = {
-  AmsInsightsAssemblyRoute: AmsInsightsAssemblyRoute,
-  AmsInsightsDispatchRoute: AmsInsightsDispatchRoute,
-  AmsInsightsInventoryRoute: AmsInsightsInventoryRoute,
-  AmsInsightsReceivingRoute: AmsInsightsReceivingRoute,
-  AmsInsightsReportsRoute: AmsInsightsReportsRoute,
-  AmsInsightsIndexRoute: AmsInsightsIndexRoute,
-  AmsInsightsProcurementApprovalsRoute: AmsInsightsProcurementApprovalsRoute,
-  AmsInsightsProcurementAsnRoute: AmsInsightsProcurementAsnRoute,
-  AmsInsightsProcurementContractsRoute: AmsInsightsProcurementContractsRoute,
-  AmsInsightsProcurementPerformanceRoute:
-    AmsInsightsProcurementPerformanceRoute,
-  AmsInsightsProcurementPurchaseOrdersRoute:
-    AmsInsightsProcurementPurchaseOrdersRoute,
-  AmsInsightsProcurementSuppliersRoute: AmsInsightsProcurementSuppliersRoute,
-  AmsInsightsSettingsSystemRoute: AmsInsightsSettingsSystemRoute,
-  AmsInsightsSettingsUsersRoute: AmsInsightsSettingsUsersRoute,
-}
-
-const AmsInsightsRouteWithChildren = AmsInsightsRoute._addFileChildren(
-  AmsInsightsRouteChildren,
-)
 
 interface DocumentFlowRouteChildren {
   DocumentFlowIndexRoute: typeof DocumentFlowIndexRoute
@@ -4454,7 +4122,6 @@ const WorkCraftRouteWithChildren = WorkCraftRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AcceptArrivalRoute: AcceptArrivalRoute,
-  AmsInsightsRoute: AmsInsightsRouteWithChildren,
   ArrivalSuccessRoute: ArrivalSuccessRoute,
   DashboardRoute: DashboardRoute,
   DockAssignmentRoute: DockAssignmentRoute,
