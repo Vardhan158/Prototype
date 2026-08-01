@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
-export type AppRole = "Administrator" | "Data Steward" | "Wave Planner" | "Production Manager" | "Inventory Controller" | "Warehouse Supervisor" | "Receiving Supervisor" | "Document Controller" | "Procurement Manager" | "Storage Manager";
-export type ModuleKey = "arrival" | "master" | "wave" | "workcraft" | "inventory" | "warehouse" | "receiving" | "document" | "procurement" | "storage";
+export type AppRole = "Administrator" | "Data Steward" | "Wave Planner" | "Production Manager" | "Inventory Controller" | "Warehouse Supervisor" | "Receiving Supervisor" | "Document Controller" | "Procurement Manager" | "Storage Manager" | "Quality Inspector";
+export type ModuleKey = "arrival" | "master" | "wave" | "workcraft" | "inventory" | "warehouse" | "receiving" | "document" | "procurement" | "storage" | "quality";
 
 export interface AuthUser {
   id: string;
@@ -20,7 +20,7 @@ export const SEEDED_USERS: SeededUser[] = [
     email: "admin@nexuswms.com",
     password: "Admin@2026",
     role: "Administrator",
-    modules: ["arrival", "master", "wave", "workcraft", "inventory", "warehouse", "receiving", "document", "procurement", "storage"],
+    modules: ["arrival", "master", "wave", "workcraft", "inventory", "warehouse", "receiving", "document", "procurement", "storage", "quality"],
     dashboard: "/dashboard",
   },
   {
@@ -103,6 +103,15 @@ export const SEEDED_USERS: SeededUser[] = [
     role: "Storage Manager",
     modules: ["storage"],
     dashboard: "/storage-guardian",
+  },
+  {
+    id: "QIN-1001",
+    name: "A. Sharma",
+    email: "quality@nexuswms.com",
+    password: "quality@2026",
+    role: "Quality Inspector",
+    modules: ["quality"],
+    dashboard: "/quality-gatekeeper",
   },
 ];
 

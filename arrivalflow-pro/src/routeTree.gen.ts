@@ -27,6 +27,7 @@ import { Route as MasterCoreRouteImport } from './routes/master-core'
 import { Route as MasterDataRouteImport } from './routes/master-data'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as PurchaseOrderRouteImport } from './routes/purchase-order'
+import { Route as QualityGatekeeperRouteImport } from './routes/quality-gatekeeper'
 import { Route as ReceivingRouteImport } from './routes/receiving'
 import { Route as ReceivingHubRouteImport } from './routes/receiving-hub'
 import { Route as ReportsRouteImport } from './routes/reports'
@@ -55,6 +56,18 @@ import { Route as MasterCoreHelpRouteImport } from './routes/master-core.help'
 import { Route as MasterCoreSettingsRouteImport } from './routes/master-core.settings'
 import { Route as MasterCoreVehiclesRouteImport } from './routes/master-core.vehicles'
 import { Route as MasterCoreWarehousesRouteImport } from './routes/master-core.warehouses'
+import { Route as QualityGatekeeperIndexRouteImport } from './routes/quality-gatekeeper.index'
+import { Route as QualityGatekeeperDamageRouteImport } from './routes/quality-gatekeeper.damage'
+import { Route as QualityGatekeeperHistoryRouteImport } from './routes/quality-gatekeeper.history'
+import { Route as QualityGatekeeperHoldRouteImport } from './routes/quality-gatekeeper.hold'
+import { Route as QualityGatekeeperInventoryRouteImport } from './routes/quality-gatekeeper.inventory'
+import { Route as QualityGatekeeperNcrRouteImport } from './routes/quality-gatekeeper.ncr'
+import { Route as QualityGatekeeperQueueRouteImport } from './routes/quality-gatekeeper.queue'
+import { Route as QualityGatekeeperReceivingRouteImport } from './routes/quality-gatekeeper.receiving'
+import { Route as QualityGatekeeperReportsRouteImport } from './routes/quality-gatekeeper.reports'
+import { Route as QualityGatekeeperRtsRouteImport } from './routes/quality-gatekeeper.rts'
+import { Route as QualityGatekeeperSettingsRouteImport } from './routes/quality-gatekeeper.settings'
+import { Route as QualityGatekeeperWarehouseRouteImport } from './routes/quality-gatekeeper.warehouse'
 import { Route as ReceivingHubIndexRouteImport } from './routes/receiving-hub.index'
 import { Route as ReceivingHubDiscrepanciesRouteImport } from './routes/receiving-hub.discrepancies'
 import { Route as ReceivingHubNonPoReceiptRouteImport } from './routes/receiving-hub.non-po-receipt'
@@ -123,6 +136,8 @@ import { Route as MasterCoreItemsIndexRouteImport } from './routes/master-core.i
 import { Route as MasterCoreItemsIdRouteImport } from './routes/master-core.items.$id'
 import { Route as MasterCoreSuppliersIndexRouteImport } from './routes/master-core.suppliers.index'
 import { Route as MasterCoreSuppliersIdRouteImport } from './routes/master-core.suppliers.$id'
+import { Route as QualityGatekeeperInspectGrnRouteImport } from './routes/quality-gatekeeper.inspect.$grn'
+import { Route as QualityGatekeeperInspectionGrnRouteImport } from './routes/quality-gatekeeper.inspection.$grn'
 import { Route as ReceivingHubGrnIndexRouteImport } from './routes/receiving-hub.grn.index'
 import { Route as ReceivingHubGrnIdRouteImport } from './routes/receiving-hub.grn.$id'
 import { Route as ReceivingHubGrnNewRouteImport } from './routes/receiving-hub.grn.new'
@@ -232,6 +247,11 @@ const NotificationsRoute = NotificationsRouteImport.update({
 const PurchaseOrderRoute = PurchaseOrderRouteImport.update({
   id: '/purchase-order',
   path: '/purchase-order',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QualityGatekeeperRoute = QualityGatekeeperRouteImport.update({
+  id: '/quality-gatekeeper',
+  path: '/quality-gatekeeper',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReceivingRoute = ReceivingRouteImport.update({
@@ -375,6 +395,72 @@ const MasterCoreWarehousesRoute = MasterCoreWarehousesRouteImport.update({
   path: '/warehouses',
   getParentRoute: () => MasterCoreRoute,
 } as any)
+const QualityGatekeeperIndexRoute = QualityGatekeeperIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => QualityGatekeeperRoute,
+} as any)
+const QualityGatekeeperDamageRoute = QualityGatekeeperDamageRouteImport.update({
+  id: '/damage',
+  path: '/damage',
+  getParentRoute: () => QualityGatekeeperRoute,
+} as any)
+const QualityGatekeeperHistoryRoute =
+  QualityGatekeeperHistoryRouteImport.update({
+    id: '/history',
+    path: '/history',
+    getParentRoute: () => QualityGatekeeperRoute,
+  } as any)
+const QualityGatekeeperHoldRoute = QualityGatekeeperHoldRouteImport.update({
+  id: '/hold',
+  path: '/hold',
+  getParentRoute: () => QualityGatekeeperRoute,
+} as any)
+const QualityGatekeeperInventoryRoute =
+  QualityGatekeeperInventoryRouteImport.update({
+    id: '/inventory',
+    path: '/inventory',
+    getParentRoute: () => QualityGatekeeperRoute,
+  } as any)
+const QualityGatekeeperNcrRoute = QualityGatekeeperNcrRouteImport.update({
+  id: '/ncr',
+  path: '/ncr',
+  getParentRoute: () => QualityGatekeeperRoute,
+} as any)
+const QualityGatekeeperQueueRoute = QualityGatekeeperQueueRouteImport.update({
+  id: '/queue',
+  path: '/queue',
+  getParentRoute: () => QualityGatekeeperRoute,
+} as any)
+const QualityGatekeeperReceivingRoute =
+  QualityGatekeeperReceivingRouteImport.update({
+    id: '/receiving',
+    path: '/receiving',
+    getParentRoute: () => QualityGatekeeperRoute,
+  } as any)
+const QualityGatekeeperReportsRoute =
+  QualityGatekeeperReportsRouteImport.update({
+    id: '/reports',
+    path: '/reports',
+    getParentRoute: () => QualityGatekeeperRoute,
+  } as any)
+const QualityGatekeeperRtsRoute = QualityGatekeeperRtsRouteImport.update({
+  id: '/rts',
+  path: '/rts',
+  getParentRoute: () => QualityGatekeeperRoute,
+} as any)
+const QualityGatekeeperSettingsRoute =
+  QualityGatekeeperSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => QualityGatekeeperRoute,
+  } as any)
+const QualityGatekeeperWarehouseRoute =
+  QualityGatekeeperWarehouseRouteImport.update({
+    id: '/warehouse',
+    path: '/warehouse',
+    getParentRoute: () => QualityGatekeeperRoute,
+  } as any)
 const ReceivingHubIndexRoute = ReceivingHubIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -738,6 +824,18 @@ const MasterCoreSuppliersIdRoute = MasterCoreSuppliersIdRouteImport.update({
   path: '/suppliers/$id',
   getParentRoute: () => MasterCoreRoute,
 } as any)
+const QualityGatekeeperInspectGrnRoute =
+  QualityGatekeeperInspectGrnRouteImport.update({
+    id: '/inspect/$grn',
+    path: '/inspect/$grn',
+    getParentRoute: () => QualityGatekeeperRoute,
+  } as any)
+const QualityGatekeeperInspectionGrnRoute =
+  QualityGatekeeperInspectionGrnRouteImport.update({
+    id: '/inspection/$grn',
+    path: '/inspection/$grn',
+    getParentRoute: () => QualityGatekeeperRoute,
+  } as any)
 const ReceivingHubGrnIndexRoute = ReceivingHubGrnIndexRouteImport.update({
   id: '/grn/',
   path: '/grn/',
@@ -873,6 +971,7 @@ export interface FileRoutesByFullPath {
   '/master-data': typeof MasterDataRoute
   '/notifications': typeof NotificationsRoute
   '/purchase-order': typeof PurchaseOrderRoute
+  '/quality-gatekeeper': typeof QualityGatekeeperRouteWithChildren
   '/receiving': typeof ReceivingRoute
   '/receiving-hub': typeof ReceivingHubRouteWithChildren
   '/reports': typeof ReportsRoute
@@ -897,6 +996,17 @@ export interface FileRoutesByFullPath {
   '/master-core/settings': typeof MasterCoreSettingsRoute
   '/master-core/vehicles': typeof MasterCoreVehiclesRoute
   '/master-core/warehouses': typeof MasterCoreWarehousesRoute
+  '/quality-gatekeeper/damage': typeof QualityGatekeeperDamageRoute
+  '/quality-gatekeeper/history': typeof QualityGatekeeperHistoryRoute
+  '/quality-gatekeeper/hold': typeof QualityGatekeeperHoldRoute
+  '/quality-gatekeeper/inventory': typeof QualityGatekeeperInventoryRoute
+  '/quality-gatekeeper/ncr': typeof QualityGatekeeperNcrRoute
+  '/quality-gatekeeper/queue': typeof QualityGatekeeperQueueRoute
+  '/quality-gatekeeper/receiving': typeof QualityGatekeeperReceivingRoute
+  '/quality-gatekeeper/reports': typeof QualityGatekeeperReportsRoute
+  '/quality-gatekeeper/rts': typeof QualityGatekeeperRtsRoute
+  '/quality-gatekeeper/settings': typeof QualityGatekeeperSettingsRoute
+  '/quality-gatekeeper/warehouse': typeof QualityGatekeeperWarehouseRoute
   '/receiving-hub/discrepancies': typeof ReceivingHubDiscrepanciesRoute
   '/receiving-hub/non-po-receipt': typeof ReceivingHubNonPoReceiptRoute
   '/receiving-hub/put-away': typeof ReceivingHubPutAwayRoute
@@ -942,6 +1052,7 @@ export interface FileRoutesByFullPath {
   '/document-flow/': typeof DocumentFlowIndexRoute
   '/inventory-flow/': typeof InventoryFlowIndexRoute
   '/master-core/': typeof MasterCoreIndexRoute
+  '/quality-gatekeeper/': typeof QualityGatekeeperIndexRoute
   '/receiving-hub/': typeof ReceivingHubIndexRoute
   '/storage-guardian/': typeof StorageGuardianIndexRoute
   '/warehouse-flow/': typeof WarehouseFlowIndexRoute
@@ -963,6 +1074,8 @@ export interface FileRoutesByFullPath {
   '/master-core/customers/$id': typeof MasterCoreCustomersIdRoute
   '/master-core/items/$id': typeof MasterCoreItemsIdRoute
   '/master-core/suppliers/$id': typeof MasterCoreSuppliersIdRoute
+  '/quality-gatekeeper/inspect/$grn': typeof QualityGatekeeperInspectGrnRoute
+  '/quality-gatekeeper/inspection/$grn': typeof QualityGatekeeperInspectionGrnRoute
   '/receiving-hub/grn/$id': typeof ReceivingHubGrnIdRoute
   '/receiving-hub/grn/new': typeof ReceivingHubGrnNewRoute
   '/receiving-hub/kpi/dock-to-stock': typeof ReceivingHubKpiDockToStockRoute
@@ -1024,6 +1137,17 @@ export interface FileRoutesByTo {
   '/master-core/settings': typeof MasterCoreSettingsRoute
   '/master-core/vehicles': typeof MasterCoreVehiclesRoute
   '/master-core/warehouses': typeof MasterCoreWarehousesRoute
+  '/quality-gatekeeper/damage': typeof QualityGatekeeperDamageRoute
+  '/quality-gatekeeper/history': typeof QualityGatekeeperHistoryRoute
+  '/quality-gatekeeper/hold': typeof QualityGatekeeperHoldRoute
+  '/quality-gatekeeper/inventory': typeof QualityGatekeeperInventoryRoute
+  '/quality-gatekeeper/ncr': typeof QualityGatekeeperNcrRoute
+  '/quality-gatekeeper/queue': typeof QualityGatekeeperQueueRoute
+  '/quality-gatekeeper/receiving': typeof QualityGatekeeperReceivingRoute
+  '/quality-gatekeeper/reports': typeof QualityGatekeeperReportsRoute
+  '/quality-gatekeeper/rts': typeof QualityGatekeeperRtsRoute
+  '/quality-gatekeeper/settings': typeof QualityGatekeeperSettingsRoute
+  '/quality-gatekeeper/warehouse': typeof QualityGatekeeperWarehouseRoute
   '/receiving-hub/discrepancies': typeof ReceivingHubDiscrepanciesRoute
   '/receiving-hub/non-po-receipt': typeof ReceivingHubNonPoReceiptRoute
   '/receiving-hub/put-away': typeof ReceivingHubPutAwayRoute
@@ -1069,6 +1193,7 @@ export interface FileRoutesByTo {
   '/document-flow': typeof DocumentFlowIndexRoute
   '/inventory-flow': typeof InventoryFlowIndexRoute
   '/master-core': typeof MasterCoreIndexRoute
+  '/quality-gatekeeper': typeof QualityGatekeeperIndexRoute
   '/receiving-hub': typeof ReceivingHubIndexRoute
   '/storage-guardian': typeof StorageGuardianIndexRoute
   '/warehouse-flow': typeof WarehouseFlowIndexRoute
@@ -1090,6 +1215,8 @@ export interface FileRoutesByTo {
   '/master-core/customers/$id': typeof MasterCoreCustomersIdRoute
   '/master-core/items/$id': typeof MasterCoreItemsIdRoute
   '/master-core/suppliers/$id': typeof MasterCoreSuppliersIdRoute
+  '/quality-gatekeeper/inspect/$grn': typeof QualityGatekeeperInspectGrnRoute
+  '/quality-gatekeeper/inspection/$grn': typeof QualityGatekeeperInspectionGrnRoute
   '/receiving-hub/grn/$id': typeof ReceivingHubGrnIdRoute
   '/receiving-hub/grn/new': typeof ReceivingHubGrnNewRoute
   '/receiving-hub/kpi/dock-to-stock': typeof ReceivingHubKpiDockToStockRoute
@@ -1136,6 +1263,7 @@ export interface FileRoutesById {
   '/master-data': typeof MasterDataRoute
   '/notifications': typeof NotificationsRoute
   '/purchase-order': typeof PurchaseOrderRoute
+  '/quality-gatekeeper': typeof QualityGatekeeperRouteWithChildren
   '/receiving': typeof ReceivingRoute
   '/receiving-hub': typeof ReceivingHubRouteWithChildren
   '/reports': typeof ReportsRoute
@@ -1160,6 +1288,17 @@ export interface FileRoutesById {
   '/master-core/settings': typeof MasterCoreSettingsRoute
   '/master-core/vehicles': typeof MasterCoreVehiclesRoute
   '/master-core/warehouses': typeof MasterCoreWarehousesRoute
+  '/quality-gatekeeper/damage': typeof QualityGatekeeperDamageRoute
+  '/quality-gatekeeper/history': typeof QualityGatekeeperHistoryRoute
+  '/quality-gatekeeper/hold': typeof QualityGatekeeperHoldRoute
+  '/quality-gatekeeper/inventory': typeof QualityGatekeeperInventoryRoute
+  '/quality-gatekeeper/ncr': typeof QualityGatekeeperNcrRoute
+  '/quality-gatekeeper/queue': typeof QualityGatekeeperQueueRoute
+  '/quality-gatekeeper/receiving': typeof QualityGatekeeperReceivingRoute
+  '/quality-gatekeeper/reports': typeof QualityGatekeeperReportsRoute
+  '/quality-gatekeeper/rts': typeof QualityGatekeeperRtsRoute
+  '/quality-gatekeeper/settings': typeof QualityGatekeeperSettingsRoute
+  '/quality-gatekeeper/warehouse': typeof QualityGatekeeperWarehouseRoute
   '/receiving-hub/discrepancies': typeof ReceivingHubDiscrepanciesRoute
   '/receiving-hub/non-po-receipt': typeof ReceivingHubNonPoReceiptRoute
   '/receiving-hub/put-away': typeof ReceivingHubPutAwayRoute
@@ -1205,6 +1344,7 @@ export interface FileRoutesById {
   '/document-flow/': typeof DocumentFlowIndexRoute
   '/inventory-flow/': typeof InventoryFlowIndexRoute
   '/master-core/': typeof MasterCoreIndexRoute
+  '/quality-gatekeeper/': typeof QualityGatekeeperIndexRoute
   '/receiving-hub/': typeof ReceivingHubIndexRoute
   '/storage-guardian/': typeof StorageGuardianIndexRoute
   '/warehouse-flow/': typeof WarehouseFlowIndexRoute
@@ -1226,6 +1366,8 @@ export interface FileRoutesById {
   '/master-core/customers/$id': typeof MasterCoreCustomersIdRoute
   '/master-core/items/$id': typeof MasterCoreItemsIdRoute
   '/master-core/suppliers/$id': typeof MasterCoreSuppliersIdRoute
+  '/quality-gatekeeper/inspect/$grn': typeof QualityGatekeeperInspectGrnRoute
+  '/quality-gatekeeper/inspection/$grn': typeof QualityGatekeeperInspectionGrnRoute
   '/receiving-hub/grn/$id': typeof ReceivingHubGrnIdRoute
   '/receiving-hub/grn/new': typeof ReceivingHubGrnNewRoute
   '/receiving-hub/kpi/dock-to-stock': typeof ReceivingHubKpiDockToStockRoute
@@ -1274,6 +1416,7 @@ export interface FileRouteTypes {
     | '/master-data'
     | '/notifications'
     | '/purchase-order'
+    | '/quality-gatekeeper'
     | '/receiving'
     | '/receiving-hub'
     | '/reports'
@@ -1298,6 +1441,17 @@ export interface FileRouteTypes {
     | '/master-core/settings'
     | '/master-core/vehicles'
     | '/master-core/warehouses'
+    | '/quality-gatekeeper/damage'
+    | '/quality-gatekeeper/history'
+    | '/quality-gatekeeper/hold'
+    | '/quality-gatekeeper/inventory'
+    | '/quality-gatekeeper/ncr'
+    | '/quality-gatekeeper/queue'
+    | '/quality-gatekeeper/receiving'
+    | '/quality-gatekeeper/reports'
+    | '/quality-gatekeeper/rts'
+    | '/quality-gatekeeper/settings'
+    | '/quality-gatekeeper/warehouse'
     | '/receiving-hub/discrepancies'
     | '/receiving-hub/non-po-receipt'
     | '/receiving-hub/put-away'
@@ -1343,6 +1497,7 @@ export interface FileRouteTypes {
     | '/document-flow/'
     | '/inventory-flow/'
     | '/master-core/'
+    | '/quality-gatekeeper/'
     | '/receiving-hub/'
     | '/storage-guardian/'
     | '/warehouse-flow/'
@@ -1364,6 +1519,8 @@ export interface FileRouteTypes {
     | '/master-core/customers/$id'
     | '/master-core/items/$id'
     | '/master-core/suppliers/$id'
+    | '/quality-gatekeeper/inspect/$grn'
+    | '/quality-gatekeeper/inspection/$grn'
     | '/receiving-hub/grn/$id'
     | '/receiving-hub/grn/new'
     | '/receiving-hub/kpi/dock-to-stock'
@@ -1425,6 +1582,17 @@ export interface FileRouteTypes {
     | '/master-core/settings'
     | '/master-core/vehicles'
     | '/master-core/warehouses'
+    | '/quality-gatekeeper/damage'
+    | '/quality-gatekeeper/history'
+    | '/quality-gatekeeper/hold'
+    | '/quality-gatekeeper/inventory'
+    | '/quality-gatekeeper/ncr'
+    | '/quality-gatekeeper/queue'
+    | '/quality-gatekeeper/receiving'
+    | '/quality-gatekeeper/reports'
+    | '/quality-gatekeeper/rts'
+    | '/quality-gatekeeper/settings'
+    | '/quality-gatekeeper/warehouse'
     | '/receiving-hub/discrepancies'
     | '/receiving-hub/non-po-receipt'
     | '/receiving-hub/put-away'
@@ -1470,6 +1638,7 @@ export interface FileRouteTypes {
     | '/document-flow'
     | '/inventory-flow'
     | '/master-core'
+    | '/quality-gatekeeper'
     | '/receiving-hub'
     | '/storage-guardian'
     | '/warehouse-flow'
@@ -1491,6 +1660,8 @@ export interface FileRouteTypes {
     | '/master-core/customers/$id'
     | '/master-core/items/$id'
     | '/master-core/suppliers/$id'
+    | '/quality-gatekeeper/inspect/$grn'
+    | '/quality-gatekeeper/inspection/$grn'
     | '/receiving-hub/grn/$id'
     | '/receiving-hub/grn/new'
     | '/receiving-hub/kpi/dock-to-stock'
@@ -1536,6 +1707,7 @@ export interface FileRouteTypes {
     | '/master-data'
     | '/notifications'
     | '/purchase-order'
+    | '/quality-gatekeeper'
     | '/receiving'
     | '/receiving-hub'
     | '/reports'
@@ -1560,6 +1732,17 @@ export interface FileRouteTypes {
     | '/master-core/settings'
     | '/master-core/vehicles'
     | '/master-core/warehouses'
+    | '/quality-gatekeeper/damage'
+    | '/quality-gatekeeper/history'
+    | '/quality-gatekeeper/hold'
+    | '/quality-gatekeeper/inventory'
+    | '/quality-gatekeeper/ncr'
+    | '/quality-gatekeeper/queue'
+    | '/quality-gatekeeper/receiving'
+    | '/quality-gatekeeper/reports'
+    | '/quality-gatekeeper/rts'
+    | '/quality-gatekeeper/settings'
+    | '/quality-gatekeeper/warehouse'
     | '/receiving-hub/discrepancies'
     | '/receiving-hub/non-po-receipt'
     | '/receiving-hub/put-away'
@@ -1605,6 +1788,7 @@ export interface FileRouteTypes {
     | '/document-flow/'
     | '/inventory-flow/'
     | '/master-core/'
+    | '/quality-gatekeeper/'
     | '/receiving-hub/'
     | '/storage-guardian/'
     | '/warehouse-flow/'
@@ -1626,6 +1810,8 @@ export interface FileRouteTypes {
     | '/master-core/customers/$id'
     | '/master-core/items/$id'
     | '/master-core/suppliers/$id'
+    | '/quality-gatekeeper/inspect/$grn'
+    | '/quality-gatekeeper/inspection/$grn'
     | '/receiving-hub/grn/$id'
     | '/receiving-hub/grn/new'
     | '/receiving-hub/kpi/dock-to-stock'
@@ -1673,6 +1859,7 @@ export interface RootRouteChildren {
   MasterDataRoute: typeof MasterDataRoute
   NotificationsRoute: typeof NotificationsRoute
   PurchaseOrderRoute: typeof PurchaseOrderRoute
+  QualityGatekeeperRoute: typeof QualityGatekeeperRouteWithChildren
   ReceivingRoute: typeof ReceivingRoute
   ReceivingHubRoute: typeof ReceivingHubRouteWithChildren
   ReportsRoute: typeof ReportsRoute
@@ -1811,6 +1998,13 @@ declare module '@tanstack/react-router' {
       path: '/purchase-order'
       fullPath: '/purchase-order'
       preLoaderRoute: typeof PurchaseOrderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quality-gatekeeper': {
+      id: '/quality-gatekeeper'
+      path: '/quality-gatekeeper'
+      fullPath: '/quality-gatekeeper'
+      preLoaderRoute: typeof QualityGatekeeperRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/receiving': {
@@ -2008,6 +2202,90 @@ declare module '@tanstack/react-router' {
       fullPath: '/master-core/warehouses'
       preLoaderRoute: typeof MasterCoreWarehousesRouteImport
       parentRoute: typeof MasterCoreRoute
+    }
+    '/quality-gatekeeper/': {
+      id: '/quality-gatekeeper/'
+      path: '/'
+      fullPath: '/quality-gatekeeper/'
+      preLoaderRoute: typeof QualityGatekeeperIndexRouteImport
+      parentRoute: typeof QualityGatekeeperRoute
+    }
+    '/quality-gatekeeper/damage': {
+      id: '/quality-gatekeeper/damage'
+      path: '/damage'
+      fullPath: '/quality-gatekeeper/damage'
+      preLoaderRoute: typeof QualityGatekeeperDamageRouteImport
+      parentRoute: typeof QualityGatekeeperRoute
+    }
+    '/quality-gatekeeper/history': {
+      id: '/quality-gatekeeper/history'
+      path: '/history'
+      fullPath: '/quality-gatekeeper/history'
+      preLoaderRoute: typeof QualityGatekeeperHistoryRouteImport
+      parentRoute: typeof QualityGatekeeperRoute
+    }
+    '/quality-gatekeeper/hold': {
+      id: '/quality-gatekeeper/hold'
+      path: '/hold'
+      fullPath: '/quality-gatekeeper/hold'
+      preLoaderRoute: typeof QualityGatekeeperHoldRouteImport
+      parentRoute: typeof QualityGatekeeperRoute
+    }
+    '/quality-gatekeeper/inventory': {
+      id: '/quality-gatekeeper/inventory'
+      path: '/inventory'
+      fullPath: '/quality-gatekeeper/inventory'
+      preLoaderRoute: typeof QualityGatekeeperInventoryRouteImport
+      parentRoute: typeof QualityGatekeeperRoute
+    }
+    '/quality-gatekeeper/ncr': {
+      id: '/quality-gatekeeper/ncr'
+      path: '/ncr'
+      fullPath: '/quality-gatekeeper/ncr'
+      preLoaderRoute: typeof QualityGatekeeperNcrRouteImport
+      parentRoute: typeof QualityGatekeeperRoute
+    }
+    '/quality-gatekeeper/queue': {
+      id: '/quality-gatekeeper/queue'
+      path: '/queue'
+      fullPath: '/quality-gatekeeper/queue'
+      preLoaderRoute: typeof QualityGatekeeperQueueRouteImport
+      parentRoute: typeof QualityGatekeeperRoute
+    }
+    '/quality-gatekeeper/receiving': {
+      id: '/quality-gatekeeper/receiving'
+      path: '/receiving'
+      fullPath: '/quality-gatekeeper/receiving'
+      preLoaderRoute: typeof QualityGatekeeperReceivingRouteImport
+      parentRoute: typeof QualityGatekeeperRoute
+    }
+    '/quality-gatekeeper/reports': {
+      id: '/quality-gatekeeper/reports'
+      path: '/reports'
+      fullPath: '/quality-gatekeeper/reports'
+      preLoaderRoute: typeof QualityGatekeeperReportsRouteImport
+      parentRoute: typeof QualityGatekeeperRoute
+    }
+    '/quality-gatekeeper/rts': {
+      id: '/quality-gatekeeper/rts'
+      path: '/rts'
+      fullPath: '/quality-gatekeeper/rts'
+      preLoaderRoute: typeof QualityGatekeeperRtsRouteImport
+      parentRoute: typeof QualityGatekeeperRoute
+    }
+    '/quality-gatekeeper/settings': {
+      id: '/quality-gatekeeper/settings'
+      path: '/settings'
+      fullPath: '/quality-gatekeeper/settings'
+      preLoaderRoute: typeof QualityGatekeeperSettingsRouteImport
+      parentRoute: typeof QualityGatekeeperRoute
+    }
+    '/quality-gatekeeper/warehouse': {
+      id: '/quality-gatekeeper/warehouse'
+      path: '/warehouse'
+      fullPath: '/quality-gatekeeper/warehouse'
+      preLoaderRoute: typeof QualityGatekeeperWarehouseRouteImport
+      parentRoute: typeof QualityGatekeeperRoute
     }
     '/receiving-hub/': {
       id: '/receiving-hub/'
@@ -2485,6 +2763,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MasterCoreSuppliersIdRouteImport
       parentRoute: typeof MasterCoreRoute
     }
+    '/quality-gatekeeper/inspect/$grn': {
+      id: '/quality-gatekeeper/inspect/$grn'
+      path: '/inspect/$grn'
+      fullPath: '/quality-gatekeeper/inspect/$grn'
+      preLoaderRoute: typeof QualityGatekeeperInspectGrnRouteImport
+      parentRoute: typeof QualityGatekeeperRoute
+    }
+    '/quality-gatekeeper/inspection/$grn': {
+      id: '/quality-gatekeeper/inspection/$grn'
+      path: '/inspection/$grn'
+      fullPath: '/quality-gatekeeper/inspection/$grn'
+      preLoaderRoute: typeof QualityGatekeeperInspectionGrnRouteImport
+      parentRoute: typeof QualityGatekeeperRoute
+    }
     '/receiving-hub/grn/': {
       id: '/receiving-hub/grn/'
       path: '/grn'
@@ -2750,6 +3042,43 @@ const MasterCoreRouteWithChildren = MasterCoreRoute._addFileChildren(
   MasterCoreRouteChildren,
 )
 
+interface QualityGatekeeperRouteChildren {
+  QualityGatekeeperDamageRoute: typeof QualityGatekeeperDamageRoute
+  QualityGatekeeperHistoryRoute: typeof QualityGatekeeperHistoryRoute
+  QualityGatekeeperHoldRoute: typeof QualityGatekeeperHoldRoute
+  QualityGatekeeperInventoryRoute: typeof QualityGatekeeperInventoryRoute
+  QualityGatekeeperNcrRoute: typeof QualityGatekeeperNcrRoute
+  QualityGatekeeperQueueRoute: typeof QualityGatekeeperQueueRoute
+  QualityGatekeeperReceivingRoute: typeof QualityGatekeeperReceivingRoute
+  QualityGatekeeperReportsRoute: typeof QualityGatekeeperReportsRoute
+  QualityGatekeeperRtsRoute: typeof QualityGatekeeperRtsRoute
+  QualityGatekeeperSettingsRoute: typeof QualityGatekeeperSettingsRoute
+  QualityGatekeeperWarehouseRoute: typeof QualityGatekeeperWarehouseRoute
+  QualityGatekeeperIndexRoute: typeof QualityGatekeeperIndexRoute
+  QualityGatekeeperInspectGrnRoute: typeof QualityGatekeeperInspectGrnRoute
+  QualityGatekeeperInspectionGrnRoute: typeof QualityGatekeeperInspectionGrnRoute
+}
+
+const QualityGatekeeperRouteChildren: QualityGatekeeperRouteChildren = {
+  QualityGatekeeperDamageRoute: QualityGatekeeperDamageRoute,
+  QualityGatekeeperHistoryRoute: QualityGatekeeperHistoryRoute,
+  QualityGatekeeperHoldRoute: QualityGatekeeperHoldRoute,
+  QualityGatekeeperInventoryRoute: QualityGatekeeperInventoryRoute,
+  QualityGatekeeperNcrRoute: QualityGatekeeperNcrRoute,
+  QualityGatekeeperQueueRoute: QualityGatekeeperQueueRoute,
+  QualityGatekeeperReceivingRoute: QualityGatekeeperReceivingRoute,
+  QualityGatekeeperReportsRoute: QualityGatekeeperReportsRoute,
+  QualityGatekeeperRtsRoute: QualityGatekeeperRtsRoute,
+  QualityGatekeeperSettingsRoute: QualityGatekeeperSettingsRoute,
+  QualityGatekeeperWarehouseRoute: QualityGatekeeperWarehouseRoute,
+  QualityGatekeeperIndexRoute: QualityGatekeeperIndexRoute,
+  QualityGatekeeperInspectGrnRoute: QualityGatekeeperInspectGrnRoute,
+  QualityGatekeeperInspectionGrnRoute: QualityGatekeeperInspectionGrnRoute,
+}
+
+const QualityGatekeeperRouteWithChildren =
+  QualityGatekeeperRoute._addFileChildren(QualityGatekeeperRouteChildren)
+
 interface ReceivingHubRouteChildren {
   ReceivingHubDiscrepanciesRoute: typeof ReceivingHubDiscrepanciesRoute
   ReceivingHubNonPoReceiptRoute: typeof ReceivingHubNonPoReceiptRoute
@@ -2964,6 +3293,7 @@ const rootRouteChildren: RootRouteChildren = {
   MasterDataRoute: MasterDataRoute,
   NotificationsRoute: NotificationsRoute,
   PurchaseOrderRoute: PurchaseOrderRoute,
+  QualityGatekeeperRoute: QualityGatekeeperRouteWithChildren,
   ReceivingRoute: ReceivingRoute,
   ReceivingHubRoute: ReceivingHubRouteWithChildren,
   ReportsRoute: ReportsRoute,
