@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
-export type AppRole = "Administrator" | "Data Steward" | "Wave Planner" | "Production Manager" | "Inventory Controller" | "Warehouse Supervisor" | "Receiving Supervisor" | "Document Controller";
-export type ModuleKey = "arrival" | "master" | "wave" | "workcraft" | "inventory" | "warehouse" | "receiving" | "document";
+export type AppRole = "Administrator" | "Data Steward" | "Wave Planner" | "Production Manager" | "Inventory Controller" | "Warehouse Supervisor" | "Receiving Supervisor" | "Document Controller" | "Procurement Manager";
+export type ModuleKey = "arrival" | "master" | "wave" | "workcraft" | "inventory" | "warehouse" | "receiving" | "document" | "procurement";
 
 export interface AuthUser {
   id: string;
@@ -20,7 +20,7 @@ export const SEEDED_USERS: SeededUser[] = [
     email: "admin@nexuswms.com",
     password: "Admin@2026",
     role: "Administrator",
-    modules: ["arrival", "master", "wave", "workcraft", "inventory", "warehouse", "receiving", "document"],
+    modules: ["arrival", "master", "wave", "workcraft", "inventory", "warehouse", "receiving", "document", "procurement"],
     dashboard: "/dashboard",
   },
   {
@@ -85,6 +85,15 @@ export const SEEDED_USERS: SeededUser[] = [
     role: "Document Controller",
     modules: ["document"],
     dashboard: "/document-flow",
+  },
+  {
+    id: "PRC-1001",
+    name: "AMS Procurement Manager",
+    email: "procurement@nexuswms.com",
+    password: "procurement@2026",
+    role: "Procurement Manager",
+    modules: ["procurement"],
+    dashboard: "/ams-insights",
   },
 ];
 
