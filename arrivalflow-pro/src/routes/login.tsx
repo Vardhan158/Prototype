@@ -1,20 +1,19 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Warehouse, Loader2, Eye, EyeOff, ShieldCheck } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Eye, EyeOff, Fingerprint, Loader2, LockKeyhole, Shield, User } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { SEEDED_USERS, useAuth } from "@/lib/auth";
+import { useAuth } from "@/lib/auth";
+import truckGate from "@/assets/truck-gate.jpg";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
-      { title: "Sign in · NexusWMS Warehouse Console" },
-      { name: "description", content: "Secure employee sign-in for the NexusWMS gate entry and arrival management console." },
-      { property: "og:title", content: "Sign in · NexusWMS Warehouse Console" },
-      { property: "og:description", content: "Secure employee sign-in for warehouse gate entry and arrival management." },
+      { title: "Security Login | WMS & AMS" },
+      {
+        name: "description",
+        content: "Secure role-based employee login for the WMS and AMS platform.",
+      },
     ],
   }),
   component: Login,
@@ -23,8 +22,8 @@ export const Route = createFileRoute("/login")({
 function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [id, setId] = useState("admin@nexuswms.com");
-  const [pw, setPw] = useState("Admin@2026");
+  const [id, setId] = useState("");
+  const [pw, setPw] = useState("");
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -40,130 +39,119 @@ function Login() {
     setTimeout(() => {
       setLoading(false);
       const account = login(id, pw);
-      if (!account) { setError("Invalid employee ID/email or password."); return; }
-      toast.success(`Welcome back, ${account.name}`, { description: `Opening the ${account.role} dashboard` });
-      navigate({
-        to: account.dashboard as never,
+      if (!account) {
+        setError("Invalid employee ID/email or password.");
+        return;
+      }
+      toast.success(`Welcome back, ${account.name}`, {
+        description: `Opening the ${account.role} dashboard`,
       });
+      navigate({ to: account.dashboard as never });
     }, 450);
   }
 
   return (
-    <div className="grid min-h-screen lg:grid-cols-[1.05fr_1fr]">
-      <div className="surface-mesh relative hidden flex-col justify-between overflow-hidden bg-secondary p-12 lg:flex">
-        <div className="flex items-center gap-3">
-          <div className="grid size-11 place-items-center rounded-xl bg-primary text-primary-foreground shadow-glow">
-            <Warehouse className="size-5" />
+    <div
+      className="relative min-h-dvh overflow-hidden bg-[#071426] bg-cover bg-center px-4 py-8 text-white sm:grid sm:place-items-center"
+      style={{ backgroundImage: `linear-gradient(180deg, rgb(4 17 34 / 92%), rgb(4 17 34 / 94%)), url(${truckGate})` }}
+    >
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_70%_25%,rgb(37_99_235_/_16%),transparent_42%)]" />
+
+      <main className="relative mx-auto flex min-h-[calc(100dvh-4rem)] w-full max-w-[430px] flex-col justify-center">
+        <header className="mb-9 text-center">
+          <div className="mx-auto grid size-24 place-items-center rounded-[1.75rem] border border-white/20 bg-white/10 shadow-2xl backdrop-blur">
+            <Shield className="size-12 text-[#5da2ff]" strokeWidth={2.3} />
           </div>
-          <div>
-            <p className="text-sm font-semibold">NexusWMS</p>
-            <p className="text-[11px] text-muted-foreground">Warehouse &amp; Asset Management Suite</p>
+          <h1 className="mt-6 text-4xl font-extrabold tracking-tight">WMS &amp; AMS</h1>
+          <p className="mt-2 text-sm font-bold tracking-[0.24em] text-[#5da2ff]">SECURITY MANAGEMENT SYSTEM</p>
+        </header>
+
+        <form onSubmit={submit} className="rounded-[2rem] bg-[#f8fafc] p-7 text-[#101b31] shadow-2xl sm:p-8">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold">Security Login</h2>
+            <p className="mt-2 text-base text-slate-500">Enter your credentials to continue</p>
           </div>
-        </div>
 
-        <div className="relative">
-          <svg viewBox="0 0 520 300" className="w-full max-w-xl" aria-hidden>
-            <rect x="20" y="120" width="300" height="130" rx="10" className="fill-card stroke-border" strokeWidth="2" />
-            <path d="M20 120 L170 46 L320 120" className="fill-primary-soft stroke-primary" strokeWidth="2" />
-            {[0, 1, 2, 3].map((i) => (
-              <rect key={i} x={44 + i * 72} y={182} width="54" height="68" rx="6" className="fill-muted stroke-border" strokeWidth="2" />
-            ))}
-            <rect x="342" y="168" width="128" height="58" rx="8" className="fill-primary" />
-            <rect x="450" y="140" width="52" height="86" rx="8" className="fill-primary/70" />
-            <circle cx="376" cy="238" r="14" className="fill-foreground/80" />
-            <circle cx="470" cy="238" r="14" className="fill-foreground/80" />
-            <rect x="352" y="182" width="44" height="10" rx="3" className="fill-primary-foreground/80" />
-            <line x1="0" y1="252" x2="520" y2="252" className="stroke-border" strokeWidth="3" />
-          </svg>
-          <h2 className="mt-8 max-w-md text-3xl font-semibold leading-tight tracking-tight">
-            From gate barrier to putaway — one continuous digital chain of custody.
-          </h2>
-          <p className="mt-3 max-w-md text-sm text-muted-foreground">
-            Average gate-to-dock time reduced by 38% across 14 distribution centres this quarter.
-          </p>
-        </div>
+          <div className="mt-7 space-y-5">
+            <label className="block">
+              <span className="mb-2 block text-sm font-bold text-slate-600">Employee ID / Email</span>
+              <span className="relative block">
+                <User className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-slate-400" />
+                <input
+                  value={id}
+                  onChange={(e) => setId(e.target.value)}
+                  placeholder="Enter Employee ID or email"
+                  autoComplete="username"
+                  className="h-14 w-full rounded-2xl border border-slate-200 bg-slate-100/80 pl-12 pr-4 text-base text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                />
+              </span>
+            </label>
 
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <ShieldCheck className="size-4 text-success" />
-          SOC 2 Type II · ISO 27001 · Single sign-on enforced
-        </div>
-      </div>
-
-      <div className="flex items-center justify-center bg-background px-6 py-12">
-        <form onSubmit={submit} className="w-full max-w-sm animate-fade-up">
-          <div className="mb-8 lg:hidden">
-            <div className="grid size-12 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-glow">
-              <Warehouse className="size-6" />
-            </div>
-          </div>
-          <h1 className="text-2xl font-semibold tracking-tight">Sign in to NexusWMS</h1>
-          <p className="mt-1.5 text-sm text-muted-foreground">Your assigned role controls which Nexus modules you can access.</p>
-
-          <div className="mt-8 space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="empid">Employee ID or email</Label>
-              <Input id="empid" value={id} onChange={(e) => setId(e.target.value)} placeholder="EMP-00000 or name@company.com" className="h-11 rounded-xl" autoComplete="username" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="pw">Password</Label>
-              <div className="relative">
-                <Input
-                  id="pw"
+            <label className="block">
+              <span className="mb-2 flex items-center justify-between text-sm font-bold text-slate-600">
+                Password
+                <button
+                  type="button"
+                  onClick={() => toast.info("Contact your administrator to reset the password.")}
+                  className="font-bold text-blue-600"
+                >
+                  Forgot?
+                </button>
+              </span>
+              <span className="relative block">
+                <LockKeyhole className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-slate-400" />
+                <input
                   type={show ? "text" : "password"}
                   value={pw}
                   onChange={(e) => setPw(e.target.value)}
-                  className="h-11 rounded-xl pr-11"
+                  placeholder="Enter password"
                   autoComplete="current-password"
+                  className="h-14 w-full rounded-2xl border border-slate-200 bg-slate-100/80 pl-12 pr-12 text-base text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
                 />
                 <button
                   type="button"
-                  onClick={() => setShow((s) => !s)}
+                  onClick={() => setShow((value) => !value)}
                   aria-label="Toggle password visibility"
-                  className="absolute right-2 top-1/2 grid size-8 -translate-y-1/2 place-items-center rounded-lg text-muted-foreground hover:bg-accent"
+                  className="absolute right-3 top-1/2 grid size-9 -translate-y-1/2 place-items-center text-slate-400"
                 >
-                  {show ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                  {show ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
                 </button>
-              </div>
-            </div>
+              </span>
+            </label>
+
+            <label className="flex items-center gap-3 text-sm font-semibold text-slate-600">
+              <Checkbox defaultChecked className="size-5 rounded-md border-slate-300" /> Remember Me
+            </label>
 
             {error && (
-              <p className="rounded-xl border border-destructive/25 bg-danger-soft px-3 py-2 text-xs font-medium text-destructive">
+              <p className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-600">
                 {error}
               </p>
             )}
 
-            <div className="flex items-center justify-between pt-1">
-              <label className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Checkbox defaultChecked /> Remember me
-              </label>
-              <button
-                type="button"
-                onClick={() => toast.info("Reset link sent", { description: "Check your plant mailbox for instructions." })}
-                className="text-sm font-medium text-primary hover:underline"
-              >
-                Forgot password?
-              </button>
-            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex h-14 w-full items-center justify-center gap-3 rounded-2xl bg-blue-600 text-sm font-extrabold tracking-[0.12em] text-white shadow-lg shadow-blue-600/25 transition hover:bg-blue-700 disabled:opacity-70"
+            >
+              {loading ? <Loader2 className="size-5 animate-spin" /> : <LockKeyhole className="size-5" />}
+              {loading ? "AUTHENTICATING" : "LOGIN"}
+            </button>
 
-            <Button type="submit" disabled={loading} className="h-11 w-full rounded-xl text-sm font-semibold shadow-glow">
-              {loading && <Loader2 className="size-4 animate-spin" />}
-              {loading ? "Authenticating…" : "Sign In"}
-            </Button>
-          </div>
-
-          <p className="mt-8 text-center text-xs text-muted-foreground">
-            Choose a demo role below or enter assigned credentials.
-          </p>
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            {SEEDED_USERS.map((account) => (
-              <button key={account.id} type="button" onClick={() => { setId(account.email); setPw(account.password); setError(""); }} className="rounded-xl border border-border bg-muted/40 px-3 py-2 text-left transition hover:border-primary/40 hover:bg-primary-soft">
-                <span className="block text-[11px] font-semibold">{account.role}</span>
-                <span className="block truncate text-[10px] text-muted-foreground">{account.email}</span>
-              </button>
-            ))}
+            <button
+              type="button"
+              onClick={() => toast.info("Fingerprint login is available on registered security devices.")}
+              className="flex h-11 w-full items-center justify-center gap-3 text-sm font-bold text-blue-600"
+            >
+              <Fingerprint className="size-6" /> Login with Fingerprint
+            </button>
           </div>
         </form>
-      </div>
+
+        <p className="mt-8 text-center text-[11px] font-bold tracking-[0.24em] text-white/80">
+          UNAUTHORIZED ACCESS PROHIBITED
+        </p>
+      </main>
     </div>
   );
 }
