@@ -61,6 +61,12 @@ import { Route as InventoryFlowIndexRouteImport } from './routes/inventory-flow.
 import { Route as InventoryFlowAdjustmentsRouteImport } from './routes/inventory-flow.adjustments'
 import { Route as InventoryFlowCycleCountRouteImport } from './routes/inventory-flow.cycle-count'
 import { Route as InventoryFlowExplorerRouteImport } from './routes/inventory-flow.explorer'
+import { Route as InventoryFlowGenealogyRouteImport } from './routes/inventory-flow.genealogy'
+import { Route as InventoryFlowPlanningRouteImport } from './routes/inventory-flow.planning'
+import { Route as InventoryFlowQuarantineRouteImport } from './routes/inventory-flow.quarantine'
+import { Route as InventoryFlowReportsRouteImport } from './routes/inventory-flow.reports'
+import { Route as InventoryFlowSettingsRouteImport } from './routes/inventory-flow.settings'
+import { Route as InventoryFlowTransfersRouteImport } from './routes/inventory-flow.transfers'
 import { Route as MasterCoreIndexRouteImport } from './routes/master-core.index'
 import { Route as MasterCoreEmployeesRouteImport } from './routes/master-core.employees'
 import { Route as MasterCoreGeographyRouteImport } from './routes/master-core.geography'
@@ -438,6 +444,36 @@ const InventoryFlowCycleCountRoute = InventoryFlowCycleCountRouteImport.update({
 const InventoryFlowExplorerRoute = InventoryFlowExplorerRouteImport.update({
   id: '/explorer',
   path: '/explorer',
+  getParentRoute: () => InventoryFlowRoute,
+} as any)
+const InventoryFlowGenealogyRoute = InventoryFlowGenealogyRouteImport.update({
+  id: '/genealogy',
+  path: '/genealogy',
+  getParentRoute: () => InventoryFlowRoute,
+} as any)
+const InventoryFlowPlanningRoute = InventoryFlowPlanningRouteImport.update({
+  id: '/planning',
+  path: '/planning',
+  getParentRoute: () => InventoryFlowRoute,
+} as any)
+const InventoryFlowQuarantineRoute = InventoryFlowQuarantineRouteImport.update({
+  id: '/quarantine',
+  path: '/quarantine',
+  getParentRoute: () => InventoryFlowRoute,
+} as any)
+const InventoryFlowReportsRoute = InventoryFlowReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => InventoryFlowRoute,
+} as any)
+const InventoryFlowSettingsRoute = InventoryFlowSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => InventoryFlowRoute,
+} as any)
+const InventoryFlowTransfersRoute = InventoryFlowTransfersRouteImport.update({
+  id: '/transfers',
+  path: '/transfers',
   getParentRoute: () => InventoryFlowRoute,
 } as any)
 const MasterCoreIndexRoute = MasterCoreIndexRouteImport.update({
@@ -1093,6 +1129,12 @@ export interface FileRoutesByFullPath {
   '/inventory-flow/adjustments': typeof InventoryFlowAdjustmentsRoute
   '/inventory-flow/cycle-count': typeof InventoryFlowCycleCountRoute
   '/inventory-flow/explorer': typeof InventoryFlowExplorerRoute
+  '/inventory-flow/genealogy': typeof InventoryFlowGenealogyRoute
+  '/inventory-flow/planning': typeof InventoryFlowPlanningRoute
+  '/inventory-flow/quarantine': typeof InventoryFlowQuarantineRoute
+  '/inventory-flow/reports': typeof InventoryFlowReportsRoute
+  '/inventory-flow/settings': typeof InventoryFlowSettingsRoute
+  '/inventory-flow/transfers': typeof InventoryFlowTransfersRoute
   '/master-core/employees': typeof MasterCoreEmployeesRoute
   '/master-core/geography': typeof MasterCoreGeographyRoute
   '/master-core/help': typeof MasterCoreHelpRoute
@@ -1247,6 +1289,12 @@ export interface FileRoutesByTo {
   '/inventory-flow/adjustments': typeof InventoryFlowAdjustmentsRoute
   '/inventory-flow/cycle-count': typeof InventoryFlowCycleCountRoute
   '/inventory-flow/explorer': typeof InventoryFlowExplorerRoute
+  '/inventory-flow/genealogy': typeof InventoryFlowGenealogyRoute
+  '/inventory-flow/planning': typeof InventoryFlowPlanningRoute
+  '/inventory-flow/quarantine': typeof InventoryFlowQuarantineRoute
+  '/inventory-flow/reports': typeof InventoryFlowReportsRoute
+  '/inventory-flow/settings': typeof InventoryFlowSettingsRoute
+  '/inventory-flow/transfers': typeof InventoryFlowTransfersRoute
   '/master-core/employees': typeof MasterCoreEmployeesRoute
   '/master-core/geography': typeof MasterCoreGeographyRoute
   '/master-core/help': typeof MasterCoreHelpRoute
@@ -1412,6 +1460,12 @@ export interface FileRoutesById {
   '/inventory-flow/adjustments': typeof InventoryFlowAdjustmentsRoute
   '/inventory-flow/cycle-count': typeof InventoryFlowCycleCountRoute
   '/inventory-flow/explorer': typeof InventoryFlowExplorerRoute
+  '/inventory-flow/genealogy': typeof InventoryFlowGenealogyRoute
+  '/inventory-flow/planning': typeof InventoryFlowPlanningRoute
+  '/inventory-flow/quarantine': typeof InventoryFlowQuarantineRoute
+  '/inventory-flow/reports': typeof InventoryFlowReportsRoute
+  '/inventory-flow/settings': typeof InventoryFlowSettingsRoute
+  '/inventory-flow/transfers': typeof InventoryFlowTransfersRoute
   '/master-core/employees': typeof MasterCoreEmployeesRoute
   '/master-core/geography': typeof MasterCoreGeographyRoute
   '/master-core/help': typeof MasterCoreHelpRoute
@@ -1579,6 +1633,12 @@ export interface FileRouteTypes {
     | '/inventory-flow/adjustments'
     | '/inventory-flow/cycle-count'
     | '/inventory-flow/explorer'
+    | '/inventory-flow/genealogy'
+    | '/inventory-flow/planning'
+    | '/inventory-flow/quarantine'
+    | '/inventory-flow/reports'
+    | '/inventory-flow/settings'
+    | '/inventory-flow/transfers'
     | '/master-core/employees'
     | '/master-core/geography'
     | '/master-core/help'
@@ -1733,6 +1793,12 @@ export interface FileRouteTypes {
     | '/inventory-flow/adjustments'
     | '/inventory-flow/cycle-count'
     | '/inventory-flow/explorer'
+    | '/inventory-flow/genealogy'
+    | '/inventory-flow/planning'
+    | '/inventory-flow/quarantine'
+    | '/inventory-flow/reports'
+    | '/inventory-flow/settings'
+    | '/inventory-flow/transfers'
     | '/master-core/employees'
     | '/master-core/geography'
     | '/master-core/help'
@@ -1897,6 +1963,12 @@ export interface FileRouteTypes {
     | '/inventory-flow/adjustments'
     | '/inventory-flow/cycle-count'
     | '/inventory-flow/explorer'
+    | '/inventory-flow/genealogy'
+    | '/inventory-flow/planning'
+    | '/inventory-flow/quarantine'
+    | '/inventory-flow/reports'
+    | '/inventory-flow/settings'
+    | '/inventory-flow/transfers'
     | '/master-core/employees'
     | '/master-core/geography'
     | '/master-core/help'
@@ -2412,6 +2484,48 @@ declare module '@tanstack/react-router' {
       path: '/explorer'
       fullPath: '/inventory-flow/explorer'
       preLoaderRoute: typeof InventoryFlowExplorerRouteImport
+      parentRoute: typeof InventoryFlowRoute
+    }
+    '/inventory-flow/genealogy': {
+      id: '/inventory-flow/genealogy'
+      path: '/genealogy'
+      fullPath: '/inventory-flow/genealogy'
+      preLoaderRoute: typeof InventoryFlowGenealogyRouteImport
+      parentRoute: typeof InventoryFlowRoute
+    }
+    '/inventory-flow/planning': {
+      id: '/inventory-flow/planning'
+      path: '/planning'
+      fullPath: '/inventory-flow/planning'
+      preLoaderRoute: typeof InventoryFlowPlanningRouteImport
+      parentRoute: typeof InventoryFlowRoute
+    }
+    '/inventory-flow/quarantine': {
+      id: '/inventory-flow/quarantine'
+      path: '/quarantine'
+      fullPath: '/inventory-flow/quarantine'
+      preLoaderRoute: typeof InventoryFlowQuarantineRouteImport
+      parentRoute: typeof InventoryFlowRoute
+    }
+    '/inventory-flow/reports': {
+      id: '/inventory-flow/reports'
+      path: '/reports'
+      fullPath: '/inventory-flow/reports'
+      preLoaderRoute: typeof InventoryFlowReportsRouteImport
+      parentRoute: typeof InventoryFlowRoute
+    }
+    '/inventory-flow/settings': {
+      id: '/inventory-flow/settings'
+      path: '/settings'
+      fullPath: '/inventory-flow/settings'
+      preLoaderRoute: typeof InventoryFlowSettingsRouteImport
+      parentRoute: typeof InventoryFlowRoute
+    }
+    '/inventory-flow/transfers': {
+      id: '/inventory-flow/transfers'
+      path: '/transfers'
+      fullPath: '/inventory-flow/transfers'
+      preLoaderRoute: typeof InventoryFlowTransfersRouteImport
       parentRoute: typeof InventoryFlowRoute
     }
     '/master-core/': {
@@ -3262,6 +3376,12 @@ interface InventoryFlowRouteChildren {
   InventoryFlowAdjustmentsRoute: typeof InventoryFlowAdjustmentsRoute
   InventoryFlowCycleCountRoute: typeof InventoryFlowCycleCountRoute
   InventoryFlowExplorerRoute: typeof InventoryFlowExplorerRoute
+  InventoryFlowGenealogyRoute: typeof InventoryFlowGenealogyRoute
+  InventoryFlowPlanningRoute: typeof InventoryFlowPlanningRoute
+  InventoryFlowQuarantineRoute: typeof InventoryFlowQuarantineRoute
+  InventoryFlowReportsRoute: typeof InventoryFlowReportsRoute
+  InventoryFlowSettingsRoute: typeof InventoryFlowSettingsRoute
+  InventoryFlowTransfersRoute: typeof InventoryFlowTransfersRoute
   InventoryFlowIndexRoute: typeof InventoryFlowIndexRoute
   InventoryFlowInventoryItemIdRoute: typeof InventoryFlowInventoryItemIdRoute
   InventoryFlowInventoryIndexRoute: typeof InventoryFlowInventoryIndexRoute
@@ -3271,6 +3391,12 @@ const InventoryFlowRouteChildren: InventoryFlowRouteChildren = {
   InventoryFlowAdjustmentsRoute: InventoryFlowAdjustmentsRoute,
   InventoryFlowCycleCountRoute: InventoryFlowCycleCountRoute,
   InventoryFlowExplorerRoute: InventoryFlowExplorerRoute,
+  InventoryFlowGenealogyRoute: InventoryFlowGenealogyRoute,
+  InventoryFlowPlanningRoute: InventoryFlowPlanningRoute,
+  InventoryFlowQuarantineRoute: InventoryFlowQuarantineRoute,
+  InventoryFlowReportsRoute: InventoryFlowReportsRoute,
+  InventoryFlowSettingsRoute: InventoryFlowSettingsRoute,
+  InventoryFlowTransfersRoute: InventoryFlowTransfersRoute,
   InventoryFlowIndexRoute: InventoryFlowIndexRoute,
   InventoryFlowInventoryItemIdRoute: InventoryFlowInventoryItemIdRoute,
   InventoryFlowInventoryIndexRoute: InventoryFlowInventoryIndexRoute,
