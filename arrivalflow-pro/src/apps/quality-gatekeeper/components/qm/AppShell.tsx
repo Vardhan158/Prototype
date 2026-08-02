@@ -191,7 +191,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="glass-panel sticky top-0 z-30 flex h-16 items-center rounded-none border-x-0 border-t-0 px-3 sm:px-5">
-          <div className="grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
+          <div className="flex w-full items-center gap-3">
             <Button
               variant="ghost"
               size="icon"
@@ -201,15 +201,15 @@ export function AppShell({ children }: { children: ReactNode }) {
             >
               <Menu className="h-5 w-5" />
             </Button>
-            <div className="relative hidden min-w-0 md:block md:pr-4 xl:pr-8">
+            <div className="relative hidden min-w-0 flex-1 md:block md:pr-2">
               <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search inspection, GRN, PO, NCR, materialâ€¦"
                 className="h-10 w-full rounded-xl bg-background/70 pr-4 pl-9"
               />
             </div>
-            <div className="md:hidden" />
-            <div className="flex h-10 items-center justify-end gap-1">
+            <div className="flex-1 md:hidden" />
+            <div className="flex h-10 shrink-0 items-center justify-end gap-1">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
