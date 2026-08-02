@@ -86,26 +86,32 @@ function NavList({ onNavigate }: { onNavigate?: () => void }) {
           </p>
           <ul className="space-y-0.5">
             {section.items.map((item) => {
-              const active = item.exact ? path === item.to : path.startsWith(item.to);
+              const active = item.exact
+                ? path === item.to || path === `${item.to}/`
+                : path.startsWith(item.to);
               return (
                 <li key={item.to}>
                   <Link
                     to={item.to}
                     onClick={onNavigate}
                     className={cn(
-                      "group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-colors",
+                      "group grid min-h-10 grid-cols-[20px_minmax(0,1fr)_auto] items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-colors",
                       active
                         ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-[inset_2px_0_0_0_var(--sidebar-primary)]"
                         : "text-muted-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground",
                     )}
                   >
-                    <item.icon className={cn("h-4 w-4 shrink-0", active && "text-primary")} />
+                    <span className="grid h-5 w-5 place-items-center">
+                      <item.icon className={cn("h-4 w-4", active && "text-primary")} />
+                    </span>
                     <span className="min-w-0 flex-1 truncate">{item.label}</span>
                     {"badge" in item && item.badge ? (
                       <span className="num rounded-md bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
                         {item.badge}
                       </span>
-                    ) : null}
+                    ) : (
+                      <span aria-hidden="true" />
+                    )}
                   </Link>
                 </li>
               );
@@ -119,7 +125,7 @@ function NavList({ onNavigate }: { onNavigate?: () => void }) {
 
 function Brand() {
   return (
-    <Link to="/quality-gatekeeper" className="flex items-center gap-3 px-5 py-4">
+    <Link to="/quality-gatekeeper" className="flex h-16 items-center gap-3 px-5">
       <div className="brand-gradient grid h-9 w-9 shrink-0 place-items-center rounded-xl text-primary-foreground shadow-sm">
         <ShieldAlert className="h-5 w-5" />
       </div>
@@ -184,8 +190,8 @@ export function AppShell({ children }: { children: ReactNode }) {
       </Sheet>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="glass-panel sticky top-0 z-30 border-x-0 border-t-0 px-3 py-2.5 sm:px-5">
-          <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
+        <header className="glass-panel sticky top-0 z-30 flex h-16 items-center rounded-none border-x-0 border-t-0 px-3 sm:px-5">
+          <div className="grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
             <Button
               variant="ghost"
               size="icon"
@@ -203,7 +209,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               />
             </div>
             <div className="md:hidden" />
-            <div className="flex items-center gap-1">
+            <div className="flex h-10 items-center justify-end gap-1">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
