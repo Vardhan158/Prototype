@@ -8,6 +8,6 @@ export const Route = createFileRoute("/wave-flow")({ component: WaveFlowLayout }
 function WaveFlowLayout() {
   const { user, canAccess } = useAuth();
   if (!canAccess("wave")) return <Navigate to="/dashboard" replace />;
-  const role: Role = user?.role === "Wave Planner" ? "Warehouse Executive" : "Warehouse Gate Entry & Arrival Management";
+  const role: Role = user?.role === "Outbound Order Fulfillment & Wave Management" ? "Warehouse Executive" : "Warehouse Gate Entry & Arrival Management";
   return <RoleProvider initialRole={role}><AppLayout><Outlet /></AppLayout></RoleProvider>;
 }

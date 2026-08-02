@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 export type AppRole =
   | "Warehouse Gate Entry & Arrival Management"
   | "Data Steward"
-  | "Wave Planner"
+  | "Outbound Order Fulfillment & Wave Management"
   | "Production Manager"
   | "Inventory Controller"
   | "Warehouse Supervisor"
@@ -74,7 +74,7 @@ export const SEEDED_USERS: SeededUser[] = [
     name: "Karan Arora",
     email: "karan@nexuswms.com",
     password: "wave@2026",
-    role: "Wave Planner",
+    role: "Outbound Order Fulfillment & Wave Management",
     modules: ["wave"],
     dashboard: "/wave-flow",
   },
