@@ -1,238 +1,392 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+﻿import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
   Activity,
+  ArrowRight,
+  BarChart3,
   CheckCircle2,
   Clock,
-  FileWarning,
-  Microscope,
-  PackageSearch,
+  FileText,
+  PackageX,
+  PlayCircle,
+  ShieldCheck,
+  Timer,
+  Truck,
+  Warehouse,
 } from "lucide-react";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { KpiCard } from "@/apps/receiving-hub/shared/KpiCard";
-import { PageHeader } from "@/apps/receiving-hub/shared/PageHeader";
-import { StatusChip } from "@/apps/receiving-hub/shared/StatusChip";
-import { useWms } from "@/apps/receiving-hub/context/WmsContext";
-import { supplierById, warehouseById } from "@/apps/receiving-hub/data";
-import { fmtDate, fmtDuration } from "@/apps/receiving-hub/format";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
+import {
+  PageHeader,
+  StatusPill,
+  PriorityPill,
+} from "@/apps/receiving-hub/components/wms/primitives";
+import { useWms } from "@/apps/receiving-hub/lib/wms-store";
+import {
+  ACTIVITY,
+  DOCKS,
+  HOURLY_RECEIPTS,
+  compactCurrency,
+} from "@/apps/receiving-hub/lib/wms-data";
 
 export const Route = createFileRoute("/receiving-hub/")({
   head: () => ({
     meta: [
-      { title: "Receiving Dashboard — NexusWMS" },
+      { title: "Receiving Dashboard | AXIOM WMS Inbound" },
       {
         name: "description",
         content:
-          "Live receiving KPIs, expected inbound shipments, dock utilisation and open discrepancies.",
+          "Live inbound control tower: today's receipts, dock occupancy, pending inspections, discrepancies and average receiving time.",
       },
-      { property: "og:title", content: "Receiving Dashboard — NexusWMS" },
+      { property: "og:title", content: "Receiving Dashboard | AXIOM WMS Inbound" },
       {
         property: "og:description",
-        content:
-          "Live receiving KPIs, expected inbound shipments, dock utilisation and open discrepancies.",
+        content: "Monitor trucks, docks, GRNs and receiving KPIs in real time.",
       },
     ],
   }),
   component: Dashboard,
 });
 
-const ACTIVITY = [
-  { text: "GRN-2026-0348 completed for Finolex Cables Ltd", time: "12 min ago", dot: "bg-success" },
-  { text: "DSC-2026-0023 raised — quantity mismatch on PO-2026-00431", time: "48 min ago", dot: "bg-danger" },
-  { text: "Gate entry GE-2026-1195 recorded at Dock A2", time: "1 h ago", dot: "bg-info" },
-  { text: "GRN-2026-0346 sent to quality inspection", time: "2 h ago", dot: "bg-warning" },
-  { text: "Non-PO receipt GRN-2026-0340 awaiting approval", time: "4 h ago", dot: "bg-warning" },
-] as const;
+const tones = {
+  info: "bg-info-soft text-info",
+  success: "bg-success-soft text-success",
+  warning: "bg-warning-soft text-warning-foreground",
+  destructive: "bg-destructive-soft text-destructive",
+  accent: "bg-primary-soft text-primary",
+  muted: "bg-muted text-muted-foreground",
+} as Record<string, string>;
 
-const STAGE_AVG = [
-  { name: "Gate Entry", minutes: 36, color: "bg-info" },
-  { name: "GRN", minutes: 62, color: "bg-primary" },
-  { name: "Inspection", minutes: 79, color: "bg-warning" },
-  { name: "Put-away", minutes: 60, color: "bg-success" },
-];
+function KpiCard({
+  label,
+  value,
+  hint,
+  delta,
+  icon: Icon,
+  tone,
+  to,
+}: {
+  label: string;
+  value: string;
+  hint: string;
+  delta?: string;
+  icon: React.ComponentType<{ className?: string }>;
+  tone: string;
+  to: string;
+}) {
+  return (
+    <Link to={to} className="group">
+      <Card className="elevated-card h-full transition-all duration-300 group-hover:-translate-y-0.5 group-hover:shadow-[var(--shadow-float)]">
+        <CardContent className="p-5">
+          <div className="flex items-start justify-between gap-3">
+            <div className={`grid h-10 w-10 place-items-center rounded-xl ${tones[tone]}`}>
+              <Icon className="h-5 w-5" />
+            </div>
+            {delta && <span className="num text-xs font-semibold text-success">{delta}</span>}
+          </div>
+          <p className="num mt-4 text-2xl font-semibold">{value}</p>
+          <p className="mt-1 text-sm font-medium">{label}</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">{hint}</p>
+        </CardContent>
+      </Card>
+    </Link>
+  );
+}
 
 function Dashboard() {
-  const { pos, grns, discrepancies, activeWarehouse } = useWms();
-  const wh = warehouseById(activeWarehouse);
-
-  const expected = pos
-    .filter((p) => p.status === "Open" || p.status === "Overdue" || p.status === "Partially Received")
-    .slice(0, 6);
-  const pendingInspection = grns.filter((g) => g.status === "Pending Inspection").length;
-  const completed = grns.filter((g) => g.status === "Completed").length;
-  const openDsc = discrepancies.filter((d) => d.status !== "Resolved");
-  const totalCycle = STAGE_AVG.reduce((s, x) => s + x.minutes, 0);
+  const { state } = useWms();
+  const navigate = useNavigate();
+  const s = state.shipments;
+  const waiting = s.filter((x) => x.status === "Waiting").length;
+  const inProgress = s.filter((x) =>
+    ["Receiving Started", "Scanning", "Verification", "Partial Receipt"].includes(x.status),
+  ).length;
+  const grnCount = state.grns.length;
+  const pendingInspection = state.inspections.filter((i) => i.status !== "Passed").length;
+  const rejected = s.filter((x) => x.status === "Rejected").length;
+  const occupied = DOCKS.reduce((a, d) => a + d.occupied, 0);
+  const capacity = DOCKS.reduce((a, d) => a + d.capacity, 0);
+  const totalValue = state.grns.reduce((a, g) => a + g.value, 0);
+  const nextUp = s
+    .filter((x) => x.status === "Waiting" || x.status === "Dock Assigned")
+    .slice(0, 4);
 
   return (
-    <>
+    <div className="mx-auto max-w-[1600px]">
       <PageHeader
-        crumbs={[{ label: "Receiving" }, { label: "Dashboard" }]}
-        title="Receiving Dashboard"
-        subtitle={`${wh.id} · ${wh.name} — operational snapshot for ${fmtDate("2026-07-31")}`}
+        title="Receiving Control Tower"
+        subtitle="Bhiwandi Central DC Â· Shift A (06:00 â€“ 14:00) Â· 3 receiving crews on floor"
+        crumbs={[{ label: "Inbound" }, { label: "Receiving Dashboard" }]}
         actions={
           <>
-            <Button variant="outline" asChild>
-              <Link to="/receiving-hub/purchase-orders">Browse purchase orders</Link>
+            <Button variant="outline" onClick={() => navigate({ to: "/receiving-hub/docks" })}>
+              <Warehouse className="mr-2 h-4 w-4" /> Dock Queue
             </Button>
-            <Button asChild>
-              <Link to="/receiving-hub/grn/new">New goods receipt</Link>
+            <Button variant="outline" onClick={() => navigate({ to: "/receiving-hub/reports" })}>
+              <BarChart3 className="mr-2 h-4 w-4" /> Reports
+            </Button>
+            <Button variant="outline" onClick={() => navigate({ to: "/receiving-hub/grn" })}>
+              <FileText className="mr-2 h-4 w-4" /> Create GRN
+            </Button>
+            <Button onClick={() => navigate({ to: "/receiving-hub/queue" })}>
+              <PlayCircle className="mr-2 h-4 w-4" /> Start Receiving
             </Button>
           </>
         }
       />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <KpiCard label="Pending Receipts" value="18" delta="12%" deltaGood caption="vs. 16 last week" icon={PackageSearch} tone="primary" />
-        <KpiCard label="Completed GRNs (MTD)" value="142" delta="8%" deltaGood caption={`${completed} completed in this session`} icon={CheckCircle2} tone="success" />
-        <KpiCard label="Pending Inspection" value={String(pendingInspection || 7)} delta="3%" caption="Target: under 5 open lots" icon={Microscope} tone="warning" />
-        <KpiCard label="Avg Dock-to-Stock" value={fmtDuration(totalCycle)} delta="9%" caption="Target 4h 30m — trending down" icon={Clock} tone="info" />
+        <KpiCard
+          label="Today's Receipts"
+          value="53"
+          hint="18 trucks Â· 9,240 units"
+          delta="+12.4%"
+          icon={Truck}
+          tone="info"
+          to="/receiving-hub/queue"
+        />
+        <KpiCard
+          label="Pending Receiving"
+          value={String(waiting)}
+          hint="Awaiting dock allocation"
+          icon={Clock}
+          tone="warning"
+          to="/receiving-hub/queue"
+        />
+        <KpiCard
+          label="Receiving In Progress"
+          value={String(inProgress)}
+          hint="Active on docks now"
+          icon={Activity}
+          tone="accent"
+          to="/receiving-hub/queue"
+        />
+        <KpiCard
+          label="Completed GRN"
+          value={String(grnCount)}
+          hint={`${compactCurrency(totalValue)} posted value`}
+          delta="+4"
+          icon={FileText}
+          tone="success"
+          to="/receiving-hub/grn"
+        />
+        <KpiCard
+          label="Pending Inspection"
+          value={String(pendingInspection)}
+          hint="Quality queue Â· 2 critical"
+          icon={ShieldCheck}
+          tone="info"
+          to="/receiving-hub/quality"
+        />
+        <KpiCard
+          label="Rejected Receipts"
+          value={String(rejected)}
+          hint="Seal tampering Â· 1 vendor claim"
+          icon={PackageX}
+          tone="destructive"
+          to="/receiving-hub/history"
+        />
+        <KpiCard
+          label="Dock Occupancy"
+          value={`${Math.round((occupied / capacity) * 100)}%`}
+          hint={`${occupied} of ${capacity} bays engaged`}
+          icon={Warehouse}
+          tone="accent"
+          to="/receiving-hub/docks"
+        />
+        <KpiCard
+          label="Avg Receiving Time"
+          value="42m"
+          hint="Target 45m Â· SLA met"
+          delta="-6m"
+          icon={Timer}
+          tone="success"
+          to="/receiving-hub/reports"
+        />
       </div>
 
-      <div className="mt-6 grid gap-6 xl:grid-cols-3">
-        <div className="xl:col-span-2 space-y-6">
-          <section className="erp-card overflow-hidden">
-            <header className="flex items-center justify-between border-b border-border px-5 py-3.5">
-              <div>
-                <h2 className="text-[15px] font-semibold">Today's Expected Receipts</h2>
-                <p className="text-xs text-muted-foreground">Inbound shipments scheduled against open purchase orders</p>
-              </div>
-              <Button variant="outline" size="sm" asChild>
-                <Link to="/receiving-hub/purchase-orders">View all</Link>
-              </Button>
-            </header>
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[760px] text-sm">
-                <thead>
-                  <tr className="bg-surface-muted">
-                    {["PO Number", "Supplier", "Expected", "Dock", "Status", ""].map((h) => (
-                      <th key={h} className="border-b border-border px-5 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {expected.map((po, i) => (
-                    <tr key={po.poNumber} className="border-b border-border last:border-0 hover:bg-surface-muted">
-                      <td className="px-5 py-3">
-                        <Link to="/receiving-hub/purchase-orders/$poNumber" params={{ poNumber: po.poNumber }} className="font-medium text-primary hover:underline">
-                          {po.poNumber}
-                        </Link>
-                      </td>
-                      <td className="px-5 py-3">{supplierById(po.supplierId).name}</td>
-                      <td className="px-5 py-3 text-muted-foreground">{fmtDate(po.expectedDate)}</td>
-                      <td className="px-5 py-3 text-muted-foreground">
-                        {warehouseById(po.warehouseId).docks[i % 3]?.name ?? "—"}
-                      </td>
-                      <td className="px-5 py-3"><StatusChip status={po.status} /></td>
-                      <td className="px-5 py-3 text-right">
-                        <Button size="sm" className="h-8" asChild>
-                          <Link to="/receiving-hub/grn/new" search={{ po: po.poNumber }}>Receive</Link>
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+      <div className="mt-5 grid gap-4 xl:grid-cols-3">
+        <Card className="elevated-card xl:col-span-2">
+          <CardHeader className="flex-row items-start justify-between gap-4">
+            <div>
+              <CardTitle className="text-base">Inbound throughput â€” today</CardTitle>
+              <CardDescription>Receipts closed and units posted per 2-hour window</CardDescription>
             </div>
-          </section>
+            <Button asChild variant="ghost" size="sm">
+              <Link to="/receiving-hub/reports">
+                Full report <ArrowRight className="ml-1 h-3 w-3" />
+              </Link>
+            </Button>
+          </CardHeader>
+          <CardContent className="h-[260px] pl-0">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={HOURLY_RECEIPTS} margin={{ left: 8, right: 12, top: 8 }}>
+                <defs>
+                  <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="var(--color-chart-1)" stopOpacity={0.45} />
+                    <stop offset="100%" stopColor="var(--color-chart-1)" stopOpacity={0.02} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid stroke="var(--color-border)" vertical={false} />
+                <XAxis
+                  dataKey="hour"
+                  tickLine={false}
+                  axisLine={false}
+                  fontSize={11}
+                  stroke="var(--color-muted-foreground)"
+                />
+                <YAxis
+                  tickLine={false}
+                  axisLine={false}
+                  fontSize={11}
+                  stroke="var(--color-muted-foreground)"
+                />
+                <Tooltip
+                  contentStyle={{
+                    background: "var(--color-card)",
+                    border: "1px solid var(--color-border)",
+                    borderRadius: 12,
+                    fontSize: 12,
+                  }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="units"
+                  stroke="var(--color-chart-1)"
+                  strokeWidth={2}
+                  fill="url(#g1)"
+                  name="Units received"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
 
-          <section className="erp-card p-5">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-[15px] font-semibold">Dock-to-Stock Stage Averages</h2>
-                <p className="text-xs text-muted-foreground">Average minutes per stage across the last 30 receipts</p>
-              </div>
-              <span className="rounded-lg bg-primary-subtle px-2.5 py-1 text-xs font-medium text-primary">
-                Total {fmtDuration(totalCycle)}
-              </span>
-            </div>
-            <div className="mt-4 flex h-3 overflow-hidden rounded-full">
-              {STAGE_AVG.map((s) => (
-                <div key={s.name} className={s.color} style={{ width: `${(s.minutes / totalCycle) * 100}%` }} />
-              ))}
-            </div>
-            <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {STAGE_AVG.map((s) => (
-                <div key={s.name} className="flex items-center gap-2">
-                  <span className={`h-2 w-2 rounded-full ${s.color}`} />
-                  <span className="text-xs text-muted-foreground">{s.name}</span>
-                  <span className="text-xs font-medium">{fmtDuration(s.minutes)}</span>
+        <Card className="elevated-card">
+          <CardHeader>
+            <CardTitle className="text-base">Dock occupancy</CardTitle>
+            <CardDescription>Live bay utilisation across inbound zones</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {["Inbound North", "Inbound East", "Inbound South", "Cross Dock"].map((zone) => {
+              const bays = DOCKS.filter((d) => d.zone === zone);
+              const cap = bays.reduce((a, b) => a + b.capacity, 0);
+              const occ = bays.reduce((a, b) => a + b.occupied, 0);
+              return (
+                <div key={zone}>
+                  <div className="mb-1.5 flex items-center justify-between text-xs">
+                    <span className="font-medium">{zone}</span>
+                    <span className="num text-muted-foreground">
+                      {occ}/{cap} bays
+                    </span>
+                  </div>
+                  <Progress value={(occ / cap) * 100} className="h-2" />
                 </div>
-              ))}
-            </div>
-            <Button variant="outline" size="sm" className="mt-4" asChild>
-              <Link to="/receiving-hub/kpi/dock-to-stock">Open KPI analysis</Link>
+              );
+            })}
+            <Separator />
+            <Button asChild variant="outline" className="w-full">
+              <Link to="/receiving-hub/docks">Open dock map</Link>
             </Button>
-          </section>
-        </div>
-
-        <div className="space-y-6">
-          <section className="erp-card p-5">
-            <h2 className="text-[15px] font-semibold">Dock Utilization</h2>
-            <p className="text-xs text-muted-foreground">{wh.name}</p>
-            <ul className="mt-4 space-y-3">
-              {wh.docks.map((d) => (
-                <li key={d.id}>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-medium">{d.name}</span>
-                    <StatusChip status={d.status} />
-                  </div>
-                  <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-muted">
-                    <div
-                      className={d.utilization > 80 ? "h-full bg-danger" : d.utilization > 50 ? "h-full bg-warning" : "h-full bg-primary"}
-                      style={{ width: `${d.utilization}%` }}
-                    />
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          <section className="erp-card p-5">
-            <h2 className="flex items-center gap-2 text-[15px] font-semibold">
-              <Activity className="h-4 w-4 text-muted-foreground" strokeWidth={1.75} />
-              Recent Activity
-            </h2>
-            <ul className="mt-4 space-y-3.5">
-              {ACTIVITY.map((a) => (
-                <li key={a.text} className="flex gap-3">
-                  <span className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${a.dot}`} />
-                  <div>
-                    <p className="text-[13px] leading-snug">{a.text}</p>
-                    <p className="text-[11px] text-muted-foreground">{a.time}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          <section className="erp-card p-5">
-            <div className="flex items-center justify-between">
-              <h2 className="flex items-center gap-2 text-[15px] font-semibold">
-                <FileWarning className="h-4 w-4 text-muted-foreground" strokeWidth={1.75} />
-                Open Discrepancies
-              </h2>
-              <span className="rounded-full bg-danger-subtle px-2 py-0.5 text-xs font-semibold text-danger">
-                {openDsc.length}
-              </span>
-            </div>
-            <ul className="mt-4 space-y-3">
-              {openDsc.slice(0, 4).map((d) => (
-                <li key={d.id} className="flex items-start justify-between gap-2">
-                  <div>
-                    <p className="text-[13px] font-medium">{d.id}</p>
-                    <p className="text-[11px] text-muted-foreground">{d.type} · {d.sku}</p>
-                  </div>
-                  <StatusChip status={d.severity} />
-                </li>
-              ))}
-            </ul>
-            <Button variant="outline" size="sm" className="mt-4 w-full" asChild>
-              <Link to="/receiving-hub/discrepancies">Manage discrepancies</Link>
-            </Button>
-          </section>
-        </div>
+          </CardContent>
+        </Card>
       </div>
-    </>
+
+      <div className="mt-5 grid gap-4 xl:grid-cols-3">
+        <Card className="elevated-card xl:col-span-2">
+          <CardHeader className="flex-row items-center justify-between">
+            <div>
+              <CardTitle className="text-base">Next in yard queue</CardTitle>
+              <CardDescription>Trucks awaiting dock allocation or receiving start</CardDescription>
+            </div>
+            <Button asChild variant="ghost" size="sm">
+              <Link to="/receiving-hub/queue">
+                View queue <ArrowRight className="ml-1 h-3 w-3" />
+              </Link>
+            </Button>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {nextUp.map((sh) => (
+              <Link
+                key={sh.id}
+                to="/receiving-hub/queue/$id"
+                params={{ id: sh.id }}
+                className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-surface-2/60 p-3 transition hover:border-ring hover:bg-surface"
+              >
+                <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary-soft text-primary">
+                  <Truck className="h-4 w-4" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="num text-sm font-semibold">{sh.truckNo}</p>
+                  <p className="truncate text-xs text-muted-foreground">
+                    {sh.vendor} Â· {sh.po}
+                  </p>
+                </div>
+                <PriorityPill priority={sh.priority} />
+                <StatusPill status={sh.status} />
+                <span className="num text-xs text-muted-foreground">{sh.arrival.slice(-5)}</span>
+              </Link>
+            ))}
+          </CardContent>
+        </Card>
+
+        <Card className="elevated-card">
+          <CardHeader>
+            <CardTitle className="text-base">Recent activity</CardTitle>
+            <CardDescription>Floor events across all inbound docks</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ol className="relative space-y-4 border-l border-border pl-5">
+              {ACTIVITY.map((a, i) => (
+                <li key={i} className="relative">
+                  <span
+                    className={`absolute -left-[1.55rem] top-1 h-2.5 w-2.5 rounded-full ${tones[a.tone]?.split(" ")[0]} ring-2 ring-card`}
+                  />
+                  <p className="text-sm leading-snug">{a.text}</p>
+                  <p className="num mt-0.5 text-[0.7rem] text-muted-foreground">
+                    {a.at} Â· {a.actor}
+                  </p>
+                </li>
+              ))}
+            </ol>
+            <Button asChild variant="ghost" size="sm" className="mt-4 w-full">
+              <Link to="/receiving-hub/audit">
+                Open audit log <ArrowRight className="ml-1 h-3 w-3" />
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card className="elevated-card mt-5 overflow-hidden">
+        <div className="brand-gradient flex flex-col gap-4 p-6 md:flex-row md:items-center md:justify-between">
+          <div className="text-primary-foreground">
+            <p className="text-xs font-medium uppercase tracking-[0.16em] opacity-80">
+              Module 03 Â· Goods Receiving &amp; GRN
+            </p>
+            <h2 className="mt-1 text-xl font-semibold">Close the loop from dock to inventory</h2>
+            <p className="mt-1 max-w-xl text-sm opacity-90">
+              Every completed receipt hands off automatically to Module 04 â€” Document Management
+              &amp; OCR Processing.
+            </p>
+          </div>
+          <Button asChild variant="secondary" size="lg">
+            <Link to="/receiving-hub/module-complete">
+              <CheckCircle2 className="mr-2 h-4 w-4" /> Module handoff
+            </Link>
+          </Button>
+        </div>
+      </Card>
+    </div>
   );
 }

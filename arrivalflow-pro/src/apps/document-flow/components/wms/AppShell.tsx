@@ -39,8 +39,8 @@ const nav = [
   { label: "Document Management", icon: FileStack, to: "/document-flow/documents", match: "/document-flow/documents" },
   { label: "OCR Processing", icon: ScanText, to: "/document-flow/ocr", match: "/document-flow/ocr" },
   { label: "Reports", icon: FileBarChart, to: "/document-flow/reports", match: "/document-flow/reports" },
-  { label: "Analytics", icon: LineChart, to: "/document-flow", match: null },
-  { label: "Settings", icon: Settings, to: "/document-flow", match: null },
+  { label: "Analytics", icon: LineChart, to: "/document-flow/analytics", match: "/document-flow/analytics" },
+  { label: "Settings", icon: Settings, to: "/document-flow/settings", match: "/document-flow/settings" },
 ];
 
 const toneDot: Record<string, string> = {

@@ -42,7 +42,9 @@ import { Route as WaveFlowRouteImport } from './routes/wave-flow'
 import { Route as WorkCraftRouteImport } from './routes/work-craft'
 import { Route as DashboardInventoryRouteImport } from './routes/dashboard_.inventory'
 import { Route as DocumentFlowIndexRouteImport } from './routes/document-flow.index'
+import { Route as DocumentFlowAnalyticsRouteImport } from './routes/document-flow.analytics'
 import { Route as DocumentFlowReportsRouteImport } from './routes/document-flow.reports'
+import { Route as DocumentFlowSettingsRouteImport } from './routes/document-flow.settings'
 import { Route as GatePassProIndexRouteImport } from './routes/gate-pass-pro.index'
 import { Route as GatePassProAppointmentsRouteImport } from './routes/gate-pass-pro.appointments'
 import { Route as GatePassProArrivalNotificationsRouteImport } from './routes/gate-pass-pro.arrival-notifications'
@@ -94,10 +96,16 @@ import { Route as QualityGatekeeperRtsRouteImport } from './routes/quality-gatek
 import { Route as QualityGatekeeperSettingsRouteImport } from './routes/quality-gatekeeper.settings'
 import { Route as QualityGatekeeperWarehouseRouteImport } from './routes/quality-gatekeeper.warehouse'
 import { Route as ReceivingHubIndexRouteImport } from './routes/receiving-hub.index'
-import { Route as ReceivingHubDiscrepanciesRouteImport } from './routes/receiving-hub.discrepancies'
-import { Route as ReceivingHubNonPoReceiptRouteImport } from './routes/receiving-hub.non-po-receipt'
-import { Route as ReceivingHubPutAwayRouteImport } from './routes/receiving-hub.put-away'
-import { Route as ReceivingHubQualityInspectionRouteImport } from './routes/receiving-hub.quality-inspection'
+import { Route as ReceivingHubApprovalsRouteImport } from './routes/receiving-hub.approvals'
+import { Route as ReceivingHubAuditRouteImport } from './routes/receiving-hub.audit'
+import { Route as ReceivingHubDocksRouteImport } from './routes/receiving-hub.docks'
+import { Route as ReceivingHubHistoryRouteImport } from './routes/receiving-hub.history'
+import { Route as ReceivingHubInventoryRouteImport } from './routes/receiving-hub.inventory'
+import { Route as ReceivingHubModuleCompleteRouteImport } from './routes/receiving-hub.module-complete'
+import { Route as ReceivingHubNotificationsRouteImport } from './routes/receiving-hub.notifications'
+import { Route as ReceivingHubQualityRouteImport } from './routes/receiving-hub.quality'
+import { Route as ReceivingHubReportsRouteImport } from './routes/receiving-hub.reports'
+import { Route as ReceivingHubSettingsRouteImport } from './routes/receiving-hub.settings'
 import { Route as StorageGuardianIndexRouteImport } from './routes/storage-guardian.index'
 import { Route as StorageGuardianAlertsRouteImport } from './routes/storage-guardian.alerts'
 import { Route as StorageGuardianAuditRouteImport } from './routes/storage-guardian.audit'
@@ -167,10 +175,9 @@ import { Route as QualityGatekeeperInspectGrnRouteImport } from './routes/qualit
 import { Route as QualityGatekeeperInspectionGrnRouteImport } from './routes/quality-gatekeeper.inspection.$grn'
 import { Route as ReceivingHubGrnIndexRouteImport } from './routes/receiving-hub.grn.index'
 import { Route as ReceivingHubGrnIdRouteImport } from './routes/receiving-hub.grn.$id'
-import { Route as ReceivingHubGrnNewRouteImport } from './routes/receiving-hub.grn.new'
-import { Route as ReceivingHubKpiDockToStockRouteImport } from './routes/receiving-hub.kpi.dock-to-stock'
-import { Route as ReceivingHubPurchaseOrdersIndexRouteImport } from './routes/receiving-hub.purchase-orders.index'
-import { Route as ReceivingHubPurchaseOrdersPoNumberRouteImport } from './routes/receiving-hub.purchase-orders.$poNumber'
+import { Route as ReceivingHubQueueIndexRouteImport } from './routes/receiving-hub.queue.index'
+import { Route as ReceivingHubQueueIdRouteImport } from './routes/receiving-hub.queue.$id'
+import { Route as ReceivingHubReceivingIdRouteImport } from './routes/receiving-hub.receiving.$id'
 import { Route as SupplierFlowApprovalsIndexRouteImport } from './routes/supplier-flow.approvals.index'
 import { Route as SupplierFlowApprovalsPoIdRouteImport } from './routes/supplier-flow.approvals.$poId'
 import { Route as SupplierFlowAsnIndexRouteImport } from './routes/supplier-flow.asn.index'
@@ -364,9 +371,19 @@ const DocumentFlowIndexRoute = DocumentFlowIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DocumentFlowRoute,
 } as any)
+const DocumentFlowAnalyticsRoute = DocumentFlowAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => DocumentFlowRoute,
+} as any)
 const DocumentFlowReportsRoute = DocumentFlowReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
+  getParentRoute: () => DocumentFlowRoute,
+} as any)
+const DocumentFlowSettingsRoute = DocumentFlowSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => DocumentFlowRoute,
 } as any)
 const GatePassProIndexRoute = GatePassProIndexRouteImport.update({
@@ -640,29 +657,58 @@ const ReceivingHubIndexRoute = ReceivingHubIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ReceivingHubRoute,
 } as any)
-const ReceivingHubDiscrepanciesRoute =
-  ReceivingHubDiscrepanciesRouteImport.update({
-    id: '/discrepancies',
-    path: '/discrepancies',
-    getParentRoute: () => ReceivingHubRoute,
-  } as any)
-const ReceivingHubNonPoReceiptRoute =
-  ReceivingHubNonPoReceiptRouteImport.update({
-    id: '/non-po-receipt',
-    path: '/non-po-receipt',
-    getParentRoute: () => ReceivingHubRoute,
-  } as any)
-const ReceivingHubPutAwayRoute = ReceivingHubPutAwayRouteImport.update({
-  id: '/put-away',
-  path: '/put-away',
+const ReceivingHubApprovalsRoute = ReceivingHubApprovalsRouteImport.update({
+  id: '/approvals',
+  path: '/approvals',
   getParentRoute: () => ReceivingHubRoute,
 } as any)
-const ReceivingHubQualityInspectionRoute =
-  ReceivingHubQualityInspectionRouteImport.update({
-    id: '/quality-inspection',
-    path: '/quality-inspection',
+const ReceivingHubAuditRoute = ReceivingHubAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => ReceivingHubRoute,
+} as any)
+const ReceivingHubDocksRoute = ReceivingHubDocksRouteImport.update({
+  id: '/docks',
+  path: '/docks',
+  getParentRoute: () => ReceivingHubRoute,
+} as any)
+const ReceivingHubHistoryRoute = ReceivingHubHistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => ReceivingHubRoute,
+} as any)
+const ReceivingHubInventoryRoute = ReceivingHubInventoryRouteImport.update({
+  id: '/inventory',
+  path: '/inventory',
+  getParentRoute: () => ReceivingHubRoute,
+} as any)
+const ReceivingHubModuleCompleteRoute =
+  ReceivingHubModuleCompleteRouteImport.update({
+    id: '/module-complete',
+    path: '/module-complete',
     getParentRoute: () => ReceivingHubRoute,
   } as any)
+const ReceivingHubNotificationsRoute =
+  ReceivingHubNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => ReceivingHubRoute,
+  } as any)
+const ReceivingHubQualityRoute = ReceivingHubQualityRouteImport.update({
+  id: '/quality',
+  path: '/quality',
+  getParentRoute: () => ReceivingHubRoute,
+} as any)
+const ReceivingHubReportsRoute = ReceivingHubReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => ReceivingHubRoute,
+} as any)
+const ReceivingHubSettingsRoute = ReceivingHubSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => ReceivingHubRoute,
+} as any)
 const StorageGuardianIndexRoute = StorageGuardianIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -1025,29 +1071,21 @@ const ReceivingHubGrnIdRoute = ReceivingHubGrnIdRouteImport.update({
   path: '/grn/$id',
   getParentRoute: () => ReceivingHubRoute,
 } as any)
-const ReceivingHubGrnNewRoute = ReceivingHubGrnNewRouteImport.update({
-  id: '/grn/new',
-  path: '/grn/new',
+const ReceivingHubQueueIndexRoute = ReceivingHubQueueIndexRouteImport.update({
+  id: '/queue/',
+  path: '/queue/',
   getParentRoute: () => ReceivingHubRoute,
 } as any)
-const ReceivingHubKpiDockToStockRoute =
-  ReceivingHubKpiDockToStockRouteImport.update({
-    id: '/kpi/dock-to-stock',
-    path: '/kpi/dock-to-stock',
-    getParentRoute: () => ReceivingHubRoute,
-  } as any)
-const ReceivingHubPurchaseOrdersIndexRoute =
-  ReceivingHubPurchaseOrdersIndexRouteImport.update({
-    id: '/purchase-orders/',
-    path: '/purchase-orders/',
-    getParentRoute: () => ReceivingHubRoute,
-  } as any)
-const ReceivingHubPurchaseOrdersPoNumberRoute =
-  ReceivingHubPurchaseOrdersPoNumberRouteImport.update({
-    id: '/purchase-orders/$poNumber',
-    path: '/purchase-orders/$poNumber',
-    getParentRoute: () => ReceivingHubRoute,
-  } as any)
+const ReceivingHubQueueIdRoute = ReceivingHubQueueIdRouteImport.update({
+  id: '/queue/$id',
+  path: '/queue/$id',
+  getParentRoute: () => ReceivingHubRoute,
+} as any)
+const ReceivingHubReceivingIdRoute = ReceivingHubReceivingIdRouteImport.update({
+  id: '/receiving/$id',
+  path: '/receiving/$id',
+  getParentRoute: () => ReceivingHubRoute,
+} as any)
 const SupplierFlowApprovalsIndexRoute =
   SupplierFlowApprovalsIndexRouteImport.update({
     id: '/approvals/',
@@ -1239,7 +1277,9 @@ export interface FileRoutesByFullPath {
   '/wave-flow': typeof WaveFlowRouteWithChildren
   '/work-craft': typeof WorkCraftRouteWithChildren
   '/dashboard/inventory': typeof DashboardInventoryRoute
+  '/document-flow/analytics': typeof DocumentFlowAnalyticsRoute
   '/document-flow/reports': typeof DocumentFlowReportsRoute
+  '/document-flow/settings': typeof DocumentFlowSettingsRoute
   '/gate-pass-pro/appointments': typeof GatePassProAppointmentsRoute
   '/gate-pass-pro/arrival-notifications': typeof GatePassProArrivalNotificationsRoute
   '/gate-pass-pro/audit': typeof GatePassProAuditRoute
@@ -1285,10 +1325,16 @@ export interface FileRoutesByFullPath {
   '/quality-gatekeeper/rts': typeof QualityGatekeeperRtsRoute
   '/quality-gatekeeper/settings': typeof QualityGatekeeperSettingsRoute
   '/quality-gatekeeper/warehouse': typeof QualityGatekeeperWarehouseRoute
-  '/receiving-hub/discrepancies': typeof ReceivingHubDiscrepanciesRoute
-  '/receiving-hub/non-po-receipt': typeof ReceivingHubNonPoReceiptRoute
-  '/receiving-hub/put-away': typeof ReceivingHubPutAwayRoute
-  '/receiving-hub/quality-inspection': typeof ReceivingHubQualityInspectionRoute
+  '/receiving-hub/approvals': typeof ReceivingHubApprovalsRoute
+  '/receiving-hub/audit': typeof ReceivingHubAuditRoute
+  '/receiving-hub/docks': typeof ReceivingHubDocksRoute
+  '/receiving-hub/history': typeof ReceivingHubHistoryRoute
+  '/receiving-hub/inventory': typeof ReceivingHubInventoryRoute
+  '/receiving-hub/module-complete': typeof ReceivingHubModuleCompleteRoute
+  '/receiving-hub/notifications': typeof ReceivingHubNotificationsRoute
+  '/receiving-hub/quality': typeof ReceivingHubQualityRoute
+  '/receiving-hub/reports': typeof ReceivingHubReportsRoute
+  '/receiving-hub/settings': typeof ReceivingHubSettingsRoute
   '/storage-guardian/alerts': typeof StorageGuardianAlertsRoute
   '/storage-guardian/audit': typeof StorageGuardianAuditRoute
   '/storage-guardian/locations': typeof StorageGuardianLocationsRoute
@@ -1356,9 +1402,8 @@ export interface FileRoutesByFullPath {
   '/quality-gatekeeper/inspect/$grn': typeof QualityGatekeeperInspectGrnRoute
   '/quality-gatekeeper/inspection/$grn': typeof QualityGatekeeperInspectionGrnRoute
   '/receiving-hub/grn/$id': typeof ReceivingHubGrnIdRoute
-  '/receiving-hub/grn/new': typeof ReceivingHubGrnNewRoute
-  '/receiving-hub/kpi/dock-to-stock': typeof ReceivingHubKpiDockToStockRoute
-  '/receiving-hub/purchase-orders/$poNumber': typeof ReceivingHubPurchaseOrdersPoNumberRoute
+  '/receiving-hub/queue/$id': typeof ReceivingHubQueueIdRoute
+  '/receiving-hub/receiving/$id': typeof ReceivingHubReceivingIdRoute
   '/supplier-flow/approvals/$poId': typeof SupplierFlowApprovalsPoIdRoute
   '/supplier-flow/asn/$asnId': typeof SupplierFlowAsnAsnIdRoute
   '/supplier-flow/asn/new': typeof SupplierFlowAsnNewRoute
@@ -1380,7 +1425,7 @@ export interface FileRoutesByFullPath {
   '/master-core/items/': typeof MasterCoreItemsIndexRoute
   '/master-core/suppliers/': typeof MasterCoreSuppliersIndexRoute
   '/receiving-hub/grn/': typeof ReceivingHubGrnIndexRoute
-  '/receiving-hub/purchase-orders/': typeof ReceivingHubPurchaseOrdersIndexRoute
+  '/receiving-hub/queue/': typeof ReceivingHubQueueIndexRoute
   '/supplier-flow/approvals/': typeof SupplierFlowApprovalsIndexRoute
   '/supplier-flow/asn/': typeof SupplierFlowAsnIndexRoute
   '/supplier-flow/purchase-orders/': typeof SupplierFlowPurchaseOrdersIndexRoute
@@ -1418,7 +1463,9 @@ export interface FileRoutesByTo {
   '/vehicle-queue': typeof VehicleQueueRoute
   '/vehicle-verification': typeof VehicleVerificationRoute
   '/dashboard/inventory': typeof DashboardInventoryRoute
+  '/document-flow/analytics': typeof DocumentFlowAnalyticsRoute
   '/document-flow/reports': typeof DocumentFlowReportsRoute
+  '/document-flow/settings': typeof DocumentFlowSettingsRoute
   '/gate-pass-pro/appointments': typeof GatePassProAppointmentsRoute
   '/gate-pass-pro/arrival-notifications': typeof GatePassProArrivalNotificationsRoute
   '/gate-pass-pro/audit': typeof GatePassProAuditRoute
@@ -1464,10 +1511,16 @@ export interface FileRoutesByTo {
   '/quality-gatekeeper/rts': typeof QualityGatekeeperRtsRoute
   '/quality-gatekeeper/settings': typeof QualityGatekeeperSettingsRoute
   '/quality-gatekeeper/warehouse': typeof QualityGatekeeperWarehouseRoute
-  '/receiving-hub/discrepancies': typeof ReceivingHubDiscrepanciesRoute
-  '/receiving-hub/non-po-receipt': typeof ReceivingHubNonPoReceiptRoute
-  '/receiving-hub/put-away': typeof ReceivingHubPutAwayRoute
-  '/receiving-hub/quality-inspection': typeof ReceivingHubQualityInspectionRoute
+  '/receiving-hub/approvals': typeof ReceivingHubApprovalsRoute
+  '/receiving-hub/audit': typeof ReceivingHubAuditRoute
+  '/receiving-hub/docks': typeof ReceivingHubDocksRoute
+  '/receiving-hub/history': typeof ReceivingHubHistoryRoute
+  '/receiving-hub/inventory': typeof ReceivingHubInventoryRoute
+  '/receiving-hub/module-complete': typeof ReceivingHubModuleCompleteRoute
+  '/receiving-hub/notifications': typeof ReceivingHubNotificationsRoute
+  '/receiving-hub/quality': typeof ReceivingHubQualityRoute
+  '/receiving-hub/reports': typeof ReceivingHubReportsRoute
+  '/receiving-hub/settings': typeof ReceivingHubSettingsRoute
   '/storage-guardian/alerts': typeof StorageGuardianAlertsRoute
   '/storage-guardian/audit': typeof StorageGuardianAuditRoute
   '/storage-guardian/locations': typeof StorageGuardianLocationsRoute
@@ -1535,9 +1588,8 @@ export interface FileRoutesByTo {
   '/quality-gatekeeper/inspect/$grn': typeof QualityGatekeeperInspectGrnRoute
   '/quality-gatekeeper/inspection/$grn': typeof QualityGatekeeperInspectionGrnRoute
   '/receiving-hub/grn/$id': typeof ReceivingHubGrnIdRoute
-  '/receiving-hub/grn/new': typeof ReceivingHubGrnNewRoute
-  '/receiving-hub/kpi/dock-to-stock': typeof ReceivingHubKpiDockToStockRoute
-  '/receiving-hub/purchase-orders/$poNumber': typeof ReceivingHubPurchaseOrdersPoNumberRoute
+  '/receiving-hub/queue/$id': typeof ReceivingHubQueueIdRoute
+  '/receiving-hub/receiving/$id': typeof ReceivingHubReceivingIdRoute
   '/supplier-flow/approvals/$poId': typeof SupplierFlowApprovalsPoIdRoute
   '/supplier-flow/asn/$asnId': typeof SupplierFlowAsnAsnIdRoute
   '/supplier-flow/asn/new': typeof SupplierFlowAsnNewRoute
@@ -1558,7 +1610,7 @@ export interface FileRoutesByTo {
   '/master-core/items': typeof MasterCoreItemsIndexRoute
   '/master-core/suppliers': typeof MasterCoreSuppliersIndexRoute
   '/receiving-hub/grn': typeof ReceivingHubGrnIndexRoute
-  '/receiving-hub/purchase-orders': typeof ReceivingHubPurchaseOrdersIndexRoute
+  '/receiving-hub/queue': typeof ReceivingHubQueueIndexRoute
   '/supplier-flow/approvals': typeof SupplierFlowApprovalsIndexRoute
   '/supplier-flow/asn': typeof SupplierFlowAsnIndexRoute
   '/supplier-flow/purchase-orders': typeof SupplierFlowPurchaseOrdersIndexRoute
@@ -1609,7 +1661,9 @@ export interface FileRoutesById {
   '/wave-flow': typeof WaveFlowRouteWithChildren
   '/work-craft': typeof WorkCraftRouteWithChildren
   '/dashboard_/inventory': typeof DashboardInventoryRoute
+  '/document-flow/analytics': typeof DocumentFlowAnalyticsRoute
   '/document-flow/reports': typeof DocumentFlowReportsRoute
+  '/document-flow/settings': typeof DocumentFlowSettingsRoute
   '/gate-pass-pro/appointments': typeof GatePassProAppointmentsRoute
   '/gate-pass-pro/arrival-notifications': typeof GatePassProArrivalNotificationsRoute
   '/gate-pass-pro/audit': typeof GatePassProAuditRoute
@@ -1655,10 +1709,16 @@ export interface FileRoutesById {
   '/quality-gatekeeper/rts': typeof QualityGatekeeperRtsRoute
   '/quality-gatekeeper/settings': typeof QualityGatekeeperSettingsRoute
   '/quality-gatekeeper/warehouse': typeof QualityGatekeeperWarehouseRoute
-  '/receiving-hub/discrepancies': typeof ReceivingHubDiscrepanciesRoute
-  '/receiving-hub/non-po-receipt': typeof ReceivingHubNonPoReceiptRoute
-  '/receiving-hub/put-away': typeof ReceivingHubPutAwayRoute
-  '/receiving-hub/quality-inspection': typeof ReceivingHubQualityInspectionRoute
+  '/receiving-hub/approvals': typeof ReceivingHubApprovalsRoute
+  '/receiving-hub/audit': typeof ReceivingHubAuditRoute
+  '/receiving-hub/docks': typeof ReceivingHubDocksRoute
+  '/receiving-hub/history': typeof ReceivingHubHistoryRoute
+  '/receiving-hub/inventory': typeof ReceivingHubInventoryRoute
+  '/receiving-hub/module-complete': typeof ReceivingHubModuleCompleteRoute
+  '/receiving-hub/notifications': typeof ReceivingHubNotificationsRoute
+  '/receiving-hub/quality': typeof ReceivingHubQualityRoute
+  '/receiving-hub/reports': typeof ReceivingHubReportsRoute
+  '/receiving-hub/settings': typeof ReceivingHubSettingsRoute
   '/storage-guardian/alerts': typeof StorageGuardianAlertsRoute
   '/storage-guardian/audit': typeof StorageGuardianAuditRoute
   '/storage-guardian/locations': typeof StorageGuardianLocationsRoute
@@ -1726,9 +1786,8 @@ export interface FileRoutesById {
   '/quality-gatekeeper/inspect/$grn': typeof QualityGatekeeperInspectGrnRoute
   '/quality-gatekeeper/inspection/$grn': typeof QualityGatekeeperInspectionGrnRoute
   '/receiving-hub/grn/$id': typeof ReceivingHubGrnIdRoute
-  '/receiving-hub/grn/new': typeof ReceivingHubGrnNewRoute
-  '/receiving-hub/kpi/dock-to-stock': typeof ReceivingHubKpiDockToStockRoute
-  '/receiving-hub/purchase-orders/$poNumber': typeof ReceivingHubPurchaseOrdersPoNumberRoute
+  '/receiving-hub/queue/$id': typeof ReceivingHubQueueIdRoute
+  '/receiving-hub/receiving/$id': typeof ReceivingHubReceivingIdRoute
   '/supplier-flow/approvals/$poId': typeof SupplierFlowApprovalsPoIdRoute
   '/supplier-flow/asn/$asnId': typeof SupplierFlowAsnAsnIdRoute
   '/supplier-flow/asn/new': typeof SupplierFlowAsnNewRoute
@@ -1750,7 +1809,7 @@ export interface FileRoutesById {
   '/master-core/items/': typeof MasterCoreItemsIndexRoute
   '/master-core/suppliers/': typeof MasterCoreSuppliersIndexRoute
   '/receiving-hub/grn/': typeof ReceivingHubGrnIndexRoute
-  '/receiving-hub/purchase-orders/': typeof ReceivingHubPurchaseOrdersIndexRoute
+  '/receiving-hub/queue/': typeof ReceivingHubQueueIndexRoute
   '/supplier-flow/approvals/': typeof SupplierFlowApprovalsIndexRoute
   '/supplier-flow/asn/': typeof SupplierFlowAsnIndexRoute
   '/supplier-flow/purchase-orders/': typeof SupplierFlowPurchaseOrdersIndexRoute
@@ -1802,7 +1861,9 @@ export interface FileRouteTypes {
     | '/wave-flow'
     | '/work-craft'
     | '/dashboard/inventory'
+    | '/document-flow/analytics'
     | '/document-flow/reports'
+    | '/document-flow/settings'
     | '/gate-pass-pro/appointments'
     | '/gate-pass-pro/arrival-notifications'
     | '/gate-pass-pro/audit'
@@ -1848,10 +1909,16 @@ export interface FileRouteTypes {
     | '/quality-gatekeeper/rts'
     | '/quality-gatekeeper/settings'
     | '/quality-gatekeeper/warehouse'
-    | '/receiving-hub/discrepancies'
-    | '/receiving-hub/non-po-receipt'
-    | '/receiving-hub/put-away'
-    | '/receiving-hub/quality-inspection'
+    | '/receiving-hub/approvals'
+    | '/receiving-hub/audit'
+    | '/receiving-hub/docks'
+    | '/receiving-hub/history'
+    | '/receiving-hub/inventory'
+    | '/receiving-hub/module-complete'
+    | '/receiving-hub/notifications'
+    | '/receiving-hub/quality'
+    | '/receiving-hub/reports'
+    | '/receiving-hub/settings'
     | '/storage-guardian/alerts'
     | '/storage-guardian/audit'
     | '/storage-guardian/locations'
@@ -1919,9 +1986,8 @@ export interface FileRouteTypes {
     | '/quality-gatekeeper/inspect/$grn'
     | '/quality-gatekeeper/inspection/$grn'
     | '/receiving-hub/grn/$id'
-    | '/receiving-hub/grn/new'
-    | '/receiving-hub/kpi/dock-to-stock'
-    | '/receiving-hub/purchase-orders/$poNumber'
+    | '/receiving-hub/queue/$id'
+    | '/receiving-hub/receiving/$id'
     | '/supplier-flow/approvals/$poId'
     | '/supplier-flow/asn/$asnId'
     | '/supplier-flow/asn/new'
@@ -1943,7 +2009,7 @@ export interface FileRouteTypes {
     | '/master-core/items/'
     | '/master-core/suppliers/'
     | '/receiving-hub/grn/'
-    | '/receiving-hub/purchase-orders/'
+    | '/receiving-hub/queue/'
     | '/supplier-flow/approvals/'
     | '/supplier-flow/asn/'
     | '/supplier-flow/purchase-orders/'
@@ -1981,7 +2047,9 @@ export interface FileRouteTypes {
     | '/vehicle-queue'
     | '/vehicle-verification'
     | '/dashboard/inventory'
+    | '/document-flow/analytics'
     | '/document-flow/reports'
+    | '/document-flow/settings'
     | '/gate-pass-pro/appointments'
     | '/gate-pass-pro/arrival-notifications'
     | '/gate-pass-pro/audit'
@@ -2027,10 +2095,16 @@ export interface FileRouteTypes {
     | '/quality-gatekeeper/rts'
     | '/quality-gatekeeper/settings'
     | '/quality-gatekeeper/warehouse'
-    | '/receiving-hub/discrepancies'
-    | '/receiving-hub/non-po-receipt'
-    | '/receiving-hub/put-away'
-    | '/receiving-hub/quality-inspection'
+    | '/receiving-hub/approvals'
+    | '/receiving-hub/audit'
+    | '/receiving-hub/docks'
+    | '/receiving-hub/history'
+    | '/receiving-hub/inventory'
+    | '/receiving-hub/module-complete'
+    | '/receiving-hub/notifications'
+    | '/receiving-hub/quality'
+    | '/receiving-hub/reports'
+    | '/receiving-hub/settings'
     | '/storage-guardian/alerts'
     | '/storage-guardian/audit'
     | '/storage-guardian/locations'
@@ -2098,9 +2172,8 @@ export interface FileRouteTypes {
     | '/quality-gatekeeper/inspect/$grn'
     | '/quality-gatekeeper/inspection/$grn'
     | '/receiving-hub/grn/$id'
-    | '/receiving-hub/grn/new'
-    | '/receiving-hub/kpi/dock-to-stock'
-    | '/receiving-hub/purchase-orders/$poNumber'
+    | '/receiving-hub/queue/$id'
+    | '/receiving-hub/receiving/$id'
     | '/supplier-flow/approvals/$poId'
     | '/supplier-flow/asn/$asnId'
     | '/supplier-flow/asn/new'
@@ -2121,7 +2194,7 @@ export interface FileRouteTypes {
     | '/master-core/items'
     | '/master-core/suppliers'
     | '/receiving-hub/grn'
-    | '/receiving-hub/purchase-orders'
+    | '/receiving-hub/queue'
     | '/supplier-flow/approvals'
     | '/supplier-flow/asn'
     | '/supplier-flow/purchase-orders'
@@ -2171,7 +2244,9 @@ export interface FileRouteTypes {
     | '/wave-flow'
     | '/work-craft'
     | '/dashboard_/inventory'
+    | '/document-flow/analytics'
     | '/document-flow/reports'
+    | '/document-flow/settings'
     | '/gate-pass-pro/appointments'
     | '/gate-pass-pro/arrival-notifications'
     | '/gate-pass-pro/audit'
@@ -2217,10 +2292,16 @@ export interface FileRouteTypes {
     | '/quality-gatekeeper/rts'
     | '/quality-gatekeeper/settings'
     | '/quality-gatekeeper/warehouse'
-    | '/receiving-hub/discrepancies'
-    | '/receiving-hub/non-po-receipt'
-    | '/receiving-hub/put-away'
-    | '/receiving-hub/quality-inspection'
+    | '/receiving-hub/approvals'
+    | '/receiving-hub/audit'
+    | '/receiving-hub/docks'
+    | '/receiving-hub/history'
+    | '/receiving-hub/inventory'
+    | '/receiving-hub/module-complete'
+    | '/receiving-hub/notifications'
+    | '/receiving-hub/quality'
+    | '/receiving-hub/reports'
+    | '/receiving-hub/settings'
     | '/storage-guardian/alerts'
     | '/storage-guardian/audit'
     | '/storage-guardian/locations'
@@ -2288,9 +2369,8 @@ export interface FileRouteTypes {
     | '/quality-gatekeeper/inspect/$grn'
     | '/quality-gatekeeper/inspection/$grn'
     | '/receiving-hub/grn/$id'
-    | '/receiving-hub/grn/new'
-    | '/receiving-hub/kpi/dock-to-stock'
-    | '/receiving-hub/purchase-orders/$poNumber'
+    | '/receiving-hub/queue/$id'
+    | '/receiving-hub/receiving/$id'
     | '/supplier-flow/approvals/$poId'
     | '/supplier-flow/asn/$asnId'
     | '/supplier-flow/asn/new'
@@ -2312,7 +2392,7 @@ export interface FileRouteTypes {
     | '/master-core/items/'
     | '/master-core/suppliers/'
     | '/receiving-hub/grn/'
-    | '/receiving-hub/purchase-orders/'
+    | '/receiving-hub/queue/'
     | '/supplier-flow/approvals/'
     | '/supplier-flow/asn/'
     | '/supplier-flow/purchase-orders/'
@@ -2598,11 +2678,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocumentFlowIndexRouteImport
       parentRoute: typeof DocumentFlowRoute
     }
+    '/document-flow/analytics': {
+      id: '/document-flow/analytics'
+      path: '/analytics'
+      fullPath: '/document-flow/analytics'
+      preLoaderRoute: typeof DocumentFlowAnalyticsRouteImport
+      parentRoute: typeof DocumentFlowRoute
+    }
     '/document-flow/reports': {
       id: '/document-flow/reports'
       path: '/reports'
       fullPath: '/document-flow/reports'
       preLoaderRoute: typeof DocumentFlowReportsRouteImport
+      parentRoute: typeof DocumentFlowRoute
+    }
+    '/document-flow/settings': {
+      id: '/document-flow/settings'
+      path: '/settings'
+      fullPath: '/document-flow/settings'
+      preLoaderRoute: typeof DocumentFlowSettingsRouteImport
       parentRoute: typeof DocumentFlowRoute
     }
     '/gate-pass-pro/': {
@@ -2962,32 +3056,74 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReceivingHubIndexRouteImport
       parentRoute: typeof ReceivingHubRoute
     }
-    '/receiving-hub/discrepancies': {
-      id: '/receiving-hub/discrepancies'
-      path: '/discrepancies'
-      fullPath: '/receiving-hub/discrepancies'
-      preLoaderRoute: typeof ReceivingHubDiscrepanciesRouteImport
+    '/receiving-hub/approvals': {
+      id: '/receiving-hub/approvals'
+      path: '/approvals'
+      fullPath: '/receiving-hub/approvals'
+      preLoaderRoute: typeof ReceivingHubApprovalsRouteImport
       parentRoute: typeof ReceivingHubRoute
     }
-    '/receiving-hub/non-po-receipt': {
-      id: '/receiving-hub/non-po-receipt'
-      path: '/non-po-receipt'
-      fullPath: '/receiving-hub/non-po-receipt'
-      preLoaderRoute: typeof ReceivingHubNonPoReceiptRouteImport
+    '/receiving-hub/audit': {
+      id: '/receiving-hub/audit'
+      path: '/audit'
+      fullPath: '/receiving-hub/audit'
+      preLoaderRoute: typeof ReceivingHubAuditRouteImport
       parentRoute: typeof ReceivingHubRoute
     }
-    '/receiving-hub/put-away': {
-      id: '/receiving-hub/put-away'
-      path: '/put-away'
-      fullPath: '/receiving-hub/put-away'
-      preLoaderRoute: typeof ReceivingHubPutAwayRouteImport
+    '/receiving-hub/docks': {
+      id: '/receiving-hub/docks'
+      path: '/docks'
+      fullPath: '/receiving-hub/docks'
+      preLoaderRoute: typeof ReceivingHubDocksRouteImport
       parentRoute: typeof ReceivingHubRoute
     }
-    '/receiving-hub/quality-inspection': {
-      id: '/receiving-hub/quality-inspection'
-      path: '/quality-inspection'
-      fullPath: '/receiving-hub/quality-inspection'
-      preLoaderRoute: typeof ReceivingHubQualityInspectionRouteImport
+    '/receiving-hub/history': {
+      id: '/receiving-hub/history'
+      path: '/history'
+      fullPath: '/receiving-hub/history'
+      preLoaderRoute: typeof ReceivingHubHistoryRouteImport
+      parentRoute: typeof ReceivingHubRoute
+    }
+    '/receiving-hub/inventory': {
+      id: '/receiving-hub/inventory'
+      path: '/inventory'
+      fullPath: '/receiving-hub/inventory'
+      preLoaderRoute: typeof ReceivingHubInventoryRouteImport
+      parentRoute: typeof ReceivingHubRoute
+    }
+    '/receiving-hub/module-complete': {
+      id: '/receiving-hub/module-complete'
+      path: '/module-complete'
+      fullPath: '/receiving-hub/module-complete'
+      preLoaderRoute: typeof ReceivingHubModuleCompleteRouteImport
+      parentRoute: typeof ReceivingHubRoute
+    }
+    '/receiving-hub/notifications': {
+      id: '/receiving-hub/notifications'
+      path: '/notifications'
+      fullPath: '/receiving-hub/notifications'
+      preLoaderRoute: typeof ReceivingHubNotificationsRouteImport
+      parentRoute: typeof ReceivingHubRoute
+    }
+    '/receiving-hub/quality': {
+      id: '/receiving-hub/quality'
+      path: '/quality'
+      fullPath: '/receiving-hub/quality'
+      preLoaderRoute: typeof ReceivingHubQualityRouteImport
+      parentRoute: typeof ReceivingHubRoute
+    }
+    '/receiving-hub/reports': {
+      id: '/receiving-hub/reports'
+      path: '/reports'
+      fullPath: '/receiving-hub/reports'
+      preLoaderRoute: typeof ReceivingHubReportsRouteImport
+      parentRoute: typeof ReceivingHubRoute
+    }
+    '/receiving-hub/settings': {
+      id: '/receiving-hub/settings'
+      path: '/settings'
+      fullPath: '/receiving-hub/settings'
+      preLoaderRoute: typeof ReceivingHubSettingsRouteImport
       parentRoute: typeof ReceivingHubRoute
     }
     '/storage-guardian/': {
@@ -3473,32 +3609,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReceivingHubGrnIdRouteImport
       parentRoute: typeof ReceivingHubRoute
     }
-    '/receiving-hub/grn/new': {
-      id: '/receiving-hub/grn/new'
-      path: '/grn/new'
-      fullPath: '/receiving-hub/grn/new'
-      preLoaderRoute: typeof ReceivingHubGrnNewRouteImport
+    '/receiving-hub/queue/': {
+      id: '/receiving-hub/queue/'
+      path: '/queue'
+      fullPath: '/receiving-hub/queue/'
+      preLoaderRoute: typeof ReceivingHubQueueIndexRouteImport
       parentRoute: typeof ReceivingHubRoute
     }
-    '/receiving-hub/kpi/dock-to-stock': {
-      id: '/receiving-hub/kpi/dock-to-stock'
-      path: '/kpi/dock-to-stock'
-      fullPath: '/receiving-hub/kpi/dock-to-stock'
-      preLoaderRoute: typeof ReceivingHubKpiDockToStockRouteImport
+    '/receiving-hub/queue/$id': {
+      id: '/receiving-hub/queue/$id'
+      path: '/queue/$id'
+      fullPath: '/receiving-hub/queue/$id'
+      preLoaderRoute: typeof ReceivingHubQueueIdRouteImport
       parentRoute: typeof ReceivingHubRoute
     }
-    '/receiving-hub/purchase-orders/': {
-      id: '/receiving-hub/purchase-orders/'
-      path: '/purchase-orders'
-      fullPath: '/receiving-hub/purchase-orders/'
-      preLoaderRoute: typeof ReceivingHubPurchaseOrdersIndexRouteImport
-      parentRoute: typeof ReceivingHubRoute
-    }
-    '/receiving-hub/purchase-orders/$poNumber': {
-      id: '/receiving-hub/purchase-orders/$poNumber'
-      path: '/purchase-orders/$poNumber'
-      fullPath: '/receiving-hub/purchase-orders/$poNumber'
-      preLoaderRoute: typeof ReceivingHubPurchaseOrdersPoNumberRouteImport
+    '/receiving-hub/receiving/$id': {
+      id: '/receiving-hub/receiving/$id'
+      path: '/receiving/$id'
+      fullPath: '/receiving-hub/receiving/$id'
+      preLoaderRoute: typeof ReceivingHubReceivingIdRouteImport
       parentRoute: typeof ReceivingHubRoute
     }
     '/supplier-flow/approvals/': {
@@ -3694,7 +3823,9 @@ declare module '@tanstack/react-router' {
 }
 
 interface DocumentFlowRouteChildren {
+  DocumentFlowAnalyticsRoute: typeof DocumentFlowAnalyticsRoute
   DocumentFlowReportsRoute: typeof DocumentFlowReportsRoute
+  DocumentFlowSettingsRoute: typeof DocumentFlowSettingsRoute
   DocumentFlowIndexRoute: typeof DocumentFlowIndexRoute
   DocumentFlowDocumentsIdRoute: typeof DocumentFlowDocumentsIdRoute
   DocumentFlowDocumentsLibraryRoute: typeof DocumentFlowDocumentsLibraryRoute
@@ -3705,7 +3836,9 @@ interface DocumentFlowRouteChildren {
 }
 
 const DocumentFlowRouteChildren: DocumentFlowRouteChildren = {
+  DocumentFlowAnalyticsRoute: DocumentFlowAnalyticsRoute,
   DocumentFlowReportsRoute: DocumentFlowReportsRoute,
+  DocumentFlowSettingsRoute: DocumentFlowSettingsRoute,
   DocumentFlowIndexRoute: DocumentFlowIndexRoute,
   DocumentFlowDocumentsIdRoute: DocumentFlowDocumentsIdRoute,
   DocumentFlowDocumentsLibraryRoute: DocumentFlowDocumentsLibraryRoute,
@@ -3902,32 +4035,41 @@ const QualityGatekeeperRouteWithChildren =
   QualityGatekeeperRoute._addFileChildren(QualityGatekeeperRouteChildren)
 
 interface ReceivingHubRouteChildren {
-  ReceivingHubDiscrepanciesRoute: typeof ReceivingHubDiscrepanciesRoute
-  ReceivingHubNonPoReceiptRoute: typeof ReceivingHubNonPoReceiptRoute
-  ReceivingHubPutAwayRoute: typeof ReceivingHubPutAwayRoute
-  ReceivingHubQualityInspectionRoute: typeof ReceivingHubQualityInspectionRoute
+  ReceivingHubApprovalsRoute: typeof ReceivingHubApprovalsRoute
+  ReceivingHubAuditRoute: typeof ReceivingHubAuditRoute
+  ReceivingHubDocksRoute: typeof ReceivingHubDocksRoute
+  ReceivingHubHistoryRoute: typeof ReceivingHubHistoryRoute
+  ReceivingHubInventoryRoute: typeof ReceivingHubInventoryRoute
+  ReceivingHubModuleCompleteRoute: typeof ReceivingHubModuleCompleteRoute
+  ReceivingHubNotificationsRoute: typeof ReceivingHubNotificationsRoute
+  ReceivingHubQualityRoute: typeof ReceivingHubQualityRoute
+  ReceivingHubReportsRoute: typeof ReceivingHubReportsRoute
+  ReceivingHubSettingsRoute: typeof ReceivingHubSettingsRoute
   ReceivingHubIndexRoute: typeof ReceivingHubIndexRoute
   ReceivingHubGrnIdRoute: typeof ReceivingHubGrnIdRoute
-  ReceivingHubGrnNewRoute: typeof ReceivingHubGrnNewRoute
-  ReceivingHubKpiDockToStockRoute: typeof ReceivingHubKpiDockToStockRoute
-  ReceivingHubPurchaseOrdersPoNumberRoute: typeof ReceivingHubPurchaseOrdersPoNumberRoute
+  ReceivingHubQueueIdRoute: typeof ReceivingHubQueueIdRoute
+  ReceivingHubReceivingIdRoute: typeof ReceivingHubReceivingIdRoute
   ReceivingHubGrnIndexRoute: typeof ReceivingHubGrnIndexRoute
-  ReceivingHubPurchaseOrdersIndexRoute: typeof ReceivingHubPurchaseOrdersIndexRoute
+  ReceivingHubQueueIndexRoute: typeof ReceivingHubQueueIndexRoute
 }
 
 const ReceivingHubRouteChildren: ReceivingHubRouteChildren = {
-  ReceivingHubDiscrepanciesRoute: ReceivingHubDiscrepanciesRoute,
-  ReceivingHubNonPoReceiptRoute: ReceivingHubNonPoReceiptRoute,
-  ReceivingHubPutAwayRoute: ReceivingHubPutAwayRoute,
-  ReceivingHubQualityInspectionRoute: ReceivingHubQualityInspectionRoute,
+  ReceivingHubApprovalsRoute: ReceivingHubApprovalsRoute,
+  ReceivingHubAuditRoute: ReceivingHubAuditRoute,
+  ReceivingHubDocksRoute: ReceivingHubDocksRoute,
+  ReceivingHubHistoryRoute: ReceivingHubHistoryRoute,
+  ReceivingHubInventoryRoute: ReceivingHubInventoryRoute,
+  ReceivingHubModuleCompleteRoute: ReceivingHubModuleCompleteRoute,
+  ReceivingHubNotificationsRoute: ReceivingHubNotificationsRoute,
+  ReceivingHubQualityRoute: ReceivingHubQualityRoute,
+  ReceivingHubReportsRoute: ReceivingHubReportsRoute,
+  ReceivingHubSettingsRoute: ReceivingHubSettingsRoute,
   ReceivingHubIndexRoute: ReceivingHubIndexRoute,
   ReceivingHubGrnIdRoute: ReceivingHubGrnIdRoute,
-  ReceivingHubGrnNewRoute: ReceivingHubGrnNewRoute,
-  ReceivingHubKpiDockToStockRoute: ReceivingHubKpiDockToStockRoute,
-  ReceivingHubPurchaseOrdersPoNumberRoute:
-    ReceivingHubPurchaseOrdersPoNumberRoute,
+  ReceivingHubQueueIdRoute: ReceivingHubQueueIdRoute,
+  ReceivingHubReceivingIdRoute: ReceivingHubReceivingIdRoute,
   ReceivingHubGrnIndexRoute: ReceivingHubGrnIndexRoute,
-  ReceivingHubPurchaseOrdersIndexRoute: ReceivingHubPurchaseOrdersIndexRoute,
+  ReceivingHubQueueIndexRoute: ReceivingHubQueueIndexRoute,
 }
 
 const ReceivingHubRouteWithChildren = ReceivingHubRoute._addFileChildren(
