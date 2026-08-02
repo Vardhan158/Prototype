@@ -104,6 +104,7 @@ export function AppShell({
 }) {
   const [dark, setDark] = useState(false);
   const [lang, setLang] = useState("EN");
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const unread = notifications.filter((n) => !n.read).length;
   const { user, logout } = useAuth();
 
@@ -129,16 +130,16 @@ export function AppShell({
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-30 glass-panel flex h-16 items-center gap-3 px-4 lg:px-6">
-          <Sheet>
+          <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="lg:hidden">
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-72 bg-sidebar p-0">
+            <SheetContent side="left" className="w-72 overflow-y-auto bg-sidebar p-0">
               <SheetTitle className="sr-only">Navigation</SheetTitle>
               <Brand />
-              <NavList />
+              <NavList onNavigate={() => setMobileNavOpen(false)} />
             </SheetContent>
           </Sheet>
 
