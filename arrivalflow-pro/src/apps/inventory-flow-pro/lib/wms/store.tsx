@@ -43,7 +43,7 @@ const ROLE_LIST = [
   { name: "Anita Deshmukh", role: "Inventory Manager" },
   { name: "Ramesh Iyer", role: "Store Keeper" },
   { name: "Sunil Prakash", role: "Assembly Manager" },
-  { name: "Fatima Al Zahra", role: "Quality Inspector" },
+  { name: "Fatima Al Zahra", role: "Quality Inspection" },
   { name: "Lena Brandt", role: "Procurement" },
 ];
 

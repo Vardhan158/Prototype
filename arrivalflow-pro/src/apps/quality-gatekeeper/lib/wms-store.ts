@@ -12,7 +12,7 @@ let state: State = {
   grns: GRNS.map((g) => ({ ...g, lines: g.lines.map((l) => ({ ...l })) })),
   warehouse: "PL-1000 · Pune Plant",
   language: "English (EN)",
-  role: "Quality Inspector",
+  role: "Quality Inspection",
 };
 
 const listeners = new Set<() => void>();

@@ -423,7 +423,7 @@ export const recentActivity = [
   { user: "S. Iyer", role: "Procurement", action: "approved PO-2026-77133 document set", time: "27 min ago", tone: "success" },
   { user: "A. Kulkarni", role: "Warehouse Manager", action: "flagged DC-4471 — page 2 unreadable", time: "1 hr ago", tone: "danger" },
   { user: "Security Desk 2", role: "Security", action: "captured Vehicle RC for MH-04-KL-8823", time: "2 hrs ago", tone: "primary" },
-  { user: "N. Fernandes", role: "Quality Inspector", action: "linked Mill Test Cert to GRN-2026-31174", time: "3 hrs ago", tone: "teal" },
+  { user: "N. Fernandes", role: "Quality Inspection", action: "linked Mill Test Cert to GRN-2026-31174", time: "3 hrs ago", tone: "teal" },
   { user: "M. Bhagat", role: "Asset Manager", action: "archived Reach Truck RT-220 warranty", time: "Yesterday", tone: "muted" },
 ];
 

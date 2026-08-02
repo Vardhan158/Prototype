@@ -80,7 +80,7 @@ const PEOPLE = [
   { name: "Ramesh Iyer", role: "Store Keeper" },
   { name: "Anita Deshmukh", role: "Inventory Manager" },
   { name: "Karan Malhotra", role: "Warehouse Manager" },
-  { name: "Fatima Al Zahra", role: "Quality Inspector" },
+  { name: "Fatima Al Zahra", role: "Quality Inspection" },
   { name: "Sunil Prakash", role: "Assembly Manager" },
   { name: "Lena Brandt", role: "Procurement" },
 ];
@@ -357,7 +357,7 @@ export const AGING_BUCKETS = [
 export const HEATMAP_ZONES = ZONES;
 
 export const ACTIVITY_FEED = [
-  { id: "ACT-1", user: "Fatima Al Zahra", role: "Quality Inspector", action: "released 4 HUs from quality hold", target: "INV-90222", time: "3 min ago", tone: "success" as const },
+  { id: "ACT-1", user: "Fatima Al Zahra", role: "Quality Inspection", action: "released 4 HUs from quality hold", target: "INV-90222", time: "3 min ago", tone: "success" as const },
   { id: "ACT-2", user: "Karan Malhotra", role: "Warehouse Manager", action: "posted goods issue for shipment", target: "DSP-77211", time: "11 min ago", tone: "primary" as const },
   { id: "ACT-3", user: "System", role: "Lifecycle Engine", action: "auto-blocked recall batch", target: "B2026-318", time: "18 min ago", tone: "danger" as const },
   { id: "ACT-4", user: "Ramesh Iyer", role: "Store Keeper", action: "confirmed 18 pick lines on wave", target: "WAVE-2026-221", time: "26 min ago", tone: "info" as const },
@@ -368,7 +368,7 @@ export const ACTIVITY_FEED = [
 export const REPORTS = [
   { id: "RPT-01", name: "Inventory Status Summary", desc: "Stock by status, warehouse and owner with blocked vs unrestricted split.", rows: 1482, freq: "Daily 06:00", format: "XLSX · PDF", owner: "Inventory Manager" },
   { id: "RPT-02", name: "Inventory Aging", desc: "Aging buckets with valuation exposure and slow-mover flags.", rows: 1039, freq: "Weekly Mon", format: "XLSX", owner: "Inventory Manager" },
-  { id: "RPT-03", name: "Blocked Inventory", desc: "Quality hold, quarantine, damaged and recall stock with hold duration.", rows: 148, freq: "Daily 07:00", format: "PDF", owner: "Quality Inspector" },
+  { id: "RPT-03", name: "Blocked Inventory", desc: "Quality hold, quarantine, damaged and recall stock with hold duration.", rows: 148, freq: "Daily 07:00", format: "PDF", owner: "Quality Inspection" },
   { id: "RPT-04", name: "Reservation Report", desc: "Open reservations, coverage, expiry risk and auto-release forecast.", rows: 286, freq: "Twice daily", format: "XLSX · CSV", owner: "Warehouse Manager" },
   { id: "RPT-05", name: "Dispatch Report", desc: "Shipments, carriers, on-time performance and POD status.", rows: 512, freq: "Daily 20:00", format: "PDF · CSV", owner: "Warehouse Manager" },
   { id: "RPT-06", name: "Status Transition Report", desc: "Full transition audit trail with actor, reason code and approvals.", rows: 6841, freq: "On demand", format: "CSV", owner: "Warehouse Manager" },

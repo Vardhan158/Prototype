@@ -199,7 +199,7 @@ function QueuePage() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
-            <label className="text-xs font-medium text-muted-foreground uppercase">Quality inspector</label>
+            <label className="text-xs font-medium text-muted-foreground uppercase">Quality Inspection</label>
             <Select value={inspector} onValueChange={setInspector}>
               <SelectTrigger>
                 <SelectValue />

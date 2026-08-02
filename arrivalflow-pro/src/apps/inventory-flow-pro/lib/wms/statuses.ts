@@ -72,7 +72,7 @@ export const STATUS_META: Record<InventoryStatus, StatusMeta> = {
     approvalRequired: false,
     allocatable: false,
     description: "GRN posted, stock created in receiving zone. Awaiting quality inspection.",
-    notify: ["Quality Inspector", "Store Keeper"],
+    notify: ["Quality Inspection", "Store Keeper"],
   },
   UNDER_INSPECTION: {
     key: "UNDER_INSPECTION",
@@ -84,7 +84,7 @@ export const STATUS_META: Record<InventoryStatus, StatusMeta> = {
     approvalRequired: false,
     allocatable: false,
     description: "Quality inspection lot open. Stock is non-allocatable until disposition.",
-    notify: ["Quality Inspector"],
+    notify: ["Quality Inspection"],
   },
   AVAILABLE: {
     key: "AVAILABLE",
@@ -180,7 +180,7 @@ export const STATUS_META: Record<InventoryStatus, StatusMeta> = {
     approvalRequired: true,
     allocatable: false,
     description: "Inspection disposition failed. Awaiting NCR decision.",
-    notify: ["Quality Inspector", "Procurement"],
+    notify: ["Quality Inspection", "Procurement"],
   },
   QUALITY_HOLD: {
     key: "QUALITY_HOLD",
@@ -192,7 +192,7 @@ export const STATUS_META: Record<InventoryStatus, StatusMeta> = {
     approvalRequired: true,
     allocatable: false,
     description: "Blocked stock. Cannot be allocated, picked or issued until released by QA.",
-    notify: ["Quality Inspector", "Inventory Manager"],
+    notify: ["Quality Inspection", "Inventory Manager"],
   },
   DAMAGED: {
     key: "DAMAGED",
@@ -216,7 +216,7 @@ export const STATUS_META: Record<InventoryStatus, StatusMeta> = {
     approvalRequired: true,
     allocatable: false,
     description: "Isolated in quarantine area. No movement permitted until release approval.",
-    notify: ["Quality Inspector", "Warehouse Manager"],
+    notify: ["Quality Inspection", "Warehouse Manager"],
   },
   RECALL: {
     key: "RECALL",
@@ -228,7 +228,7 @@ export const STATUS_META: Record<InventoryStatus, StatusMeta> = {
     approvalRequired: true,
     allocatable: false,
     description: "Supplier or regulatory recall. Automatically blocked across all warehouses.",
-    notify: ["Warehouse Manager", "Quality Inspector", "Procurement"],
+    notify: ["Warehouse Manager", "Quality Inspection", "Procurement"],
   },
   REPAIR: {
     key: "REPAIR",

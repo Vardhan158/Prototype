@@ -64,7 +64,7 @@ const NAV = [
 
 const WAREHOUSES = ["PL-1000 · Pune Plant", "PL-2000 · Chennai DC", "PL-3000 · Rotterdam Hub"];
 const LANGUAGES = ["English (EN)", "Deutsch (DE)", "हिन्दी (HI)", "العربية (AR)"];
-const ROLES = ["Quality Inspector", "Quality Manager", "Warehouse Manager", "Store Keeper", "Procurement"];
+const ROLES = ["Quality Inspection", "Quality Manager", "Warehouse Manager", "Store Keeper", "Procurement"];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);

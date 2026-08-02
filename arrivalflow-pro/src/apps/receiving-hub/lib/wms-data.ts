@@ -614,7 +614,7 @@ export const SHIPMENTS: Shipment[] = [
       {
         at: "15:48",
         label: "Seal tampering detected â€” consignment rejected",
-        actor: "Quality Inspector Â· Nisha B.",
+        actor: "Quality Inspection Â· Nisha B.",
       },
     ],
     documents: [{ name: "Rejection_Note_88012.pdf", type: "Rejection Note", size: "144 KB" }],

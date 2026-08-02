@@ -473,7 +473,7 @@ export const AUDIT_LOG = [
   { at: "01 Aug 2026, 09:20", user: "K. Iyer", role: "Quality Manager", action: "Approved RTS-2026-0091", ip: "10.42.8.11" },
   { at: "01 Aug 2026, 08:22", user: "K. Iyer", role: "Quality Manager", action: "Assigned inspector A. Sharma to GRN-2026-004872", ip: "10.42.8.11" },
   { at: "01 Aug 2026, 00:02", user: "SYSTEM", role: "EWM Interface", action: "Posted 4 COIL to QA-HOLD-01", ip: "—" },
-  { at: "31 Jul 2026, 23:36", user: "N. Verma", role: "Quality Inspector", action: "Recorded 4 rejections on GRN-2026-004869", ip: "10.42.9.87" },
+  { at: "31 Jul 2026, 23:36", user: "N. Verma", role: "Quality Inspection", action: "Recorded 4 rejections on GRN-2026-004869", ip: "10.42.9.87" },
   { at: "31 Jul 2026, 15:50", user: "SYSTEM", role: "EWM Interface", action: "Posted 96 DRUM to WH-A-12-03", ip: "—" },
 ];
 

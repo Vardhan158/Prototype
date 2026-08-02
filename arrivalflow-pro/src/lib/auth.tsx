@@ -10,7 +10,7 @@ export type AppRole =
   | "Goods Receiving"
   | "Document Management & OCR"
   | "Storage Manager"
-  | "Quality Inspector"
+  | "Quality Inspection"
   | "Inventory Lifecycle Manager"
   | "Supplier & Purchase Order Management";
 export type ModuleKey =
@@ -137,7 +137,7 @@ export const SEEDED_USERS: SeededUser[] = [
     name: "A. Sharma",
     email: "quality@nexuswms.com",
     password: "quality@2026",
-    role: "Quality Inspector",
+    role: "Quality Inspection",
     modules: ["quality"],
     dashboard: "/quality-gatekeeper",
   },
