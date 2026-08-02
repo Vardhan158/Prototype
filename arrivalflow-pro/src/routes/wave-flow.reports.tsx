@@ -1,166 +1,224 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Download, FileBarChart } from "lucide-react";
+﻿import { createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";
+import {
+  KpiCard,
+  PageHeader,
+  ProgressBar,
+  SectionCard,
+  StatusBadge,
+  Metric,
+  Timeline,
+} from "@/apps/wave-flow/components/wms/ui";
+import { Button } from "@/components/ui/button";
+import { FileBarChart, Download, Clock, CheckCircle2 } from "lucide-react";
 import {
   Bar,
   BarChart,
   CartesianGrid,
-  Cell,
   Legend,
   Line,
   LineChart,
-  Pie,
-  PieChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
-import { Button } from "@wave/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@wave/components/ui/card";
-import { DataTable, type Column } from "@wave/components/wms/data-table";
-import { PageHeader } from "@wave/components/wms/page-header";
-import { StatCard } from "@wave/components/wms/stat-card";
-import { StatusBadge } from "@wave/components/wms/status-badge";
-import {
-  dailyFulfillmentChart,
-  ordersByPriorityChart,
-  salesOrders,
-  shipmentTrendChart,
-  waveStatusChart,
-  waves,
-  type Wave,
-} from "@wave/data/mock-data";
+import { cycleTimeTrend, waveEfficiency } from "@/apps/wave-flow/lib/wms-data";
 
 export const Route = createFileRoute("/wave-flow/reports")({
   head: () => ({
     meta: [
-      { title: "Outbound Reports & Analytics | NEXUS WMS" },
-      { name: "description", content: "Fulfillment throughput, wave performance, shipment trends and order priority analytics." },
-      { property: "og:title", content: "Outbound Reports & Analytics | NEXUS WMS" },
-      { property: "og:description", content: "Operational analytics for outbound order fulfillment and wave management." },
+      { title: "Reports â€” NexusWMS" },
+      {
+        name: "description",
+        content:
+          "Outbound performance, wave efficiency, picking and packing productivity, loading time, dispatch performance and cycle time reports.",
+      },
+      { property: "og:title", content: "Reports â€” NexusWMS" },
+      {
+        property: "og:description",
+        content:
+          "Outbound performance, wave efficiency, picking and packing productivity, loading time, dispatch performance and cycle time reports.",
+      },
     ],
   }),
-  component: ReportsPage,
+  component: Page,
 });
 
-const PIE_COLORS = ["var(--color-chart-1)", "var(--color-chart-2)", "var(--color-chart-3)", "var(--color-chart-4)", "var(--color-chart-5)"];
-
-function ReportsPage() {
-  const columns: Column<Wave>[] = [
-    { key: "id", header: "Wave", value: (r) => r.id, render: (r) => <span className="font-medium text-primary">{r.id}</span> },
-    { key: "name", header: "Wave Name", value: (r) => r.name },
-    { key: "warehouse", header: "Warehouse", value: (r) => r.warehouse },
-    { key: "orders", header: "Orders", value: (r) => r.orders.length, className: "num text-right" },
-    { key: "lines", header: "Lines", value: (r) => r.lines, className: "num text-right" },
-    { key: "capacity", header: "Capacity", value: (r) => r.capacity, className: "num text-right" },
-    { key: "route", header: "Route", value: (r) => r.route },
-    { key: "status", header: "Status", value: (r) => r.status, render: (r) => <StatusBadge value={r.status} /> },
-  ];
-
-  const shipped = salesOrders.filter((o) => o.status === "Shipped").length;
-  const onTime = Math.round((shipped / Math.max(salesOrders.length, 1)) * 100);
-
+function Page() {
   return (
-    <div>
+    <div className="space-y-4">
       <PageHeader
-        title="Reports & Analytics"
-        description="Operational performance across order fulfillment, wave execution and outbound shipping."
-        breadcrumbs={[{ label: "Insights" }, { label: "Reports" }]}
+        title="Reports"
+        description="Standard outbound report pack Â· period 12â€“18 March 2026"
+        breadcrumb={["Insights", "Reports"]}
         actions={
-          <>
-            <Button variant="outline" onClick={() => toast.success("PDF report queued", { description: "TODO: Reporting Engine." })}>
-              <FileBarChart className="h-4 w-4" />
-              Export PDF
-            </Button>
-            <Button onClick={() => toast.success("CSV export started")}>
-              <Download className="h-4 w-4" />
-              Export CSV
-            </Button>
-          </>
+          <Button onClick={() => toast.success("Report pack exported to PDF")}>
+            <Download className="size-4" /> Export pack
+          </Button>
         }
       />
-
-      <div className="mb-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Orders Processed" value={salesOrders.length} tone="primary" />
-        <StatCard label="Orders Shipped" value={shipped} tone="success" trend={{ value: "+8.2%", direction: "up" }} />
-        <StatCard label="Fulfillment Rate" value={`${onTime}%`} tone="warning" />
-        <StatCard label="Active Waves" value={waves.filter((w) => w.status !== "Completed").length} />
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <KpiCard
+          label="Order cycle time"
+          value="6.1 h"
+          sub="Order â†’ dispatch"
+          tone="success"
+          delta="-0.8h"
+          icon={<Clock className="size-4" />}
+        />
+        <KpiCard
+          label="On-time dispatch"
+          value="96.2%"
+          sub="Target 95%"
+          tone="success"
+          delta="+1.4%"
+          icon={<CheckCircle2 className="size-4" />}
+        />
+        <KpiCard
+          label="Late orders"
+          value={3}
+          sub="0.9% of volume"
+          tone="danger"
+          icon={<Clock className="size-4" />}
+        />
+        <KpiCard
+          label="Reports scheduled"
+          value={7}
+          sub="Daily & weekly"
+          tone="primary"
+          icon={<FileBarChart className="size-4" />}
+        />
       </div>
-
-      <div className="mb-4 grid gap-4 xl:grid-cols-2">
-        <ChartCard title="Daily Fulfillment Throughput">
-          <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={dailyFulfillmentChart}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
-              <XAxis dataKey="day" tick={{ fontSize: 11 }} stroke="var(--color-muted-foreground)" />
-              <YAxis tick={{ fontSize: 11 }} stroke="var(--color-muted-foreground)" />
-              <Tooltip contentStyle={{ background: "var(--color-card)", border: "1px solid var(--color-border)", borderRadius: 8, fontSize: 12 }} />
-              <Legend wrapperStyle={{ fontSize: 12 }} />
-              <Bar dataKey="picked" fill="var(--color-chart-1)" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="packed" fill="var(--color-chart-2)" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="shipped" fill="var(--color-chart-3)" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartCard>
-
-        <ChartCard title="Shipment Trend">
-          <ResponsiveContainer width="100%" height={260}>
-            <LineChart data={shipmentTrendChart}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
-              <XAxis dataKey="date" tick={{ fontSize: 11 }} stroke="var(--color-muted-foreground)" />
-              <YAxis tick={{ fontSize: 11 }} stroke="var(--color-muted-foreground)" />
-              <Tooltip contentStyle={{ background: "var(--color-card)", border: "1px solid var(--color-border)", borderRadius: 8, fontSize: 12 }} />
-              <Line type="monotone" dataKey="shipments" stroke="var(--color-chart-1)" strokeWidth={2} dot={false} />
-              <Line type="monotone" dataKey="onTime" stroke="var(--color-chart-2)" strokeWidth={2} dot={false} />
-            </LineChart>
-          </ResponsiveContainer>
-        </ChartCard>
-
-        <ChartCard title="Wave Status Distribution">
-          <ResponsiveContainer width="100%" height={260}>
-            <PieChart>
-              <Pie data={waveStatusChart} dataKey="value" nameKey="name" innerRadius={55} outerRadius={90} paddingAngle={2}>
-                {waveStatusChart.map((_, i) => (
-                  <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip contentStyle={{ background: "var(--color-card)", border: "1px solid var(--color-border)", borderRadius: 8, fontSize: 12 }} />
-              <Legend wrapperStyle={{ fontSize: 12 }} />
-            </PieChart>
-          </ResponsiveContainer>
-        </ChartCard>
-
-        <ChartCard title="Orders by Priority">
-          <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={ordersByPriorityChart} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" horizontal={false} />
-              <XAxis type="number" tick={{ fontSize: 11 }} stroke="var(--color-muted-foreground)" />
-              <YAxis type="category" dataKey="name" width={70} tick={{ fontSize: 11 }} stroke="var(--color-muted-foreground)" />
-              <Tooltip contentStyle={{ background: "var(--color-card)", border: "1px solid var(--color-border)", borderRadius: 8, fontSize: 12 }} />
-              <Bar dataKey="value" fill="var(--color-chart-4)" radius={[0, 4, 4, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartCard>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <SectionCard title="Wave efficiency" description="Planned vs actual attainment per wave">
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={waveEfficiency} margin={{ left: -20 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                <XAxis
+                  dataKey="wave"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                  stroke="var(--muted-foreground)"
+                />
+                <YAxis
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                  stroke="var(--muted-foreground)"
+                />
+                <Tooltip
+                  contentStyle={{
+                    borderRadius: 12,
+                    border: "1px solid var(--border)",
+                    background: "var(--surface)",
+                    fontSize: 12,
+                  }}
+                />
+                <Legend iconType="circle" wrapperStyle={{ fontSize: 12 }} />
+                <Bar dataKey="planned" fill="var(--chart-2)" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="actual" fill="var(--chart-1)" radius={[6, 6, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </SectionCard>
+        <SectionCard
+          title="Order cycle time trend"
+          description="Hours from order receipt to dispatch"
+        >
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={cycleTimeTrend} margin={{ left: -20 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                <XAxis
+                  dataKey="day"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                  stroke="var(--muted-foreground)"
+                />
+                <YAxis
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                  stroke="var(--muted-foreground)"
+                />
+                <Tooltip
+                  contentStyle={{
+                    borderRadius: 12,
+                    border: "1px solid var(--border)",
+                    background: "var(--surface)",
+                    fontSize: 12,
+                  }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="hours"
+                  stroke="var(--chart-1)"
+                  strokeWidth={2.5}
+                  dot={{ r: 3 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </SectionCard>
       </div>
-
-      <DataTable
-        data={waves}
-        columns={columns}
-        searchKeys={(r) => `${r.id} ${r.name} ${r.warehouse}`}
-        onExport={() => toast.success("Wave performance exported")}
-      />
+      <SectionCard title="Standard reports" bodyClassName="p-0">
+        <ul className="divide-y divide-border">
+          {[
+            [
+              "Outbound performance",
+              "Volume, fill rate and SLA attainment by warehouse",
+              "Daily 06:00",
+            ],
+            [
+              "Wave efficiency",
+              "Planned vs actual wave completion and travel savings",
+              "Per wave close",
+            ],
+            ["Picking productivity", "Lines/hour, accuracy and travel per picker", "Daily 14:00"],
+            ["Packing productivity", "Cartons/hour and rework rate per station", "Daily 14:00"],
+            [
+              "Truck loading time",
+              "Dock occupancy and load duration distribution",
+              "Weekly Mon 07:00",
+            ],
+            [
+              "Dispatch performance",
+              "On-time dispatch, gate time and seal compliance",
+              "Daily 18:00",
+            ],
+            ["Late orders", "SLA breaches with root cause classification", "Hourly"],
+            ["Order cycle time", "Stage-by-stage duration breakdown", "Weekly Mon 07:00"],
+          ].map(([t, d, s]) => (
+            <li
+              key={t}
+              className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-3"
+            >
+              <div className="min-w-0">
+                <p className="truncate text-sm font-medium">{t}</p>
+                <p className="truncate text-xs text-muted-foreground">
+                  {d} Â· schedule: {s}
+                </p>
+              </div>
+              <div className="flex shrink-0 gap-2">
+                <Button variant="ghost" size="sm" onClick={() => toast.success(`${t} generated`)}>
+                  Run
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => toast.success(`${t} exported (XLSX)`)}
+                >
+                  Export
+                </Button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </SectionCard>
     </div>
-  );
-}
-
-function ChartCard({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <Card className="border-border shadow-[var(--shadow-card)]">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm">{title}</CardTitle>
-      </CardHeader>
-      <CardContent>{children}</CardContent>
-    </Card>
   );
 }

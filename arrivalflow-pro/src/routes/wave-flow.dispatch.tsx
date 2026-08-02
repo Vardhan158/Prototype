@@ -1,120 +1,175 @@
-import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
-import { CheckCircle2, XCircle } from "lucide-react";
+﻿import { createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { Alert, AlertDescription, AlertTitle } from "@wave/components/ui/alert";
-import { Button } from "@wave/components/ui/button";
-import { DataTable, type Column } from "@wave/components/wms/data-table";
-import { PageHeader } from "@wave/components/wms/page-header";
-import { StatCard } from "@wave/components/wms/stat-card";
-import { StatusBadge } from "@wave/components/wms/status-badge";
-import { useRole } from "@wave/context/role-context";
-import { carriers, shipments, type Shipment } from "@wave/data/mock-data";
+import {
+  KpiCard,
+  PageHeader,
+  ProgressBar,
+  SectionCard,
+  StatusBadge,
+  Metric,
+  Timeline,
+} from "@/apps/wave-flow/components/wms/ui";
+import { Button } from "@/components/ui/button";
+import { ClipboardCheck, Check, FileText, Signature } from "lucide-react";
 
 export const Route = createFileRoute("/wave-flow/dispatch")({
   head: () => ({
     meta: [
-      { title: "Dispatch Authorization | NEXUS WMS" },
-      { name: "description", content: "BR-157 dispatch approval — only warehouse managers can authorize verified shipments for dispatch." },
-      { property: "og:title", content: "Dispatch Authorization | NEXUS WMS" },
-      { property: "og:description", content: "Approve or reject outbound shipments awaiting dispatch authorization." },
+      { title: "Dispatch Verification â€” NexusWMS" },
+      {
+        name: "description",
+        content:
+          "Final dispatch checklist: vehicle, driver, shipment and seal verification with digital signature and dispatch pass.",
+      },
+      { property: "og:title", content: "Dispatch Verification â€” NexusWMS" },
+      {
+        property: "og:description",
+        content:
+          "Final dispatch checklist: vehicle, driver, shipment and seal verification with digital signature and dispatch pass.",
+      },
     ],
   }),
-  component: DispatchPage,
+  component: Page,
 });
 
-function DispatchPage() {
-  const { can, role } = useRole();
-  const [rows, setRows] = useState<Shipment[]>(shipments);
-  const isManager = role === "Warehouse Manager" || role === "Warehouse Gate Entry & Arrival Management";
-
-  const decide = (r: Shipment, approve: boolean) => {
-    if (!isManager) {
-      toast.error("Not authorized", { description: "Only Warehouse Managers can authorize dispatch (BR-157)." });
-      return;
-    }
-    if (approve && !r.loadVerified) {
-      toast.error("Dispatch blocked", { description: `${r.id} has not passed load verification (BR-156).` });
-      return;
-    }
-    setRows((s) =>
-      s.map((x) =>
-        x.id === r.id
-          ? { ...x, dispatch: approve ? "Dispatched" : "Rejected", status: approve ? "In Transit" : x.status }
-          : x,
-      ),
-    );
-    toast[approve ? "success" : "warning"](approve ? `${r.id} dispatched` : `${r.id} dispatch rejected`);
-  };
-
-  const columns: Column<Shipment>[] = [
-    { key: "id", header: "Shipment", value: (r) => r.id, render: (r) => <span className="font-medium text-primary">{r.id}</span> },
-    { key: "orders", header: "Orders", value: (r) => r.orders.join(", ") },
-    { key: "carrier", header: "Carrier", value: (r) => r.carrier },
-    { key: "vehicle", header: "Vehicle", value: (r) => r.vehicle },
-    { key: "driver", header: "Driver", value: (r) => r.driver },
-    { key: "destination", header: "Destination", value: (r) => r.destination },
-    {
-      key: "loadVerified",
-      header: "Load Verified",
-      value: (r) => String(r.loadVerified),
-      render: (r) => <StatusBadge value={r.loadVerified ? "Passed" : "Failed"} />,
-    },
-    { key: "dispatch", header: "Dispatch Status", value: (r) => r.dispatch, render: (r) => <StatusBadge value={r.dispatch} /> },
-    {
-      key: "actions",
-      header: "Actions",
-      sortable: false,
-      render: (r) => (
-        <div className="flex gap-2">
-          <Button size="sm" disabled={!can("shipment.track") && !isManager} onClick={() => decide(r, true)}>
-            <CheckCircle2 className="h-4 w-4" />
-            Approve
-          </Button>
-          <Button size="sm" variant="outline" onClick={() => decide(r, false)}>
-            <XCircle className="h-4 w-4" />
-            Reject
-          </Button>
-        </div>
-      ),
-    },
-  ];
-
+function Page() {
   return (
-    <div>
+    <div className="space-y-4">
       <PageHeader
-        title="Dispatch Authorization"
-        description="BR-157 · Dispatch approval is restricted to Warehouse Managers."
-        breadcrumbs={[{ label: "Outbound Logistics" }, { label: "Dispatch Authorization" }]}
-        badge={<StatusBadge value={isManager ? "Approved" : "Pending"} />}
+        title="Dispatch Verification"
+        description="Final gate before release Â· 2 shipments awaiting approval"
+        breadcrumb={["Outbound", "Dispatch"]}
       />
-
-      {!isManager && (
-        <Alert className="mb-4 border-danger/30 bg-danger-soft">
-          <AlertTitle>Read-only access</AlertTitle>
-          <AlertDescription className="text-muted-foreground">
-            You are signed in as {role}. Dispatch approval requires the Warehouse Manager role.
-          </AlertDescription>
-        </Alert>
-      )}
-
-      <div className="mb-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Awaiting Dispatch" value={rows.filter((r) => r.dispatch === "Awaiting Dispatch").length} tone="warning" />
-        <StatCard label="Approved" value={rows.filter((r) => r.dispatch === "Approved").length} tone="primary" />
-        <StatCard label="Dispatched" value={rows.filter((r) => r.dispatch === "Dispatched").length} tone="success" />
-        <StatCard label="Rejected" value={rows.filter((r) => r.dispatch === "Rejected").length} tone="danger" />
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <KpiCard
+          label="Awaiting verification"
+          value={2}
+          sub="TRK-4471 Â· TRK-4482"
+          icon={<ClipboardCheck className="size-4" />}
+        />
+        <KpiCard
+          label="Approved today"
+          value={28}
+          sub="100% seal match"
+          tone="success"
+          icon={<Check className="size-4" />}
+        />
+        <KpiCard
+          label="Dispatch passes issued"
+          value={28}
+          sub="Gate integration live"
+          tone="primary"
+          icon={<FileText className="size-4" />}
+        />
+        <KpiCard
+          label="Avg gate time"
+          value="7 min"
+          sub="Check-in to exit"
+          tone="secondary"
+          delta="-2m"
+          icon={<Signature className="size-4" />}
+        />
       </div>
-
-      <DataTable
-        data={rows}
-        columns={columns}
-        searchKeys={(r) => `${r.id} ${r.carrier} ${r.driver} ${r.destination}`}
-        onExport={() => toast.success("Dispatch log exported")}
-        filters={[
-          { key: "carrier", label: "Carrier", options: carriers, match: (r, v) => r.carrier === v },
-          { key: "dispatch", label: "Dispatch Status", options: ["Awaiting Dispatch", "Approved", "Rejected", "Dispatched"], match: (r, v) => r.dispatch === v },
-        ]}
-      />
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
+        <SectionCard
+          title="Dispatch checklist Â· TRK-4471"
+          description="Schneider National Â· BX-482-KL Â· DOCK-01"
+          actions={<StatusBadge status="Loaded" />}
+        >
+          <div className="space-y-3">
+            {[
+              {
+                g: "Vehicle verification",
+                items: [
+                  "Plate matches booking (BX-482-KL)",
+                  "Trailer roadworthy inspection valid",
+                  "Tail-lift and straps present",
+                ],
+              },
+              {
+                g: "Driver verification",
+                items: [
+                  "Driver ID matched (Ray Kowalski)",
+                  "Licence OH-77120394 valid to 2029",
+                  "Site induction completed",
+                ],
+              },
+              {
+                g: "Shipment verification",
+                items: [
+                  "Manifest LM-3391 matches loaded pallets",
+                  "Gross weight 15,980 kg within limit",
+                  "Customs documents attached",
+                ],
+              },
+              {
+                g: "Seal verification",
+                items: ["Seal SL-778102 applied", "Seal number photographed and logged"],
+              },
+            ].map((grp) => (
+              <div key={grp.g} className="glass-panel rounded-xl p-3">
+                <p className="text-sm font-medium">{grp.g}</p>
+                <ul className="mt-2 space-y-1.5">
+                  {grp.items.map((i) => (
+                    <li key={i} className="flex items-start gap-2 text-xs">
+                      <span className="mt-0.5 grid size-4 shrink-0 place-items-center rounded-full border border-success bg-success text-success-foreground">
+                        âœ“
+                      </span>
+                      <span>{i}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Button onClick={() => toast.success("Dispatch approved Â· pass DP-88214 issued")}>
+              Approve dispatch
+            </Button>
+            <Button variant="outline" onClick={() => toast.success("Digital signature captured")}>
+              <Signature className="size-4" /> Sign
+            </Button>
+            <Button
+              variant="outline"
+              className="text-danger"
+              onClick={() => toast.error("Dispatch held â€” exception raised")}
+            >
+              Hold shipment
+            </Button>
+          </div>
+        </SectionCard>
+        <SectionCard title="Dispatch pass preview">
+          <div className="rounded-xl border border-border p-4">
+            <p className="text-xs text-muted-foreground">DISPATCH PASS</p>
+            <p className="num text-xl font-semibold">DP-88214</p>
+            <div className="mt-3 grid grid-cols-2 gap-3">
+              <Metric label="Truck" value="TRK-4471" />
+              <Metric label="Plate" value="BX-482-KL" />
+              <Metric label="Driver" value="Ray Kowalski" />
+              <Metric label="Seal" value="SL-778102" />
+              <Metric label="Order" value="OB-2026-104878" />
+              <Metric label="Dock" value="DOCK-01" />
+            </div>
+            <div className="mt-3 flex h-12 items-end gap-[2px]">
+              {Array.from({ length: 48 }).map((_, i) => (
+                <span
+                  key={i}
+                  className="flex-1 bg-foreground"
+                  style={{ height: `${40 + ((i * 29) % 60)}%` }}
+                />
+              ))}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-3 w-full"
+              onClick={() => toast.success("Dispatch pass printed at gatehouse")}
+            >
+              Print pass
+            </Button>
+          </div>
+        </SectionCard>
+      </div>
     </div>
   );
 }

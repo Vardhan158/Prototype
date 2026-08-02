@@ -1,207 +1,314 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { CheckCircle2, Pause, Play, ScanBarcode } from "lucide-react";
+import { ScanBarcode, Play, Pause, SkipForward, TriangleAlert, MapPin, Check } from "lucide-react";
 import { toast } from "sonner";
-import { Alert, AlertDescription, AlertTitle } from "@wave/components/ui/alert";
-import { Button } from "@wave/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@wave/components/ui/card";
-import { Input } from "@wave/components/ui/input";
-import { Progress } from "@wave/components/ui/progress";
-import { DataTable, type Column } from "@wave/components/wms/data-table";
-import { PageHeader } from "@wave/components/wms/page-header";
-import { StatCard } from "@wave/components/wms/stat-card";
-import { StatusBadge } from "@wave/components/wms/status-badge";
-import { useRole } from "@wave/context/role-context";
-import { pickLines, waves, zones, type PickLine } from "@wave/data/mock-data";
-import { cn } from "@wave/lib/utils";
+import {
+  KpiCard,
+  Metric,
+  PageHeader,
+  ProgressBar,
+  SectionCard,
+  StatusBadge,
+} from "@/apps/wave-flow/components/wms/ui";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { pickers, pickTasks } from "@/apps/wave-flow/lib/wms-data";
 
 export const Route = createFileRoute("/wave-flow/picking")({
   head: () => ({
     meta: [
-      { title: "Picking Execution | NEXUS WMS" },
-      { name: "description", content: "BR-152 picking screen with picker assignment, warehouse map, barcode verification and pick progress." },
-      { property: "og:title", content: "Picking Execution | NEXUS WMS" },
-      { property: "og:description", content: "Execute pick lists with mandatory barcode verification for every picked item." },
+      { title: "Picking Management â€” NexusWMS" },
+      {
+        name: "description",
+        content:
+          "Pick queue, RF barcode scanning workflow, location navigation and picker productivity in real time.",
+      },
+      { property: "og:title", content: "Picking Management â€” NexusWMS" },
+      {
+        property: "og:description",
+        content: "Pick tasks, scanning validation and exception handling.",
+      },
     ],
   }),
   component: PickingPage,
 });
 
-const MAP_ZONES = ["Zone A", "Zone B", "Zone C", "Zone D", "Bulk Zone", "Cold Zone", "High Bay", "Staging"];
-
 function PickingPage() {
-  const { can } = useRole();
-  const [rows, setRows] = useState<PickLine[]>(pickLines);
-  const [session, setSession] = useState<"idle" | "active" | "paused">("active");
+  const [active, setActive] = useState(pickTasks[0]!);
   const [scan, setScan] = useState("");
-  const [active, setActive] = useState<PickLine | null>(pickLines[0] ?? null);
+  const [confirmed, setConfirmed] = useState(active.picked);
 
-  const totalQty = rows.reduce((s, r) => s + r.quantity, 0);
-  const pickedQty = rows.reduce((s, r) => s + r.pickedQty, 0);
-
-  const verifyScan = () => {
-    if (!active) return;
-    if (scan.trim() !== active.barcode) {
-      toast.error("Barcode mismatch", { description: "Scanned barcode does not match the pick line. Item cannot be confirmed." });
-      return;
+  const validate = () => {
+    if (scan.trim() === active.barcode) {
+      setConfirmed((c) => Math.min(active.qty, c + 20));
+      toast.success("Barcode validated", { description: `${active.material} Â· ${active.bin}` });
+      setScan("");
+    } else {
+      toast.error("Barcode mismatch", {
+        description: `Expected ${active.barcode} at ${active.bin}`,
+      });
     }
-    // TODO(integration): send verification event to the Barcode Scanner / device gateway.
-    setRows((s) => s.map((r) => (r.id === active.id ? { ...r, verified: true, pickedQty: r.quantity, status: "Picked" } : r)));
-    toast.success("Item verified & picked", { description: `${active.sku} confirmed at ${active.location}.` });
-    setScan("");
   };
 
-  const columns: Column<PickLine>[] = [
-    { key: "id", header: "Pick Line", value: (r) => r.id, render: (r) => <span className="font-medium text-primary">{r.id}</span> },
-    { key: "picker", header: "Assigned Picker", value: (r) => r.picker },
-    { key: "sku", header: "SKU", value: (r) => r.sku },
-    { key: "product", header: "Product", value: (r) => r.product },
-    { key: "location", header: "Location", value: (r) => r.location },
-    { key: "quantity", header: "Required", value: (r) => r.quantity, className: "num text-right" },
-    { key: "pickedQty", header: "Picked", value: (r) => r.pickedQty, className: "num text-right" },
-    { key: "remaining", header: "Remaining", value: (r) => r.quantity - r.pickedQty, className: "num text-right" },
-    {
-      key: "verified",
-      header: "Barcode",
-      value: (r) => String(r.verified),
-      render: (r) => <StatusBadge value={r.verified ? "Passed" : "Pending"} />,
-    },
-    { key: "status", header: "Status", value: (r) => r.status, render: (r) => <StatusBadge value={r.status} /> },
-    {
-      key: "actions",
-      header: "Actions",
-      sortable: false,
-      render: (r) => (
-        <Button size="sm" variant={active?.id === r.id ? "default" : "outline"} onClick={() => setActive(r)}>
-          <ScanBarcode className="h-4 w-4" />
-          Scan
-        </Button>
-      ),
-    },
-  ];
-
   return (
-    <div>
+    <div className="space-y-4">
       <PageHeader
-        title="Picking"
-        description="BR-152 · Every picked item must be barcode verified before confirmation."
-        breadcrumbs={[{ label: "Warehouse Execution" }, { label: "Picking" }]}
-        badge={<StatusBadge value={session === "active" ? "In Progress" : session === "paused" ? "Pending" : "Draft"} />}
+        title="Picking Management"
+        description="18 open pick tasks Â· 14 pickers active Â· 132 lines/hour"
+        breadcrumb={["Outbound", "Picking"]}
         actions={
-          <>
-            <Button variant="outline" disabled={!can("pick.execute") || session !== "active"} onClick={() => { setSession("paused"); toast.info("Picking paused"); }}>
-              <Pause className="h-4 w-4" />
-              Pause
-            </Button>
-            <Button variant="outline" disabled={!can("pick.execute") || session !== "paused"} onClick={() => { setSession("active"); toast.success("Picking resumed"); }}>
-              <Play className="h-4 w-4" />
-              Resume
-            </Button>
-            <Button variant="outline" disabled={!can("pick.execute")} onClick={() => { setSession("idle"); toast.success("Picking completed", { description: "Orders released to packing." }); }}>
-              <CheckCircle2 className="h-4 w-4" />
-              Complete Picking
-            </Button>
-            <Button disabled={!can("pick.execute")} onClick={() => { setSession("active"); toast.success("Picking started"); }}>
-              <Play className="h-4 w-4" />
-              Start Picking
-            </Button>
-          </>
+          <Button onClick={() => toast.success("Tasks rebalanced across 4 zones")}>
+            <ScanBarcode className="size-4" /> Rebalance queue
+          </Button>
         }
       />
 
-      <div className="mb-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Pick Lines" value={rows.length} tone="primary" />
-        <StatCard label="Units Picked" value={`${pickedQty} / ${totalQty}`} tone="success" />
-        <StatCard label="Barcode Verified" value={rows.filter((r) => r.verified).length} />
-        <StatCard label="Short Picks" value={rows.filter((r) => r.status === "Short").length} tone="danger" />
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <KpiCard
+          label="Queued tasks"
+          value={7}
+          sub="Zones A, C, D"
+          icon={<ScanBarcode className="size-4" />}
+        />
+        <KpiCard
+          label="In progress"
+          value={5}
+          sub="avg 11 min/task"
+          tone="warning"
+          icon={<Play className="size-4" />}
+        />
+        <KpiCard
+          label="Completed today"
+          value={214}
+          sub="99.2% accuracy"
+          tone="success"
+          delta="+8%"
+          icon={<Check className="size-4" />}
+        />
+        <KpiCard
+          label="Exceptions"
+          value={1}
+          sub="Inventory shortage"
+          tone="danger"
+          icon={<TriangleAlert className="size-4" />}
+        />
       </div>
 
-      <div className="mb-4 grid gap-4 xl:grid-cols-3">
-        <Card className="border-border shadow-[var(--shadow-card)]">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm">Barcode Verification</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {/* TODO(integration): bind to the physical barcode scanner / warehouse device SDK. */}
-            <p className="text-xs text-muted-foreground">
-              Active line: <span className="font-medium text-foreground">{active?.id ?? "—"}</span> · {active?.sku} @ {active?.location}
-            </p>
-            <div className="flex gap-2">
-              <Input value={scan} onChange={(e) => setScan(e.target.value)} placeholder={active ? `Scan ${active.barcode}` : "Select a pick line"} />
-              <Button onClick={verifyScan} disabled={!active || !can("pick.execute")}>
-                Verify
-              </Button>
-            </div>
-            <Alert className="border-warning/30 bg-warning-soft">
-              <AlertTitle className="text-sm">Scanner placeholder</AlertTitle>
-              <AlertDescription className="text-xs text-muted-foreground">
-                Hardware scanner input will auto-populate this field once the device gateway is connected.
-              </AlertDescription>
-            </Alert>
-          </CardContent>
-        </Card>
+      <Tabs defaultValue="queue">
+        <TabsList>
+          <TabsTrigger value="queue">Pick queue</TabsTrigger>
+          <TabsTrigger value="rf">RF picking screen</TabsTrigger>
+          <TabsTrigger value="pickers">Pickers</TabsTrigger>
+        </TabsList>
 
-        <Card className="border-border shadow-[var(--shadow-card)]">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm">Warehouse Map</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-4 gap-2">
-              {MAP_ZONES.map((z) => {
-                const linesHere = rows.filter((r) => r.zone === z).length;
-                return (
-                  <div
-                    key={z}
-                    className={cn(
-                      "rounded-md border p-2 text-center text-[11px]",
-                      active?.zone === z ? "border-primary bg-primary-soft text-primary" : "border-border bg-muted text-muted-foreground",
-                    )}
-                  >
-                    <p className="font-medium">{z}</p>
-                    <p className="num">{linesHere} lines</p>
-                  </div>
-                );
-              })}
+        <TabsContent value="queue" className="mt-3">
+          <SectionCard bodyClassName="p-0">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[1000px] text-sm">
+                <thead className="bg-surface-muted text-xs text-muted-foreground">
+                  <tr>
+                    {[
+                      "Task",
+                      "Wave",
+                      "Order",
+                      "Material",
+                      "Bin",
+                      "Zone",
+                      "Qty",
+                      "Picker",
+                      "ETA",
+                      "Status",
+                      "",
+                    ].map((h) => (
+                      <th key={h} className="px-4 py-2.5 text-left font-medium whitespace-nowrap">
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {pickTasks.map((t) => (
+                    <tr key={t.id} className="hover:bg-muted/50">
+                      <td className="num px-4 py-3 font-medium">{t.id}</td>
+                      <td className="num px-4 py-3 text-muted-foreground">{t.wave}</td>
+                      <td className="num px-4 py-3 text-muted-foreground">{t.order}</td>
+                      <td className="num px-4 py-3">{t.material}</td>
+                      <td className="num px-4 py-3">{t.bin}</td>
+                      <td className="px-4 py-3 text-muted-foreground">{t.zone}</td>
+                      <td className="num px-4 py-3">
+                        {t.picked}/{t.qty}
+                      </td>
+                      <td className="px-4 py-3">{t.picker}</td>
+                      <td className="num px-4 py-3 text-muted-foreground">
+                        {t.etaMin ? `${t.etaMin} min` : "â€”"}
+                      </td>
+                      <td className="px-4 py-3">
+                        <StatusBadge status={t.status} />
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setActive(t);
+                            setConfirmed(t.picked);
+                          }}
+                        >
+                          Open
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-            <p className="mt-3 text-xs text-muted-foreground">Aisle-level map renders from the Warehouse Master Data module.</p>
-          </CardContent>
-        </Card>
+          </SectionCard>
+        </TabsContent>
 
-        <Card className="border-border shadow-[var(--shadow-card)]">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm">Wave Progress</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {waves
-              .filter((w) => ["Released", "Picking"].includes(w.status))
-              .map((w) => {
-                const wl = rows.filter((r) => r.wave === w.id);
-                const pct = wl.length ? Math.round((wl.filter((r) => r.status === "Picked").length / wl.length) * 100) : 0;
-                return (
-                  <div key={w.id}>
-                    <div className="mb-1 flex items-center justify-between text-xs">
-                      <span className="font-medium text-foreground">{w.id}</span>
-                      <span className="num text-muted-foreground">{pct}%</span>
+        <TabsContent value="rf" className="mt-3">
+          <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
+            <SectionCard
+              title={`RF device Â· ${active.id}`}
+              description="Handheld picking screen (mobile layout)"
+            >
+              <div className="mx-auto w-full max-w-sm space-y-3">
+                <div className="rounded-2xl bg-primary p-4 text-primary-foreground">
+                  <p className="text-xs opacity-80">GO TO LOCATION</p>
+                  <p className="num text-2xl font-semibold">{active.bin}</p>
+                  <p className="mt-1 text-xs opacity-90">
+                    {active.zone} Â· Aisle {active.aisle} Â· Rack {active.rack} Â· Shelf{" "}
+                    {active.shelf}
+                  </p>
+                </div>
+                <div className="surface-card p-4">
+                  <p className="num text-sm font-semibold">{active.material}</p>
+                  <p className="text-xs text-muted-foreground">{active.description}</p>
+                  <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+                    <div className="rounded-lg bg-muted p-2">
+                      <p className="num text-lg font-semibold">{active.qty}</p>
+                      <p className="text-[11px] text-muted-foreground">Required</p>
                     </div>
-                    <Progress value={pct} className="h-1.5" />
+                    <div className="rounded-lg bg-muted p-2">
+                      <p className="num text-lg font-semibold text-success-foreground">
+                        {confirmed}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground">Picked</p>
+                    </div>
+                    <div className="rounded-lg bg-muted p-2">
+                      <p className="num text-lg font-semibold">{active.uom}</p>
+                      <p className="text-[11px] text-muted-foreground">UoM</p>
+                    </div>
                   </div>
-                );
-              })}
-          </CardContent>
-        </Card>
-      </div>
+                  <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-muted-foreground">
+                    <span>Batch: {active.batch}</span>
+                    <span>Serial: {active.serial}</span>
+                  </div>
+                  <div className="mt-3">
+                    <ProgressBar
+                      value={(confirmed / active.qty) * 100}
+                      tone={confirmed >= active.qty ? "success" : "warning"}
+                    />
+                  </div>
+                </div>
+                <div className="surface-card space-y-2 p-4">
+                  <p className="text-xs font-medium">Scan item barcode</p>
+                  <div className="flex gap-2">
+                    <Input
+                      value={scan}
+                      onChange={(e) => setScan(e.target.value)}
+                      placeholder={active.barcode}
+                      className="num"
+                    />
+                    <Button onClick={validate}>
+                      <ScanBarcode className="size-4" /> Scan
+                    </Button>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">Expected: {active.barcode}</p>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button onClick={() => toast.success(`${active.id} confirmed`)}>
+                    <Check className="size-4" /> Confirm
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => toast.info(`${active.id} skipped â€” requeued`)}
+                  >
+                    <SkipForward className="size-4" /> Skip
+                  </Button>
+                  <Button variant="outline" onClick={() => toast.warning(`${active.id} paused`)}>
+                    <Pause className="size-4" /> Pause
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="text-danger"
+                    onClick={() => toast.error("Exception EXC-5522 raised")}
+                  >
+                    <TriangleAlert className="size-4" /> Report issue
+                  </Button>
+                </div>
+              </div>
+            </SectionCard>
 
-      <DataTable
-        data={rows}
-        columns={columns}
-        pageSize={8}
-        searchKeys={(r) => `${r.id} ${r.picker} ${r.sku} ${r.product} ${r.location}`}
-        filters={[
-          { key: "picker", label: "Picker", options: [...new Set(rows.map((r) => r.picker))], match: (r, v) => r.picker === v },
-          { key: "zone", label: "Zone", options: zones, match: (r, v) => r.zone === v },
-          { key: "status", label: "Status", options: ["Pending", "In Progress", "Picked", "Short"], match: (r, v) => r.status === v },
-        ]}
-      />
+            <SectionCard title="Pick route" description="Optimised serpentine path through zones">
+              <div className="grid grid-cols-10 gap-1">
+                {Array.from({ length: 60 }).map((_, i) => {
+                  const onPath = [3, 4, 5, 15, 25, 24, 23, 33, 43, 42, 41, 51].includes(i);
+                  const stop = [3, 25, 41].includes(i);
+                  return (
+                    <div
+                      key={i}
+                      className={`aspect-square rounded-md border text-[9px] ${
+                        stop
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : onPath
+                            ? "border-primary/30 bg-primary-soft"
+                            : "border-border bg-muted"
+                      } grid place-items-center`}
+                    >
+                      {stop ? <MapPin className="size-3" /> : ""}
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                <Metric label="Stops" value="12" />
+                <Metric label="Distance" value="1,610 m" />
+                <Metric label="Est. duration" value="34 min" />
+              </div>
+            </SectionCard>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="pickers" className="mt-3">
+          <SectionCard bodyClassName="p-0">
+            <ul className="divide-y divide-border">
+              {pickers.map((p) => (
+                <li
+                  key={p.name}
+                  className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-3"
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span className="grid size-9 shrink-0 place-items-center rounded-full bg-secondary-soft text-xs font-semibold text-secondary-foreground">
+                      {p.name
+                        .split(" ")
+                        .map((x) => x[0])
+                        .join("")}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium">{p.name}</p>
+                      <p className="num truncate text-xs text-muted-foreground">
+                        {p.zone} Â· {p.tasks} tasks Â· {p.lph} lines/hr Â· {p.accuracy}% accuracy
+                      </p>
+                    </div>
+                  </div>
+                  <StatusBadge status={p.status} />
+                </li>
+              ))}
+            </ul>
+          </SectionCard>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

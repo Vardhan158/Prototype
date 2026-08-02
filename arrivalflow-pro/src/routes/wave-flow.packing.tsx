@@ -1,168 +1,183 @@
-import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
-import { CheckCircle2, FileText, Printer } from "lucide-react";
+﻿import { createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { Button } from "@wave/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@wave/components/ui/card";
-import { Input } from "@wave/components/ui/input";
-import { Label } from "@wave/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@wave/components/ui/select";
-import { DataTable, type Column } from "@wave/components/wms/data-table";
-import { PageHeader } from "@wave/components/wms/page-header";
-import { StatCard } from "@wave/components/wms/stat-card";
-import { StatusBadge } from "@wave/components/wms/status-badge";
-import { useRole } from "@wave/context/role-context";
-import { packingRecords, type PackingRecord } from "@wave/data/mock-data";
+import {
+  KpiCard,
+  PageHeader,
+  ProgressBar,
+  SectionCard,
+  StatusBadge,
+  Metric,
+  Timeline,
+} from "@/apps/wave-flow/components/wms/ui";
+import { Button } from "@/components/ui/button";
+import { Boxes, Printer, Scale, Camera, CheckCircle2 } from "lucide-react";
+import { packStations } from "@/apps/wave-flow/lib/wms-data";
 
 export const Route = createFileRoute("/wave-flow/packing")({
   head: () => ({
     meta: [
-      { title: "Packing Station | NEXUS WMS" },
-      { name: "description", content: "BR-153 packing station: package type, carton, weight, dimensions, materials and label numbers." },
-      { property: "og:title", content: "Packing Station | NEXUS WMS" },
-      { property: "og:description", content: "Pack picked orders, record package details and print carton labels." },
+      { title: "Packing Management â€” NexusWMS" },
+      {
+        name: "description",
+        content:
+          "Packing queue, station checklists, carton weight and dimension capture and shipping label printing.",
+      },
+      { property: "og:title", content: "Packing Management â€” NexusWMS" },
+      {
+        property: "og:description",
+        content:
+          "Packing queue, station checklists, carton weight and dimension capture and shipping label printing.",
+      },
     ],
   }),
-  component: PackingPage,
+  component: Page,
 });
 
-function PackingPage() {
-  const { can } = useRole();
-  const [rows, setRows] = useState<PackingRecord[]>(packingRecords);
-
-  const columns: Column<PackingRecord>[] = [
-    { key: "id", header: "Packing ID", value: (r) => r.id, render: (r) => <span className="font-medium text-primary">{r.id}</span> },
-    { key: "order", header: "Sales Order", value: (r) => r.order },
-    { key: "wave", header: "Wave", value: (r) => r.wave },
-    { key: "packageType", header: "Package Type", value: (r) => r.packageType },
-    { key: "carton", header: "Carton", value: (r) => r.carton },
-    { key: "weightKg", header: "Weight (kg)", value: (r) => r.weightKg, className: "num text-right" },
-    { key: "dimensions", header: "Dimensions", value: (r) => r.dimensions },
-    { key: "material", header: "Packing Materials", value: (r) => r.material },
-    { key: "labelNumber", header: "Label Number", value: (r) => r.labelNumber },
-    { key: "station", header: "Station", value: (r) => r.station },
-    { key: "status", header: "Status", value: (r) => r.status, render: (r) => <StatusBadge value={r.status} /> },
-    {
-      key: "actions",
-      header: "Actions",
-      sortable: false,
-      render: (r) => (
-        <Button
-          size="sm"
-          variant="outline"
-          disabled={r.status === "Completed" || !can("pack.execute")}
-          onClick={() => {
-            setRows((s) => s.map((x) => (x.id === r.id ? { ...x, status: "Completed" } : x)));
-            toast.success("Packing completed", { description: `${r.order} ready for staging.` });
-          }}
-        >
-          <CheckCircle2 className="h-4 w-4" />
-          Complete
-        </Button>
-      ),
-    },
-  ];
-
+function Page() {
   return (
-    <div>
+    <div className="space-y-4">
       <PageHeader
-        title="Packing Station"
-        description="BR-153 · Packing cannot begin until picking is completed for the order."
-        breadcrumbs={[{ label: "Warehouse Execution" }, { label: "Packing" }]}
+        title="Packing Management"
+        description="3 stations Â· 37 orders in queue Â· avg 6m 12s per carton"
+        breadcrumb={["Outbound", "Packing"]}
         actions={
-          <>
-            <Button variant="outline" disabled={!can("label.print")} onClick={() => toast.success("Packing list generated")}>
-              <FileText className="h-4 w-4" />
-              Generate Packing List
-            </Button>
-            <Button disabled={!can("label.print")} onClick={() => toast.success("Labels sent to printer", { description: "TODO: Label printing service." })}>
-              <Printer className="h-4 w-4" />
-              Print Labels
-            </Button>
-          </>
+          <Button onClick={() => toast.success("Shipping labels sent to printer LP-02")}>
+            <Printer className="size-4" /> Print labels
+          </Button>
         }
       />
-
-      <div className="mb-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Packages" value={rows.length} tone="primary" />
-        <StatCard label="Completed" value={rows.filter((r) => r.status === "Completed").length} tone="success" />
-        <StatCard label="In Progress" value={rows.filter((r) => r.status === "In Progress").length} tone="warning" />
-        <StatCard label="Total Weight" value={`${rows.reduce((s, r) => s + r.weightKg, 0).toFixed(1)} kg`} />
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <KpiCard
+          label="Packing queue"
+          value={37}
+          sub="12 cartons open"
+          icon={<Boxes className="size-4" />}
+        />
+        <KpiCard
+          label="Packed today"
+          value={128}
+          sub="Target 150"
+          tone="success"
+          delta="+14%"
+          icon={<CheckCircle2 className="size-4" />}
+        />
+        <KpiCard
+          label="Avg carton weight"
+          value="21.4 kg"
+          sub="Across 3 stations"
+          tone="secondary"
+          icon={<Scale className="size-4" />}
+        />
+        <KpiCard
+          label="Photos captured"
+          value={64}
+          sub="Damage evidence"
+          tone="warning"
+          icon={<Camera className="size-4" />}
+        />
       </div>
-
-      <div className="mb-4 grid gap-4 lg:grid-cols-3">
-        <Card className="border-border shadow-[var(--shadow-card)] lg:col-span-2">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm">New Package</CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-4 sm:grid-cols-3">
-            <Field label="Package Type">
-              <Select>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {["Carton", "Pallet", "Tote", "Crate"].map((t) => (
-                    <SelectItem key={t} value={t}>
-                      {t}
-                    </SelectItem>
+      <div className="grid gap-4 lg:grid-cols-3">
+        {packStations.map((s) => (
+          <SectionCard
+            key={s.id}
+            title={s.id}
+            description={s.packer}
+            actions={<StatusBadge status={s.status} />}
+          >
+            {s.order === "â€”" ? (
+              <p className="py-8 text-center text-sm text-muted-foreground">
+                Station idle â€” waiting for picked orders.
+              </p>
+            ) : (
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <Metric label="Order" value={s.order} />
+                  <Metric label="Cartons" value={s.cartons} />
+                  <Metric label="Weight" value={`${s.weightKg} kg`} />
+                  <Metric label="Dimensions" value={s.dims} />
+                </div>
+                <ProgressBar value={s.progress} tone={s.progress === 100 ? "success" : "warning"} />
+                <ul className="space-y-1.5">
+                  {s.checklist.map((c) => (
+                    <li key={c.label} className="flex items-start gap-2 text-xs">
+                      <span
+                        className={`mt-0.5 grid size-4 shrink-0 place-items-center rounded-full border ${c.done ? "border-success bg-success text-success-foreground" : "border-border"}`}
+                      >
+                        {c.done ? "âœ“" : ""}
+                      </span>
+                      <span className={c.done ? "" : "text-muted-foreground"}>{c.label}</span>
+                    </li>
                   ))}
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field label="Carton Code">
-              <Input placeholder="CTN-60x40x40" />
-            </Field>
-            <Field label="Weight (kg)">
-              <Input type="number" placeholder="18.4" />
-            </Field>
-            <Field label="Dimensions (cm)">
-              <Input placeholder="60 x 40 x 40" />
-            </Field>
-            <Field label="Packing Materials">
-              <Input placeholder="Double-wall + bubble wrap" />
-            </Field>
-            <Field label="Label Number">
-              <Input value="LBL-99126" readOnly />
-            </Field>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border shadow-[var(--shadow-card)]">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm">Package Summary</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm">
-            {(["Carton", "Pallet", "Tote", "Crate"] as const).map((t) => (
-              <div key={t} className="flex items-center justify-between rounded-md border border-border px-3 py-2">
-                <span className="text-muted-foreground">{t}</span>
-                <span className="num font-medium">{rows.filter((r) => r.packageType === t).length}</span>
+                </ul>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => toast.success("Packing photo captured")}
+                  >
+                    <Camera className="size-4" /> Photo
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={() => toast.success(`${s.order} packed Â· label printed`)}
+                  >
+                    Complete
+                  </Button>
+                </div>
               </div>
-            ))}
-          </CardContent>
-        </Card>
+            )}
+          </SectionCard>
+        ))}
       </div>
-
-      <DataTable
-        data={rows}
-        columns={columns}
-        searchKeys={(r) => `${r.id} ${r.order} ${r.wave} ${r.labelNumber} ${r.operator}`}
-        onExport={() => toast.success("Packing report queued")}
-        filters={[
-          { key: "status", label: "Status", options: ["Pending", "In Progress", "Completed"], match: (r, v) => r.status === v },
-          { key: "packageType", label: "Package Type", options: ["Carton", "Pallet", "Tote", "Crate"], match: (r, v) => r.packageType === v },
-          { key: "station", label: "Station", options: [...new Set(rows.map((r) => r.station))], match: (r, v) => r.station === v },
-        ]}
-      />
-    </div>
-  );
-}
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="min-w-0">
-      <Label className="mb-1.5 block text-xs text-muted-foreground">{label}</Label>
-      {children}
+      <SectionCard title="Label management" description="Shipping, barcode, QR and pallet labels">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {[
+            { t: "Shipping label", d: "4x6 thermal Â· DHL Freight", s: "Printed" },
+            { t: "Barcode label", d: "Code-128 Â· carton ID", s: "Printed" },
+            { t: "QR label", d: "Track & trace deep link", s: "Queued" },
+            { t: "Pallet label", d: "SSCC-18 Â· GS1 compliant", s: "Queued" },
+          ].map((l) => (
+            <div key={l.t} className="glass-panel rounded-xl p-3">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-sm font-medium">{l.t}</p>
+                <StatusBadge status={l.s === "Printed" ? "Completed" : "Queued"} />
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">{l.d}</p>
+              <div className="mt-3 rounded-lg border border-dashed border-border p-3">
+                <div className="flex h-10 items-end gap-[2px]">
+                  {Array.from({ length: 34 }).map((_, i) => (
+                    <span
+                      key={i}
+                      className="flex-1 bg-foreground"
+                      style={{ height: `${40 + ((i * 37) % 60)}%` }}
+                    />
+                  ))}
+                </div>
+                <p className="num mt-1 text-center text-[10px] text-muted-foreground">
+                  8712345678904
+                </p>
+              </div>
+              <div className="mt-2 flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1"
+                  onClick={() => toast.success(`${l.t} preview opened`)}
+                >
+                  Preview
+                </Button>
+                <Button
+                  size="sm"
+                  className="flex-1"
+                  onClick={() => toast.success(`${l.t} reprinted`)}
+                >
+                  Reprint
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </SectionCard>
     </div>
   );
 }

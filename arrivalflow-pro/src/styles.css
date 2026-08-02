@@ -17,6 +17,8 @@
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
+  --color-surface: var(--card);
+  --color-surface-muted: var(--muted);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
@@ -24,6 +26,7 @@
   --color-primary-soft: var(--primary-soft);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary-soft: var(--teal-soft);
   --color-teal: var(--teal);
   --color-teal-foreground: var(--teal-foreground);
   --color-teal-soft: var(--teal-soft);
@@ -34,6 +37,8 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-danger-soft: var(--danger-soft);
+  --color-danger: var(--destructive);
+  --color-danger-foreground: var(--destructive-foreground);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
   --color-success-soft: var(--success-soft);
@@ -314,6 +319,16 @@
   backdrop-filter: blur(24px) saturate(160%);
   border: 1px solid color-mix(in oklab, var(--border) 75%, transparent);
   box-shadow: 0 1px 2px oklch(0.2 0.05 260 / 0.06), 0 8px 24px -12px oklch(0.2 0.05 260 / 0.18);
+}
+
+@utility glass-topbar {
+  background: color-mix(in oklab, var(--card) 78%, transparent);
+  backdrop-filter: blur(20px) saturate(160%);
+}
+
+@utility grid-page {
+  display: grid;
+  gap: 1rem;
 }
 
 @utility surface-card {

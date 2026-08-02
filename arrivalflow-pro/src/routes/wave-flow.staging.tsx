@@ -1,113 +1,126 @@
-import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
-import { ClipboardCheck, MapPin } from "lucide-react";
+﻿import { createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { Button } from "@wave/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@wave/components/ui/card";
-import { DataTable, type Column } from "@wave/components/wms/data-table";
-import { PageHeader } from "@wave/components/wms/page-header";
-import { StatCard } from "@wave/components/wms/stat-card";
-import { StatusBadge } from "@wave/components/wms/status-badge";
-import { useRole } from "@wave/context/role-context";
-import { docks, shipments, type Shipment } from "@wave/data/mock-data";
-import { cn } from "@wave/lib/utils";
+import {
+  KpiCard,
+  PageHeader,
+  ProgressBar,
+  SectionCard,
+  StatusBadge,
+  Metric,
+  Timeline,
+} from "@/apps/wave-flow/components/wms/ui";
+import { Button } from "@/components/ui/button";
+import { Warehouse, Truck, Clock, CheckCircle2 } from "lucide-react";
+import { docks, orders } from "@/apps/wave-flow/lib/wms-data";
 
 export const Route = createFileRoute("/wave-flow/staging")({
   head: () => ({
     meta: [
-      { title: "Staging Area | NEXUS WMS" },
-      { name: "description", content: "Track packed shipments moved to staging lanes and dock assignments before loading." },
-      { property: "og:title", content: "Staging Area | NEXUS WMS" },
-      { property: "og:description", content: "Monitor staging lanes, dock readiness and shipments waiting to load." },
+      { title: "Staging Management â€” NexusWMS" },
+      {
+        name: "description",
+        content:
+          "Staging lane map, dock assignment, waiting trucks and staging queue for outbound shipments.",
+      },
+      { property: "og:title", content: "Staging Management â€” NexusWMS" },
+      {
+        property: "og:description",
+        content:
+          "Staging lane map, dock assignment, waiting trucks and staging queue for outbound shipments.",
+      },
     ],
   }),
-  component: StagingPage,
+  component: Page,
 });
 
-function StagingPage() {
-  const { can } = useRole();
-  const [rows, setRows] = useState<Shipment[]>(shipments);
-
-  const columns: Column<Shipment>[] = [
-    { key: "id", header: "Shipment", value: (r) => r.id, render: (r) => <span className="font-medium text-primary">{r.id}</span> },
-    { key: "orders", header: "Orders", value: (r) => r.orders.join(", ") },
-    { key: "carrier", header: "Carrier", value: (r) => r.carrier },
-    { key: "dock", header: "Staging Lane / Dock", value: (r) => r.dock },
-    { key: "destination", header: "Destination", value: (r) => r.destination },
-    { key: "scheduledAt", header: "Scheduled", value: (r) => r.scheduledAt, className: "num" },
-    { key: "status", header: "Status", value: (r) => r.status, render: (r) => <StatusBadge value={r.status} /> },
-    {
-      key: "actions",
-      header: "Actions",
-      sortable: false,
-      render: (r) => (
-        <Button
-          size="sm"
-          variant="outline"
-          disabled={r.status !== "Staged" || !can("load.execute")}
-          onClick={() => {
-            setRows((s) => s.map((x) => (x.id === r.id ? { ...x, status: "Loading" } : x)));
-            toast.success(`${r.id} moved to loading`, { description: `${r.dock} assigned.` });
-          }}
-        >
-          <ClipboardCheck className="h-4 w-4" />
-          Move to Loading
-        </Button>
-      ),
-    },
-  ];
-
+function Page() {
   return (
-    <div>
+    <div className="space-y-4">
       <PageHeader
-        title="Staging Area"
-        description="Packed shipments held in staging lanes awaiting dock assignment and loading."
-        breadcrumbs={[{ label: "Outbound Logistics" }, { label: "Staging" }]}
+        title="Staging Management"
+        description="6 docks Â· 4 staging lanes Â· 2 trucks waiting at gatehouse"
+        breadcrumb={["Outbound", "Staging"]}
       />
-
-      <div className="mb-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Staged Shipments" value={rows.filter((r) => r.status === "Staged").length} tone="warning" />
-        <StatCard label="Loading" value={rows.filter((r) => r.status === "Loading").length} tone="primary" />
-        <StatCard label="Ready for Shipment" value={rows.filter((r) => r.status === "Ready for Shipment").length} tone="success" />
-        <StatCard label="Docks Active" value={`${new Set(rows.map((r) => r.dock)).size} / ${docks.length}`} />
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <KpiCard
+          label="Staged shipments"
+          value={4}
+          sub="Lanes S-01 to S-04"
+          icon={<Warehouse className="size-4" />}
+        />
+        <KpiCard
+          label="Waiting trucks"
+          value={2}
+          sub="Avg wait 18 min"
+          tone="warning"
+          icon={<Clock className="size-4" />}
+        />
+        <KpiCard
+          label="Docks in use"
+          value="3 / 6"
+          sub="1 under maintenance"
+          tone="primary"
+          icon={<Truck className="size-4" />}
+        />
+        <KpiCard
+          label="Completed"
+          value={11}
+          sub="Handed to loading"
+          tone="success"
+          icon={<CheckCircle2 className="size-4" />}
+        />
       </div>
-
-      <Card className="mb-4 border-border shadow-[var(--shadow-card)]">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm">Dock Occupancy</CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-2 sm:grid-cols-3 xl:grid-cols-6">
-          {docks.map((d) => {
-            const occ = rows.find((r) => r.dock === d);
-            return (
-              <div
-                key={d}
-                className={cn(
-                  "rounded-md border p-3 text-xs",
-                  occ ? "border-primary/30 bg-primary-soft" : "border-border bg-muted",
-                )}
-              >
-                <p className="flex items-center gap-1 font-medium text-foreground">
-                  <MapPin className="h-3 w-3" />
-                  {d}
-                </p>
-                <p className="mt-1 text-muted-foreground">{occ ? `${occ.id} · ${occ.carrier}` : "Available"}</p>
+      <SectionCard title="Staging area map" description="Live dock and lane occupancy">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {docks.map((d) => (
+            <div key={d.id} className="glass-panel rounded-xl p-3">
+              <div className="flex items-center justify-between gap-2">
+                <p className="num text-sm font-semibold">{d.id}</p>
+                <StatusBadge status={d.status} />
               </div>
-            );
-          })}
-        </CardContent>
-      </Card>
-
-      <DataTable
-        data={rows}
-        columns={columns}
-        searchKeys={(r) => `${r.id} ${r.carrier} ${r.dock} ${r.destination} ${r.orders.join(" ")}`}
-        onExport={() => toast.success("Staging report exported")}
-        filters={[
-          { key: "dock", label: "Dock", options: docks, match: (r, v) => r.dock === v },
-          { key: "status", label: "Status", options: ["Staged", "Loading", "Ready for Shipment", "In Transit", "Delivered"], match: (r, v) => r.status === v },
-        ]}
-      />
+              <p className="mt-1 truncate text-xs text-muted-foreground">
+                {d.truck !== "â€”" ? `${d.truck} Â· ${d.order}` : "Available"}
+              </p>
+              <p className="num mt-1 text-xs text-muted-foreground">ETA {d.eta}</p>
+              <div className="mt-2">
+                <ProgressBar
+                  value={d.utilization}
+                  tone={d.utilization > 75 ? "success" : "warning"}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </SectionCard>
+      <SectionCard title="Staging queue" bodyClassName="p-0">
+        <ul className="divide-y divide-border">
+          {orders
+            .filter((o) => ["Staged", "Packed", "Quality Verified"].includes(o.status))
+            .map((o) => (
+              <li
+                key={o.id}
+                className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-3"
+              >
+                <div className="min-w-0">
+                  <p className="num truncate text-sm font-medium">{o.id}</p>
+                  <p className="truncate text-xs text-muted-foreground">
+                    {o.customer} Â· {o.carrier} Â· {o.dispatchWindow}
+                  </p>
+                </div>
+                <div className="flex shrink-0 items-center gap-2">
+                  <StatusBadge status={o.status} />
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => toast.success(`${o.id} assigned to DOCK-03`)}
+                  >
+                    Assign dock
+                  </Button>
+                </div>
+              </li>
+            ))}
+        </ul>
+      </SectionCard>
     </div>
   );
 }
