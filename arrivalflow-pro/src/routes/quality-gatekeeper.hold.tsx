@@ -1,126 +1,269 @@
+﻿import { createFileRoute, Link } from "@tanstack/react-router";
+import { Lock, Unlock, XCircle, Search } from "lucide-react";
 import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
-import { ShieldAlert, Unlock, XCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { SectionCard, StatCard, StatusBadge, Field } from "@/apps/quality-gatekeeper/components/wms/bits";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  EmptyState,
+  PageHeader,
+  SectionCard,
+} from "@/apps/quality-gatekeeper/components/qm/Primitives";
+import { StatusPill } from "@/apps/quality-gatekeeper/components/qm/StatusPill";
+import { holds } from "@/apps/quality-gatekeeper/lib/qm-data";
 
 export const Route = createFileRoute("/quality-gatekeeper/hold")({
   head: () => ({
     meta: [
-      { title: "Quality Hold — AXIOM WMS Quality" },
-      { name: "description", content: "Blocked stock in quality hold with reason codes, blocked quantities, inspection notes, release and reject actions." },
-      { property: "og:title", content: "Quality Hold — AXIOM WMS Quality" },
-      { property: "og:description", content: "Blocked stock, reason codes and release or reject decisions." },
+      { title: "Quality Hold Â· Axiom WMS" },
+      {
+        name: "description",
+        content:
+          "Blocked stock register with hold reasons, quarantine locations, release and reject actions.",
+      },
+      { property: "og:title", content: "Quality Hold Â· Axiom WMS" },
+      {
+        property: "og:description",
+        content: "Manage quarantined warehouse stock and hold dispositions.",
+      },
     ],
   }),
   component: HoldPage,
 });
 
-const HOLD_ROWS = [
-  { grn: "GRN-2026-004869", material: "MAT-10220 CR Steel Coil 1.2mm", vendor: "Tata Steel Processing", qty: 4, uom: "COIL", bin: "QA-HOLD-01", reason: "Edge corrosion beyond acceptance limit", status: "Quality Hold", since: "01 Aug, 00:02", ncr: "NCR-2026-0317" },
-  { grn: "GRN-2026-004860", material: "MAT-30110 Hex Bolt M12x60 8.8", vendor: "Guangdong Fasteners", qty: 6000, uom: "EA", bin: "QA-HOLD-02", reason: "Zinc plating defect — AQL failure", status: "NCR Created", since: "30 Jul, 15:00", ncr: "NCR-2026-0318" },
-  { grn: "GRN-2026-004845", material: "MAT-91002 Bearing 6205 2RS", vendor: "SKF India", qty: 240, uom: "EA", bin: "QA-HOLD-01", reason: "Missing test certificate", status: "Under Review", since: "29 Jul, 10:40", ncr: "—" },
-  { grn: "GRN-2026-004822", material: "MAT-22110 Cu Cable 4C x 6sqmm", vendor: "Wenzhou Cable Industries", qty: 1200, uom: "M", bin: "QA-HOLD-03", reason: "Conductor cross-section below spec", status: "RTS", since: "27 Jul, 18:15", ncr: "NCR-2026-0305" },
-];
-
 function HoldPage() {
-  const [dialog, setDialog] = useState<{ type: "release" | "reject"; row: (typeof HOLD_ROWS)[number] } | null>(null);
-  const [note, setNote] = useState("");
+  const [q, setQ] = useState("");
+  const [action, setAction] = useState<{ id: string; type: "release" | "reject" } | null>(null);
+  const rows = holds.filter((h) =>
+    [h.id, h.material, h.vendor, h.reason].join(" ").toLowerCase().includes(q.toLowerCase()),
+  );
 
   return (
-    <div className="mx-auto max-w-[1600px] space-y-5">
-      <header>
-        <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">Quality Inspection</p>
-        <h1 className="text-2xl font-bold sm:text-3xl">Quality Hold</h1>
-      </header>
+    <>
+      <PageHeader
+        breadcrumb={[{ label: "Quality", to: "/quality-gatekeeper" }, { label: "Quality Hold" }]}
+        eyebrow="Screen 11"
+        title="Quality Hold"
+        description="Stock blocked from putaway and issue until quality disposition"
+        actions={
+          <Button size="sm" asChild>
+            <Link to="/quality-gatekeeper/queue">Create hold from queue</Link>
+          </Button>
+        }
+      />
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Lots on hold" value={HOLD_ROWS.length} sub="Across 3 hold bins" icon={<ShieldAlert className="h-5 w-5" />} tone="warning" />
-        <StatCard label="Blocked quantity" value="7,444" sub="Mixed UoM · ₹ 14.2 L value" icon={<ShieldAlert className="h-5 w-5" />} tone="danger" />
-        <StatCard label="Awaiting decision" value={2} sub="SLA breach in 6h for 1 lot" icon={<ShieldAlert className="h-5 w-5" />} tone="primary" />
-        <StatCard label="Released this week" value={9} sub="1,820 EA returned to stock" icon={<Unlock className="h-5 w-5" />} tone="success" />
+      <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <Kpi l="Active holds" v="3" tone="warning" />
+        <Kpi l="Blocked units" v="48" tone="danger" />
+        <Kpi l="Blocked value" v="SAR 214k" tone="danger" />
+        <Kpi l="Avg hold age" v="0.7 d" tone="success" />
       </div>
 
-      <SectionCard title="Blocked stock register" description="Stock is not available for picking while on quality hold">
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow className="hover:bg-transparent">
-                <TableHead>GRN</TableHead>
-                <TableHead>Material</TableHead>
-                <TableHead>Vendor</TableHead>
-                <TableHead className="text-right">Blocked qty</TableHead>
-                <TableHead>Hold bin</TableHead>
-                <TableHead>Reason</TableHead>
-                <TableHead>NCR</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Decision</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {HOLD_ROWS.map((r) => (
-                <TableRow key={r.grn}>
-                  <TableCell className="num font-mono text-xs font-semibold text-primary">{r.grn}</TableCell>
-                  <TableCell className="max-w-[220px] truncate text-xs">{r.material}</TableCell>
-                  <TableCell className="text-xs">{r.vendor}</TableCell>
-                  <TableCell className="num text-right text-xs font-semibold">{r.qty.toLocaleString()} {r.uom}</TableCell>
-                  <TableCell className="num font-mono text-xs">{r.bin}</TableCell>
-                  <TableCell className="max-w-[220px] truncate text-xs text-muted-foreground">{r.reason}</TableCell>
-                  <TableCell className="num font-mono text-xs">{r.ncr}</TableCell>
-                  <TableCell><StatusBadge status={r.status} /></TableCell>
-                  <TableCell className="text-right whitespace-nowrap">
-                    <div className="inline-flex gap-1">
-                      <Button size="sm" variant="outline" className="h-8 rounded-lg" onClick={() => setDialog({ type: "release", row: r })}>
-                        <Unlock className="h-3.5 w-3.5" /> Release
+      <SectionCard padded={false}>
+        <div className="border-b border-border p-3">
+          <div className="relative max-w-md">
+            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Search hold, material, vendorâ€¦"
+              className="h-9 rounded-xl pl-9"
+            />
+          </div>
+        </div>
+        {rows.length === 0 ? (
+          <EmptyState
+            icon={Lock}
+            title="No quality holds"
+            description="No stock is currently blocked for this filter."
+          />
+        ) : (
+          <>
+            <div className="hidden overflow-x-auto lg:block">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/50">
+                    <TableHead>Hold No.</TableHead>
+                    <TableHead>Inspection</TableHead>
+                    <TableHead>Material</TableHead>
+                    <TableHead>Reason</TableHead>
+                    <TableHead className="text-right">Blocked qty</TableHead>
+                    <TableHead>Location</TableHead>
+                    <TableHead>Inspector</TableHead>
+                    <TableHead>Age</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {rows.map((h) => (
+                    <TableRow key={h.id} className="hover:bg-accent/30">
+                      <TableCell className="num text-xs font-semibold text-primary">
+                        {h.id}
+                      </TableCell>
+                      <TableCell className="num text-xs">
+                        <Link
+                          to="/quality-gatekeeper/queue/$id"
+                          params={{ id: h.inspection }}
+                          className="hover:underline"
+                        >
+                          {h.inspection}
+                        </Link>
+                      </TableCell>
+                      <TableCell className="max-w-[180px] truncate text-xs">{h.material}</TableCell>
+                      <TableCell className="max-w-[220px] truncate text-xs text-muted-foreground">
+                        {h.reason}
+                      </TableCell>
+                      <TableCell className="num text-right text-xs">
+                        {h.qty} {h.uom}
+                      </TableCell>
+                      <TableCell className="num text-xs">{h.location}</TableCell>
+                      <TableCell className="text-xs">{h.inspector}</TableCell>
+                      <TableCell className="num text-xs">{h.ageDays} d</TableCell>
+                      <TableCell>
+                        <StatusPill
+                          tone={
+                            h.status === "Active"
+                              ? "warning"
+                              : h.status === "Released"
+                                ? "success"
+                                : "danger"
+                          }
+                        >
+                          {h.status}
+                        </StatusPill>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            disabled={h.status !== "Active"}
+                            onClick={() => setAction({ id: h.id, type: "release" })}
+                          >
+                            <Unlock className="mr-1.5 h-3.5 w-3.5 text-success" /> Release
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            disabled={h.status !== "Active"}
+                            onClick={() => setAction({ id: h.id, type: "reject" })}
+                          >
+                            <XCircle className="mr-1.5 h-3.5 w-3.5 text-destructive" /> Reject
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+            <ul className="divide-y divide-border lg:hidden">
+              {rows.map((h) => (
+                <li key={h.id} className="p-3">
+                  <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+                    <div className="min-w-0">
+                      <p className="num truncate text-xs font-semibold text-primary">{h.id}</p>
+                      <p className="mt-0.5 truncate text-sm font-medium">{h.material}</p>
+                      <p className="truncate text-[11px] text-muted-foreground">{h.reason}</p>
+                      <p className="num truncate text-[11px] text-muted-foreground">
+                        {h.qty} {h.uom} Â· {h.location}
+                      </p>
+                    </div>
+                    <StatusPill tone={h.status === "Active" ? "warning" : "success"}>
+                      {h.status}
+                    </StatusPill>
+                  </div>
+                  {h.status === "Active" && (
+                    <div className="mt-3 flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="flex-1"
+                        onClick={() => setAction({ id: h.id, type: "release" })}
+                      >
+                        Release
                       </Button>
-                      <Button size="sm" variant="destructive" className="h-8 rounded-lg" onClick={() => setDialog({ type: "reject", row: r })}>
-                        <XCircle className="h-3.5 w-3.5" /> Reject
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="flex-1 text-destructive"
+                        onClick={() => setAction({ id: h.id, type: "reject" })}
+                      >
+                        Reject
                       </Button>
                     </div>
-                  </TableCell>
-                </TableRow>
+                  )}
+                </li>
               ))}
-            </TableBody>
-          </Table>
-        </div>
+            </ul>
+          </>
+        )}
       </SectionCard>
 
-      <AlertDialog open={dialog !== null} onOpenChange={(o) => !o && setDialog(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {dialog?.type === "release" ? "Release blocked stock to available inventory?" : "Reject blocked stock and start return?"}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              {dialog?.row.qty.toLocaleString()} {dialog?.row.uom} of {dialog?.row.material} from {dialog?.row.bin}.
-              {dialog?.type === "release" ? " A 343 movement is posted and the warehouse is notified." : " An RTS document is created and procurement is notified."}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <div className="grid gap-3">
-            <Field label="Reason code" value={dialog?.row.reason ?? ""} />
-            <Textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Inspection notes / justification (mandatory)…" className="min-h-24" />
-          </div>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
+      <Dialog open={action !== null} onOpenChange={(o) => !o && setAction(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {action?.type === "release" ? "Release quality hold" : "Reject held stock"}
+            </DialogTitle>
+            <DialogDescription>
+              {action?.type === "release"
+                ? `${action?.id} will be unblocked and the quantity moved to unrestricted-use stock.`
+                : `${action?.id} will be rejected. An NCR and return-to-supplier request will be generated.`}
+            </DialogDescription>
+          </DialogHeader>
+          <Textarea rows={3} placeholder="Justification / decision notesâ€¦" />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAction(null)}>
+              Cancel
+            </Button>
+            <Button
+              variant={action?.type === "reject" ? "destructive" : "default"}
               onClick={() => {
-                toast[dialog?.type === "release" ? "success" : "error"](
-                  dialog?.type === "release" ? "Stock released from quality hold" : "Stock rejected — RTS-2026-0092 created",
-                  { description: `${dialog?.row.grn} · ${dialog?.row.qty.toLocaleString()} ${dialog?.row.uom}` },
+                toast.success(
+                  action?.type === "release"
+                    ? "Hold released â€” stock unblocked"
+                    : "Stock rejected â€” NCR raised",
                 );
-                setNote("");
-                setDialog(null);
+                setAction(null);
               }}
             >
               Confirm
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
+
+function Kpi({ l, v, tone }: { l: string; v: string; tone: "warning" | "danger" | "success" }) {
+  return (
+    <div className="surface-card rounded-2xl p-4">
+      <p className="text-[11px] text-muted-foreground">{l}</p>
+      <p className="num mt-1 text-2xl font-semibold">{v}</p>
+      <StatusPill tone={tone} className="mt-2" dot={false}>
+        {tone === "success" ? "Within target" : "Monitor"}
+      </StatusPill>
     </div>
   );
 }

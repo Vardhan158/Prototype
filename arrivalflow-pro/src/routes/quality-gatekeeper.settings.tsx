@@ -1,99 +1,70 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Switch } from "@/components/ui/switch";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+﻿import { createFileRoute, Link } from "@tanstack/react-router";
+import { Download } from "lucide-react";
 import { toast } from "sonner";
-import { SectionCard } from "@/apps/quality-gatekeeper/components/wms/bits";
+
+import { Button } from "@/components/ui/button";
+import { PageHeader, SectionCard } from "@/apps/quality-gatekeeper/components/qm/Primitives";
+import { StatusPill } from "@/apps/quality-gatekeeper/components/qm/StatusPill";
 
 export const Route = createFileRoute("/quality-gatekeeper/settings")({
   head: () => ({
     meta: [
-      { title: "Quality Settings — AXIOM WMS" },
-      { name: "description", content: "Inspection plan defaults, AQL levels, escalation SLAs, evidence rules and notification routing." },
-      { property: "og:title", content: "Quality Settings — AXIOM WMS" },
-      { property: "og:description", content: "Inspection defaults, AQL levels, SLAs and notification routing." },
+      { title: "Settings Â· Axiom WMS" },
+      {
+        name: "description",
+        content:
+          "Inspection templates, sampling rules, AQL levels, damage categories and NCR configuration",
+      },
+      { property: "og:title", content: "Settings Â· Axiom WMS" },
+      {
+        property: "og:description",
+        content:
+          "Inspection templates, sampling rules, AQL levels, damage categories and NCR configuration",
+      },
     ],
   }),
-  component: SettingsPage,
+  component: Page,
 });
 
-function SettingsPage() {
+function Page() {
   return (
-    <div className="mx-auto max-w-[1100px] space-y-5">
-      <header>
-        <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">Configuration</p>
-        <h1 className="text-2xl font-bold sm:text-3xl">Quality Settings</h1>
-      </header>
-
-      <SectionCard title="Inspection defaults" description="Applied when no material-specific inspection plan exists">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <Label className="text-xs">Default inspection type</Label>
-            <Select defaultValue="AQL Sampling">
-              <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="100% Inspection">100% Inspection</SelectItem>
-                <SelectItem value="Random Sampling">Random Sampling</SelectItem>
-                <SelectItem value="AQL Sampling">AQL Sampling</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label className="text-xs">AQL level</Label>
-            <Select defaultValue="1.0">
-              <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {["0.65", "1.0", "1.5", "2.5"].map((a) => (<SelectItem key={a} value={a}>AQL {a}</SelectItem>))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label className="text-xs">Inspection SLA (minutes)</Label>
-            <Input defaultValue={60} className="num mt-1.5" />
-          </div>
-          <div>
-            <Label className="text-xs">NCR response SLA (hours)</Label>
-            <Input defaultValue={48} className="num mt-1.5" />
-          </div>
-        </div>
-      </SectionCard>
-
-      <SectionCard title="Evidence & compliance rules" description="Enforced by the inspection workbench">
-        {[
-          { t: "Mandatory photo evidence on rejection", d: "Minimum 4 photos required before a FAIL disposition can be signed." },
-          { t: "Digital signature required", d: "Certified e-signature enforced on every approval (21 CFR Part 11 aligned)." },
-          { t: "Auto-create NCR on critical severity", d: "Critical damage automatically raises an NCR and blocks the lot." },
-          { t: "Barcode validation mandatory", d: "Every material line must be scanned before verification can be completed." },
-        ].map((r) => (
-          <div key={r.t} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 border-b border-border py-4 last:border-0">
-            <div className="min-w-0">
-              <p className="text-sm font-medium">{r.t}</p>
-              <p className="mt-0.5 text-xs text-muted-foreground">{r.d}</p>
-            </div>
-            <Switch defaultChecked />
-          </div>
-        ))}
-      </SectionCard>
-
-      <SectionCard title="Notification routing" description="Who gets notified on quality events">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <Label className="text-xs">Pass — notify</Label>
-            <Input defaultValue="Warehouse Manager, Store Keeper" className="mt-1.5" />
-          </div>
-          <div>
-            <Label className="text-xs">Fail / NCR — notify</Label>
-            <Input defaultValue="Quality Manager, Procurement, Supplier Quality" className="mt-1.5" />
-          </div>
-        </div>
-        <div className="mt-5 flex justify-end">
-          <Button className="rounded-xl" onClick={() => toast.success("Quality settings saved", { description: "Applied to plant PL-1000 · effective immediately" })}>
-            Save settings
+    <>
+      <PageHeader
+        breadcrumb={[{ label: "Quality", to: "/quality-gatekeeper" }, { label: "Settings" }]}
+        eyebrow="Screen 22"
+        title="Settings"
+        description="Inspection templates, sampling rules, AQL levels, damage categories and NCR configuration"
+        actions={
+          <Button variant="outline" size="sm" onClick={() => toast.success("Exported")}>
+            <Download className="mr-2 h-4 w-4" /> Export
           </Button>
-        </div>
-      </SectionCard>
-    </div>
+        }
+      />
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+        {[
+          [
+            "Inspection Templates",
+            "6 active templates Â· flange, valve, electrical, PPE, bulk, consumables",
+          ],
+          ["Sampling Rules", "ISO 2859-1 tables, switching rules and lot-size bands"],
+          ["AQL Levels", "0.065 â€“ 4.0 configured per material group criticality"],
+          ["Damage Categories", "8 categories mapped to defect codes and severity"],
+          ["Quality Rules", "Auto-hold on critical defect, tolerance Â±2% under-delivery"],
+          ["NCR Settings", "Numbering QM-NCR-YYYY, 2-step approval, 8D template"],
+        ].map(([t, d]) => (
+          <SectionCard key={t} title={t as string}>
+            <p className="text-[11px] text-muted-foreground">{d}</p>
+            <Button
+              size="sm"
+              variant="outline"
+              className="mt-3 w-full"
+              onClick={() => toast("Configuration opened")}
+            >
+              Configure
+            </Button>
+          </SectionCard>
+        ))}
+      </div>
+    </>
   );
 }

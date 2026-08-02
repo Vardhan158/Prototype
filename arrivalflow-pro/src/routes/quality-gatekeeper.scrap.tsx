@@ -19,22 +19,20 @@ import {
   SectionCard,
 } from "@/apps/quality-gatekeeper/components/qm/Primitives";
 import { StatusPill } from "@/apps/quality-gatekeeper/components/qm/StatusPill";
-import { rtsList } from "@/apps/quality-gatekeeper/lib/qm-data";
+import { scraps } from "@/apps/quality-gatekeeper/lib/qm-data";
 
-export const Route = createFileRoute("/quality-gatekeeper/rts")({
+export const Route = createFileRoute("/quality-gatekeeper/scrap")({
   head: () => ({
     meta: [
-      { title: "Return To Supplier Â· Axiom WMS" },
+      { title: "Scrap Management Â· Axiom WMS" },
       {
         name: "description",
-        content:
-          "Return shipments raised from NCR dispositions with approval, transport and credit note tracking",
+        content: "Scrap requests with cost of poor quality, approval routing and disposal evidence",
       },
-      { property: "og:title", content: "Return To Supplier Â· Axiom WMS" },
+      { property: "og:title", content: "Scrap Management Â· Axiom WMS" },
       {
         property: "og:description",
-        content:
-          "Return shipments raised from NCR dispositions with approval, transport and credit note tracking",
+        content: "Scrap requests with cost of poor quality, approval routing and disposal evidence",
       },
     ],
   }),
@@ -43,8 +41,8 @@ export const Route = createFileRoute("/quality-gatekeeper/rts")({
 
 function Page() {
   const [q, setQ] = useState("");
-  const rows = rtsList.filter((r) =>
-    [r.id, r.vendor, r.material, r.reason].join(" ").toLowerCase().includes(q.toLowerCase()),
+  const rows = scraps.filter((r) =>
+    [r.id, r.material, r.reason].join(" ").toLowerCase().includes(q.toLowerCase()),
   );
 
   return (
@@ -52,11 +50,11 @@ function Page() {
       <PageHeader
         breadcrumb={[
           { label: "Quality", to: "/quality-gatekeeper" },
-          { label: "Return To Supplier" },
+          { label: "Scrap Management" },
         ]}
-        eyebrow="Screen 12"
-        title="Return To Supplier"
-        description="Return shipments raised from NCR dispositions with approval, transport and credit note tracking"
+        eyebrow="Screen 14"
+        title="Scrap Management"
+        description="Scrap requests with cost of poor quality, approval routing and disposal evidence"
         actions={
           <Button variant="outline" size="sm" onClick={() => toast.success("Exported to XLSX")}>
             <Download className="mr-2 h-4 w-4" /> Export
@@ -65,10 +63,10 @@ function Page() {
       />
 
       <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Kpi l="Open returns" v="3" />
-        <Kpi l="Units returned" v="45" />
-        <Kpi l="Credit value" v="SAR 106.5k" />
-        <Kpi l="Avg turnaround" v="6 d" />
+        <Kpi l="Open requests" v="1" />
+        <Kpi l="Scrap value MTD" v="SAR 20.1k" />
+        <Kpi l="Units scrapped" v="180" />
+        <Kpi l="Scrap rate" v="0.8%" />
       </div>
 
       <SectionCard padded={false}>
@@ -93,16 +91,13 @@ function Page() {
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/50">
-                  <TableHead>RTS No.</TableHead>
+                  <TableHead>Scrap No.</TableHead>
                   <TableHead>NCR</TableHead>
-                  <TableHead>Vendor</TableHead>
                   <TableHead>Material</TableHead>
                   <TableHead>Qty</TableHead>
                   <TableHead>Reason</TableHead>
-                  <TableHead>Approval</TableHead>
-                  <TableHead>Carrier / AWB</TableHead>
-                  <TableHead>Dispatch</TableHead>
-                  <TableHead>Credit note</TableHead>
+                  <TableHead>Scrap cost</TableHead>
+                  <TableHead>Approver</TableHead>
                   <TableHead>Status</TableHead>
                 </TableRow>
               </TableHeader>
@@ -110,36 +105,24 @@ function Page() {
                 {rows.map((r) => (
                   <TableRow key={r.id} className="hover:bg-accent/30">
                     <TableCell className="num text-xs font-semibold text-primary">{r.id}</TableCell>
+                    <TableCell className="num text-xs">{r.ncr}</TableCell>
+                    <TableCell className="max-w-[180px] truncate text-xs">{r.material}</TableCell>
                     <TableCell className="num text-xs">
-                      <Link
-                        to="/quality-gatekeeper/ncr/$id"
-                        params={{ id: r.ncr }}
-                        className="hover:underline"
-                      >
-                        {r.ncr}
-                      </Link>
+                      {r.qty} {r.uom}
                     </TableCell>
-                    <TableCell className="max-w-[170px] truncate text-xs">{r.vendor}</TableCell>
-                    <TableCell className="max-w-[170px] truncate text-xs">{r.material}</TableCell>
-                    <TableCell className="num text-xs">{r.qty}</TableCell>
-                    <TableCell className="max-w-[180px] truncate text-xs text-muted-foreground">
+                    <TableCell className="max-w-[220px] truncate text-xs text-muted-foreground">
                       {r.reason}
                     </TableCell>
-                    <TableCell className="text-xs">{r.approvedBy}</TableCell>
-                    <TableCell className="num text-xs">
-                      {r.carrier}
-                      <p className="text-[10px] text-muted-foreground">{r.awb}</p>
-                    </TableCell>
-                    <TableCell className="num text-xs">{r.dispatch}</TableCell>
-                    <TableCell className="num text-xs">{r.creditNote}</TableCell>
+                    <TableCell className="num text-xs">SAR {r.cost.toLocaleString()}</TableCell>
+                    <TableCell className="text-xs">{r.approver}</TableCell>
                     <TableCell>
                       <StatusPill
                         tone={
-                          r.status === "Delivered" || r.status === "Closed"
+                          r.status === "Disposed"
                             ? "success"
-                            : r.status === "Awaiting Approval"
-                              ? "warning"
-                              : "info"
+                            : r.status === "Approved"
+                              ? "info"
+                              : "warning"
                         }
                       >
                         {r.status}

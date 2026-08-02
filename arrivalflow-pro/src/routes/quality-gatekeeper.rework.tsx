@@ -19,22 +19,22 @@ import {
   SectionCard,
 } from "@/apps/quality-gatekeeper/components/qm/Primitives";
 import { StatusPill } from "@/apps/quality-gatekeeper/components/qm/StatusPill";
-import { rtsList } from "@/apps/quality-gatekeeper/lib/qm-data";
+import { reworks } from "@/apps/quality-gatekeeper/lib/qm-data";
 
-export const Route = createFileRoute("/quality-gatekeeper/rts")({
+export const Route = createFileRoute("/quality-gatekeeper/rework")({
   head: () => ({
     meta: [
-      { title: "Return To Supplier Â· Axiom WMS" },
+      { title: "Rework Orders Â· Axiom WMS" },
       {
         name: "description",
         content:
-          "Return shipments raised from NCR dispositions with approval, transport and credit note tracking",
+          "Rework orders raised against non-conforming material with assigned teams and re-inspection gates",
       },
-      { property: "og:title", content: "Return To Supplier Â· Axiom WMS" },
+      { property: "og:title", content: "Rework Orders Â· Axiom WMS" },
       {
         property: "og:description",
         content:
-          "Return shipments raised from NCR dispositions with approval, transport and credit note tracking",
+          "Rework orders raised against non-conforming material with assigned teams and re-inspection gates",
       },
     ],
   }),
@@ -43,20 +43,17 @@ export const Route = createFileRoute("/quality-gatekeeper/rts")({
 
 function Page() {
   const [q, setQ] = useState("");
-  const rows = rtsList.filter((r) =>
-    [r.id, r.vendor, r.material, r.reason].join(" ").toLowerCase().includes(q.toLowerCase()),
+  const rows = reworks.filter((r) =>
+    [r.id, r.material, r.team, r.reason].join(" ").toLowerCase().includes(q.toLowerCase()),
   );
 
   return (
     <>
       <PageHeader
-        breadcrumb={[
-          { label: "Quality", to: "/quality-gatekeeper" },
-          { label: "Return To Supplier" },
-        ]}
-        eyebrow="Screen 12"
-        title="Return To Supplier"
-        description="Return shipments raised from NCR dispositions with approval, transport and credit note tracking"
+        breadcrumb={[{ label: "Quality", to: "/quality-gatekeeper" }, { label: "Rework Orders" }]}
+        eyebrow="Screen 13"
+        title="Rework Orders"
+        description="Rework orders raised against non-conforming material with assigned teams and re-inspection gates"
         actions={
           <Button variant="outline" size="sm" onClick={() => toast.success("Exported to XLSX")}>
             <Download className="mr-2 h-4 w-4" /> Export
@@ -65,10 +62,10 @@ function Page() {
       />
 
       <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Kpi l="Open returns" v="3" />
-        <Kpi l="Units returned" v="45" />
-        <Kpi l="Credit value" v="SAR 106.5k" />
-        <Kpi l="Avg turnaround" v="6 d" />
+        <Kpi l="Active orders" v="2" />
+        <Kpi l="Units in rework" v="8" />
+        <Kpi l="Awaiting re-inspection" v="6" />
+        <Kpi l="On-time rate" v="92%" />
       </div>
 
       <SectionCard padded={false}>
@@ -93,16 +90,14 @@ function Page() {
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/50">
-                  <TableHead>RTS No.</TableHead>
+                  <TableHead>Rework Order</TableHead>
                   <TableHead>NCR</TableHead>
-                  <TableHead>Vendor</TableHead>
                   <TableHead>Material</TableHead>
                   <TableHead>Qty</TableHead>
+                  <TableHead>Assigned team</TableHead>
                   <TableHead>Reason</TableHead>
-                  <TableHead>Approval</TableHead>
-                  <TableHead>Carrier / AWB</TableHead>
-                  <TableHead>Dispatch</TableHead>
-                  <TableHead>Credit note</TableHead>
+                  <TableHead>Expected completion</TableHead>
+                  <TableHead>Progress</TableHead>
                   <TableHead>Status</TableHead>
                 </TableRow>
               </TableHeader>
@@ -119,25 +114,27 @@ function Page() {
                         {r.ncr}
                       </Link>
                     </TableCell>
-                    <TableCell className="max-w-[170px] truncate text-xs">{r.vendor}</TableCell>
-                    <TableCell className="max-w-[170px] truncate text-xs">{r.material}</TableCell>
+                    <TableCell className="max-w-[180px] truncate text-xs">{r.material}</TableCell>
                     <TableCell className="num text-xs">{r.qty}</TableCell>
-                    <TableCell className="max-w-[180px] truncate text-xs text-muted-foreground">
+                    <TableCell className="text-xs">{r.team}</TableCell>
+                    <TableCell className="max-w-[200px] truncate text-xs text-muted-foreground">
                       {r.reason}
                     </TableCell>
-                    <TableCell className="text-xs">{r.approvedBy}</TableCell>
-                    <TableCell className="num text-xs">
-                      {r.carrier}
-                      <p className="text-[10px] text-muted-foreground">{r.awb}</p>
+                    <TableCell className="num text-xs">{r.due}</TableCell>
+                    <TableCell className="w-32">
+                      <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                        <div
+                          className="brand-gradient h-full rounded-full"
+                          style={{ width: `${r.progress}%` }}
+                        />
+                      </div>
                     </TableCell>
-                    <TableCell className="num text-xs">{r.dispatch}</TableCell>
-                    <TableCell className="num text-xs">{r.creditNote}</TableCell>
                     <TableCell>
                       <StatusPill
                         tone={
-                          r.status === "Delivered" || r.status === "Closed"
+                          r.status === "Completed"
                             ? "success"
-                            : r.status === "Awaiting Approval"
+                            : r.status === "Re-Inspection"
                               ? "warning"
                               : "info"
                         }
