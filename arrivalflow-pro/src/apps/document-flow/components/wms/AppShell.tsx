@@ -38,7 +38,7 @@ const nav = [
   { label: "Dashboard", icon: LayoutDashboard, to: "/document-flow", match: "/document-flow" },
   { label: "Document Management", icon: FileStack, to: "/document-flow/documents", match: "/document-flow/documents" },
   { label: "OCR Processing", icon: ScanText, to: "/document-flow/ocr", match: "/document-flow/ocr" },
-  { label: "Reports", icon: FileBarChart, to: "/document-flow", match: null },
+  { label: "Reports", icon: FileBarChart, to: "/document-flow/reports", match: "/document-flow/reports" },
   { label: "Analytics", icon: LineChart, to: "/document-flow", match: null },
   { label: "Settings", icon: Settings, to: "/document-flow", match: null },
 ];

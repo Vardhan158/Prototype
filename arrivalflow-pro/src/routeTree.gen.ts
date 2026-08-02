@@ -42,6 +42,7 @@ import { Route as WaveFlowRouteImport } from './routes/wave-flow'
 import { Route as WorkCraftRouteImport } from './routes/work-craft'
 import { Route as DashboardInventoryRouteImport } from './routes/dashboard_.inventory'
 import { Route as DocumentFlowIndexRouteImport } from './routes/document-flow.index'
+import { Route as DocumentFlowReportsRouteImport } from './routes/document-flow.reports'
 import { Route as GatePassProIndexRouteImport } from './routes/gate-pass-pro.index'
 import { Route as GatePassProAppointmentsRouteImport } from './routes/gate-pass-pro.appointments'
 import { Route as GatePassProArrivalNotificationsRouteImport } from './routes/gate-pass-pro.arrival-notifications'
@@ -361,6 +362,11 @@ const DashboardInventoryRoute = DashboardInventoryRouteImport.update({
 const DocumentFlowIndexRoute = DocumentFlowIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => DocumentFlowRoute,
+} as any)
+const DocumentFlowReportsRoute = DocumentFlowReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
   getParentRoute: () => DocumentFlowRoute,
 } as any)
 const GatePassProIndexRoute = GatePassProIndexRouteImport.update({
@@ -1233,6 +1239,7 @@ export interface FileRoutesByFullPath {
   '/wave-flow': typeof WaveFlowRouteWithChildren
   '/work-craft': typeof WorkCraftRouteWithChildren
   '/dashboard/inventory': typeof DashboardInventoryRoute
+  '/document-flow/reports': typeof DocumentFlowReportsRoute
   '/gate-pass-pro/appointments': typeof GatePassProAppointmentsRoute
   '/gate-pass-pro/arrival-notifications': typeof GatePassProArrivalNotificationsRoute
   '/gate-pass-pro/audit': typeof GatePassProAuditRoute
@@ -1411,6 +1418,7 @@ export interface FileRoutesByTo {
   '/vehicle-queue': typeof VehicleQueueRoute
   '/vehicle-verification': typeof VehicleVerificationRoute
   '/dashboard/inventory': typeof DashboardInventoryRoute
+  '/document-flow/reports': typeof DocumentFlowReportsRoute
   '/gate-pass-pro/appointments': typeof GatePassProAppointmentsRoute
   '/gate-pass-pro/arrival-notifications': typeof GatePassProArrivalNotificationsRoute
   '/gate-pass-pro/audit': typeof GatePassProAuditRoute
@@ -1601,6 +1609,7 @@ export interface FileRoutesById {
   '/wave-flow': typeof WaveFlowRouteWithChildren
   '/work-craft': typeof WorkCraftRouteWithChildren
   '/dashboard_/inventory': typeof DashboardInventoryRoute
+  '/document-flow/reports': typeof DocumentFlowReportsRoute
   '/gate-pass-pro/appointments': typeof GatePassProAppointmentsRoute
   '/gate-pass-pro/arrival-notifications': typeof GatePassProArrivalNotificationsRoute
   '/gate-pass-pro/audit': typeof GatePassProAuditRoute
@@ -1793,6 +1802,7 @@ export interface FileRouteTypes {
     | '/wave-flow'
     | '/work-craft'
     | '/dashboard/inventory'
+    | '/document-flow/reports'
     | '/gate-pass-pro/appointments'
     | '/gate-pass-pro/arrival-notifications'
     | '/gate-pass-pro/audit'
@@ -1971,6 +1981,7 @@ export interface FileRouteTypes {
     | '/vehicle-queue'
     | '/vehicle-verification'
     | '/dashboard/inventory'
+    | '/document-flow/reports'
     | '/gate-pass-pro/appointments'
     | '/gate-pass-pro/arrival-notifications'
     | '/gate-pass-pro/audit'
@@ -2160,6 +2171,7 @@ export interface FileRouteTypes {
     | '/wave-flow'
     | '/work-craft'
     | '/dashboard_/inventory'
+    | '/document-flow/reports'
     | '/gate-pass-pro/appointments'
     | '/gate-pass-pro/arrival-notifications'
     | '/gate-pass-pro/audit'
@@ -2584,6 +2596,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/document-flow/'
       preLoaderRoute: typeof DocumentFlowIndexRouteImport
+      parentRoute: typeof DocumentFlowRoute
+    }
+    '/document-flow/reports': {
+      id: '/document-flow/reports'
+      path: '/reports'
+      fullPath: '/document-flow/reports'
+      preLoaderRoute: typeof DocumentFlowReportsRouteImport
       parentRoute: typeof DocumentFlowRoute
     }
     '/gate-pass-pro/': {
@@ -3675,6 +3694,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface DocumentFlowRouteChildren {
+  DocumentFlowReportsRoute: typeof DocumentFlowReportsRoute
   DocumentFlowIndexRoute: typeof DocumentFlowIndexRoute
   DocumentFlowDocumentsIdRoute: typeof DocumentFlowDocumentsIdRoute
   DocumentFlowDocumentsLibraryRoute: typeof DocumentFlowDocumentsLibraryRoute
@@ -3685,6 +3705,7 @@ interface DocumentFlowRouteChildren {
 }
 
 const DocumentFlowRouteChildren: DocumentFlowRouteChildren = {
+  DocumentFlowReportsRoute: DocumentFlowReportsRoute,
   DocumentFlowIndexRoute: DocumentFlowIndexRoute,
   DocumentFlowDocumentsIdRoute: DocumentFlowDocumentsIdRoute,
   DocumentFlowDocumentsLibraryRoute: DocumentFlowDocumentsLibraryRoute,
