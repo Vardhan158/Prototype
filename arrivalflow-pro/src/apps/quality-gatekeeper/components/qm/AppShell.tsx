@@ -201,11 +201,11 @@ export function AppShell({ children }: { children: ReactNode }) {
             >
               <Menu className="h-5 w-5" />
             </Button>
-            <div className="relative hidden min-w-0 md:block">
+            <div className="relative hidden min-w-0 md:block md:pr-4 xl:pr-8">
               <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search inspection, GRN, PO, NCR, materialâ€¦"
-                className="h-9 max-w-xl rounded-xl bg-background/70 pl-9"
+                className="h-10 w-full rounded-xl bg-background/70 pr-4 pl-9"
               />
             </div>
             <div className="md:hidden" />
