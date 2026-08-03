@@ -10,6 +10,7 @@ import {
   zoneById,
 } from "./data";
 import { CATEGORY_ZONES, allocate, validateStorageRules } from "./rules";
+import { buildProductQrValue } from "./qr";
 import type {
   AllocationResult,
   AuditEntry,
@@ -177,15 +178,19 @@ export function WarehouseProvider({ children }: { children: ReactNode }) {
 
   const generateCode = useCallback(
     (itemId: string) => {
+      const item = items.find((i) => i.id === itemId);
+      if (!item) return "";
+
+      const payload = buildProductQrValue(item);
       const existing = items.map((i) => i.code);
       let code = `DC-${itemId.replace("ITM-", "")}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
       if (existing.includes(code)) {
         code = `${code}-R`;
         raise("info", "Duplicate QR", `Duplicate code detected for ${itemId}.`, "A new unique code was generated automatically.", itemId);
       }
-      patchItem(itemId, { code, stage: "rules" });
-      log("QR / Barcode Generation", itemId, "no code", code);
-      return code;
+      patchItem(itemId, { code: payload, stage: "rules" });
+      log("QR / Barcode Generation", itemId, "no code", payload);
+      return payload;
     },
     [items, log, patchItem, raise],
   );

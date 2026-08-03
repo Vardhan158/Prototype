@@ -131,7 +131,7 @@ function SettingsPage() {
               </CardHeader>
               <CardContent className="space-y-3">
                 {[
-                  ["Step 1 — Data Steward", "Completeness and duplicate check"],
+                  ["Step 1 — Master Data Management", "Completeness and duplicate check"],
                   ["Step 2 — Department Manager", "Business validation"],
                   ["Step 3 — Finance", "Tax and payment terms review"],
                 ].map(([step, desc]) => (

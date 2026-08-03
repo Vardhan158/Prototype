@@ -196,7 +196,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 </Avatar>
                 <div className="leading-tight">
                   <p className="text-sm font-semibold">{user?.name ?? "Anjali Sharma"}</p>
-                  <p className="text-[11px] text-muted-foreground">{user?.role ?? "Warehouse Supervisor"}</p>
+                  <p className="text-[11px] text-muted-foreground">{user?.role ?? "Warehouse Executive / Department Manager"}</p>
                 </div>
               </div>
               <Button
