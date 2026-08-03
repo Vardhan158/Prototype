@@ -60,7 +60,7 @@ export const departments = [
 ];
 
 export const users = [
-  { name: "Anjali Sharma", role: "Warehouse Executive / Department Manager", initials: "AS" },
+  { name: "Anjali Sharma", role: "Warehouse Supervisor", initials: "AS" },
   { name: "Rohit Menon", role: "Ops Manager", initials: "RM" },
   { name: "Priya Nair", role: "Production Planner", initials: "PN" },
   { name: "Vikram Desai", role: "Store Keeper", initials: "VD" },

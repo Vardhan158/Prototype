@@ -1,5 +1,8 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
+import { AppShell } from "@/apps/inventory-flow-pro/components/wms/app-shell";
+import { WmsProvider } from "@/apps/inventory-flow-pro/lib/wms/store";
 import { useAuth } from "@/lib/auth";
+import { DashboardScreen } from "./inventory-flow-pro.index";
 
 export const Route = createFileRoute("/dashboard_/inventory")({
   head: () => ({
@@ -21,5 +24,11 @@ function InventoryDashboard() {
   if (!ready) return null;
   if (!canAccess("lifecycle")) return <Navigate to="/dashboard" replace />;
 
-  return <Navigate to="/inventory-flow-pro" replace />;
+  return (
+    <WmsProvider>
+      <AppShell>
+        <DashboardScreen />
+      </AppShell>
+    </WmsProvider>
+  );
 }

@@ -95,12 +95,12 @@ function ReceivingPage() {
     <div className="space-y-6">
       <PageHeader
         title="Receiving & Pipeline"
-        subtitle="Warehouse flow: receive item → inspect quality → create QR label → validate storage rules → assign storage → confirm put-away."
+        subtitle="Capture supplier deliveries against PO/ASN, then advance each item through the 11-stage storage pipeline."
       />
 
       <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
         <form onSubmit={submit} className="panel h-fit space-y-4 p-5">
-          <h2 className="text-lg font-semibold">Goods receiving</h2>
+          <h2 className="text-lg font-semibold">Document Management & OCR</h2>
 
           <div className="space-y-1.5">
             <Label htmlFor="name">Item description</Label>
@@ -285,12 +285,9 @@ function PipelineCard({ item }: { item: Item }) {
         )}
 
         {item.stage === "qr" && (
-          <div className="space-y-2">
-            <p className="text-xs text-muted-foreground">Step 3: Create the combined QR label with the item details and storage destination.</p>
-            <Button size="sm" onClick={() => { const c = generateCode(item.id); toast.success(`Combined QR label generated: ${c}`); }}>
-              <QrIcon className="size-4" /> Generate combined QR label
-            </Button>
-          </div>
+          <Button size="sm" onClick={() => { const c = generateCode(item.id); toast.success(`Label ${c} generated.`); }}>
+            <QrIcon className="size-4" /> Generate QR / barcode
+          </Button>
         )}
 
         {item.stage === "rules" && (
@@ -304,7 +301,7 @@ function PipelineCard({ item }: { item: Item }) {
               ))}
             </ul>
             <Button size="sm" onClick={() => { runValidation(item.id); toast.success(`Validated → ${zoneById(validation.recommendedZone).name}`); }}>
-              <ShieldCheck className="size-4" /> Validate rules and continue
+              <ShieldCheck className="size-4" /> Accept & continue to capacity check
             </Button>
           </div>
         )}
@@ -316,7 +313,7 @@ function PipelineCard({ item }: { item: Item }) {
               setAllocation(res);
               res.failed ? toast.error("No capacity — escalated to Warehouse Manager.") : toast.success(`Assigned ${res.locationCode}`);
             }}>
-              <ArrowRight className="size-4" /> Run capacity check
+              <ArrowRight className="size-4" /> Run capacity decision tree
             </Button>
             {allocation && (
               <ol className="space-y-1 text-xs">
@@ -331,13 +328,8 @@ function PipelineCard({ item }: { item: Item }) {
         )}
 
         {item.stage === "task" && (
-          <div className="space-y-3">
-            <div className="flex flex-wrap items-center gap-3">
-              {item.code ? <QrCode value={item.code} size={96} /> : <p className="text-xs text-warning">Item label not generated yet.</p>}
-            </div>
-            <div className="rounded-md border border-border bg-muted/30 p-3 text-xs text-muted-foreground">
-              Step 6: The item is now ready for put-away. Open the queue to verify the item and storage location before confirmation.
-            </div>
+          <div className="flex flex-wrap items-center gap-3">
+            {item.code && <QrCode value={item.code} size={96} />}
             <Button size="sm" variant="outline" asChild>
               <Link to="/storage-guardian/putaway"><ScanBarcode className="size-4" /> Go to put-away queue</Link>
             </Button>

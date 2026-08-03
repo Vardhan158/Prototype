@@ -1,10 +1,10 @@
-import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard, ClipboardList, Columns3, CalendarClock, ShieldQuestion, BellRing,
-  LogOut, BarChart3, ScrollText, Settings, Truck, Search, Bell, Moon, Sun,
-  Menu, ChevronDown, PackageCheck, Loader2,
+  LogOut, BarChart3, ScrollText, Settings, Truck, Search, Bell, Globe, Moon, Sun,
+  Menu, ChevronDown, PackageCheck,
 } from "lucide-react";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -14,10 +14,9 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
   DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { notifications } from "@/apps/gate-pass-pro/lib/wms-data";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
-import { searchGateRecords, type SearchResult } from "@/apps/gate-pass-pro/lib/search-api";
-import { useRealtimeNotifications } from "@/apps/gate-pass-pro/lib/notification-api";
 
 const nav = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -104,53 +103,10 @@ export function AppShell({
   children: ReactNode;
 }) {
   const [dark, setDark] = useState(false);
+  const [lang, setLang] = useState("EN");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const [search, setSearch] = useState("");
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
-  const [searching, setSearching] = useState(false);
-  const [searchError, setSearchError] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const searchBoxRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
-  const { unreadCount: unread } = useRealtimeNotifications();
+  const unread = notifications.filter((n) => !n.read).length;
   const { user, logout } = useAuth();
-
-  useEffect(() => {
-    const query = search.trim();
-    if (query.length < 2) {
-      setSearchResults([]);
-      setSearching(false);
-      setSearchError(false);
-      return;
-    }
-    const controller = new AbortController();
-    const timer = window.setTimeout(async () => {
-      setSearching(true);
-      setSearchError(false);
-      try {
-        setSearchResults(await searchGateRecords(query, controller.signal));
-      } catch (error) {
-        if ((error as Error).name !== "AbortError") setSearchError(true);
-      } finally {
-        if (!controller.signal.aborted) setSearching(false);
-      }
-    }, 250);
-    return () => { window.clearTimeout(timer); controller.abort(); };
-  }, [search]);
-
-  useEffect(() => {
-    const close = (event: MouseEvent) => {
-      if (!searchBoxRef.current?.contains(event.target as Node)) setSearchOpen(false);
-    };
-    document.addEventListener("mousedown", close);
-    return () => document.removeEventListener("mousedown", close);
-  }, []);
-
-  const openResult = (result: SearchResult) => {
-    setSearchOpen(false);
-    setSearch("");
-    void navigate({ to: result.url });
-  };
 
   const toggleTheme = () => {
     setDark((d) => {
@@ -187,52 +143,33 @@ export function AppShell({
             </SheetContent>
           </Sheet>
 
-          <div ref={searchBoxRef} className="relative hidden max-w-md flex-1 md:block">
+          <div className="relative hidden max-w-md flex-1 md:block">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search truck no, gate entry, PO, driver, vendor…"
               className="h-9 rounded-lg pl-9"
-              value={search}
-              onChange={(event) => { setSearch(event.target.value); setSearchOpen(true); }}
-              onFocus={() => setSearchOpen(true)}
-              onKeyDown={(event) => {
-                if (event.key === "Escape") setSearchOpen(false);
-                if (event.key === "Enter" && searchResults[0]) openResult(searchResults[0]);
-              }}
-              role="combobox"
-              aria-expanded={searchOpen && search.trim().length >= 2}
-              aria-controls="global-search-results"
             />
-            {searching && <Loader2 className="absolute right-3 top-2.5 h-4 w-4 animate-spin text-muted-foreground" />}
-            {searchOpen && search.trim().length >= 2 && (
-              <div id="global-search-results" className="absolute left-0 right-0 top-11 z-50 overflow-hidden rounded-xl border border-border bg-popover shadow-lg">
-                {searchError ? (
-                  <p className="p-4 text-sm text-destructive">Search service is unavailable.</p>
-                ) : !searching && searchResults.length === 0 ? (
-                  <p className="p-4 text-sm text-muted-foreground">No matching records found.</p>
-                ) : (
-                  <ul className="max-h-80 overflow-y-auto p-1">
-                    {searchResults.map((result) => (
-                      <li key={result.id}>
-                        <button type="button" onClick={() => openResult(result)} className="w-full rounded-lg px-3 py-2.5 text-left hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
-                          <span className="flex items-center justify-between gap-3">
-                            <span className="truncate text-sm font-medium">{result.title}</span>
-                            <Badge variant="outline" className="shrink-0 text-[10px]">{result.status}</Badge>
-                          </span>
-                          <span className="mt-0.5 block truncate text-xs text-muted-foreground">{result.subtitle || result.type}</span>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            )}
           </div>
 
           <div className="ml-auto flex items-center gap-1">
             <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Toggle theme">
               {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="gap-1 px-2">
+                  <Globe className="h-4 w-4" />
+                  <span className="text-xs font-semibold">{lang}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {["EN", "HI", "AR", "DE"].map((l) => (
+                  <DropdownMenuItem key={l} onClick={() => setLang(l)}>
+                    {l === "EN" ? "English" : l === "HI" ? "हिन्दी" : l === "AR" ? "العربية" : "Deutsch"}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
             <Button variant="ghost" size="icon" asChild aria-label="Notifications">
               <Link to="/gate-pass-pro/notifications" className="relative">
                 <Bell className="h-4 w-4" />

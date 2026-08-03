@@ -10,11 +10,10 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AppShell } from "@/apps/gate-pass-pro/components/wms/AppShell";
+import { gateEntries, hourlyTraffic, reportRows, waitingTrend } from "@/apps/gate-pass-pro/lib/wms-data";
 import { StatusChip } from "@/apps/gate-pass-pro/components/wms/StatusChip";
-import { getGateReport, useRealtimeGateReport } from "@/apps/gate-pass-pro/lib/report-api";
 
 export const Route = createFileRoute("/gate-pass-pro/reports")({
-  loader: () => getGateReport("Today"),
   head: () => ({
     meta: [
       { title: "Gate Reports & Analytics — NexusWMS" },
@@ -26,6 +25,12 @@ export const Route = createFileRoute("/gate-pass-pro/reports")({
   component: Reports,
 });
 
+const pieData = [
+  { name: "Completed", value: 39 },
+  { name: "Inside", value: 11 },
+  { name: "Pending", value: 3 },
+  { name: "Rejected", value: 2 },
+];
 const pieColors = ["var(--color-chart-3)", "var(--color-chart-1)", "var(--color-chart-4)", "var(--color-chart-5)"];
 
 const tooltipStyle = {
@@ -37,13 +42,11 @@ const tooltipStyle = {
 
 function Reports() {
   const [range, setRange] = useState("Today");
-  const { report, connected } = useRealtimeGateReport(range, Route.useLoaderData());
-  const { metrics, hourlyTraffic, vendorRows: reportRows, waitingTrend, exceptions, statusDistribution: pieData, officerPerformance } = report;
 
   return (
     <AppShell
       title="Reports &amp; Analytics"
-      subtitle={`Gate performance, vendor compliance and yard productivity · ${connected ? "Live" : "Reconnecting"}`}
+      subtitle="Gate performance, vendor compliance and yard productivity"
       actions={
         <>
           <Select value={range} onValueChange={setRange}>
@@ -62,11 +65,16 @@ function Reports() {
       }
     >
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {metrics.map((metric) => (
-          <div key={metric.label} className="surface-card p-4">
-            <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{metric.label}</p>
-            <p className="mt-1 text-2xl font-semibold">{metric.value}</p>
-            <p className="text-[11px] text-muted-foreground">{metric.hint}</p>
+        {[
+          ["Trucks processed", "47", "+12% WoW"],
+          ["Average waiting time", "24 min", "-3 min WoW"],
+          ["Gate productivity", "6.7 trucks/hr", "target 6.0"],
+          ["Rejection rate", "4.2%", "2 trucks turned away"],
+        ].map(([k, v, s]) => (
+          <div key={k} className="surface-card p-4">
+            <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{k}</p>
+            <p className="mt-1 text-2xl font-semibold">{v}</p>
+            <p className="text-[11px] text-muted-foreground">{s}</p>
           </div>
         ))}
       </div>
@@ -162,11 +170,11 @@ function Reports() {
 
         <TabsContent value="rejected" className="pt-4">
           <div className="surface-card divide-y divide-border">
-            {exceptions.map((e) => (
+            {gateEntries.filter((e) => e.status === "Rejected" || e.status === "On Hold").map((e) => (
               <div key={e.id} className="flex flex-wrap items-center gap-3 p-4">
                 <span className="w-32 font-mono text-xs font-semibold">{e.truck}</span>
                 <span className="min-w-0 flex-1 text-xs text-muted-foreground">{e.vendor} · {e.holdReason}</span>
-                <span className="text-[11px] text-muted-foreground">{new Date(e.arrival).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
+                <span className="text-[11px] text-muted-foreground">{e.arrival.slice(11)}</span>
                 <StatusChip status={e.status} />
               </div>
             ))}
@@ -192,13 +200,17 @@ function Reports() {
             <div className="surface-card p-5">
               <h2 className="text-sm font-semibold">Security officer performance</h2>
               <div className="mt-4 divide-y divide-border">
-                {officerPerformance.map((r) => (
-                  <div key={r.officer} className="flex flex-wrap items-center gap-3 py-3 text-xs">
-                    <span className="w-28 font-medium">{r.officer}</span>
-                    <span className="text-muted-foreground">{r.gate}</span>
-                    <span className="ml-auto">{r.entries} entries</span>
-                    <span className="text-muted-foreground">avg {r.avgMinutes} min/entry</span>
-                    <span className="text-muted-foreground">{r.exceptions} exceptions</span>
+                {[
+                  ["S. Kulkarni", "Gate 01", "22 entries", "avg 11 min/entry", "0 exceptions"],
+                  ["A. Fernandes", "Gate 02", "15 entries", "avg 14 min/entry", "3 exceptions"],
+                  ["R. Nair", "Gate 03", "10 entries", "avg 12 min/entry", "1 exception"],
+                ].map((r) => (
+                  <div key={r[0]} className="flex flex-wrap items-center gap-3 py-3 text-xs">
+                    <span className="w-28 font-medium">{r[0]}</span>
+                    <span className="text-muted-foreground">{r[1]}</span>
+                    <span className="ml-auto">{r[2]}</span>
+                    <span className="text-muted-foreground">{r[3]}</span>
+                    <span className="text-muted-foreground">{r[4]}</span>
                   </div>
                 ))}
               </div>

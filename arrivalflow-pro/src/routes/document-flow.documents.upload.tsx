@@ -51,7 +51,7 @@ const queued = [
   { name: "EWB-391004528817.pdf", size: "0.4 MB", pages: 1 },
 ];
 
-function UploadPage() {
+export function UploadPage() {
   const navigate = useNavigate();
   const [over, setOver] = useState(false);
   const [stage, setStage] = useState<Stage>("idle");

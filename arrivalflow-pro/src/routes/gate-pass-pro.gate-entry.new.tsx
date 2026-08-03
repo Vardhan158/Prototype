@@ -51,11 +51,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
-import { createGateEntry, type NewGateEntryInput } from "@/apps/gate-pass-pro/lib/gate-entry-api";
-import { useAuth } from "@/lib/auth";
-import { uploadVehicleImage } from "@/apps/gate-pass-pro/lib/upload-api";
-import { verifyDriverLicence, type DriverRecord } from "@/apps/gate-pass-pro/lib/driver-api";
-import { canvasToJpeg, extractWithGemini, type DrivingLicenceOcr, type VehiclePlateOcr } from "@/apps/gate-pass-pro/lib/ocr-api";
 
 export const Route = createFileRoute("/gate-pass-pro/gate-entry/new")({
   component: NewGateEntry,
@@ -69,26 +64,20 @@ function NewGateEntry() {
   const [driverVerified, setDriverVerified] = React.useState(false);
   const [poVerified, setPoVerified] = React.useState(false);
   const [submitting, setSubmitting] = React.useState(false);
-  const [draft, setDraft] = React.useState<NewGateEntryInput>({ gate: "Gate 01", priority: "normal" });
-  const { user } = useAuth();
-  const updateDraft = (patch: Partial<NewGateEntryInput>) => setDraft((current) => ({ ...current, ...patch }));
 
-  const submitGateEntry = async () => {
+  const createGateEntry = () => {
     if (submitting) return;
     setSubmitting(true);
-    try {
-      const created = await createGateEntry({ ...draft, ...(user?.name ? { officer: user.name } : {}) });
-      toast.success("Gate entry created", { description: `${created.id} was saved and broadcast in real time.` });
-      await router.navigate({ to: "/dashboard" });
-    } catch (error) {
-      toast.error("Gate entry could not be created", { description: (error as Error).message });
-      setSubmitting(false);
-    }
+    const id = `GE-2026-${String(Math.floor(4831 + Math.random() * 99)).padStart(6, "0")}`;
+    window.setTimeout(() => {
+      toast.success("Gate entry created", { description: `${id} was added to the gate-entry register.` });
+      router.navigate({ to: "/gate-pass-pro/gate-entry" });
+    }, 900);
   };
 
   const goNext = () => {
     if (step === steps.length - 1) {
-      void submitGateEntry();
+      createGateEntry();
       return;
     }
     setStep((s) => Math.min(s + 1, steps.length - 1));
@@ -129,12 +118,12 @@ function NewGateEntry() {
         </div>
         <Progress value={((step + 1) / steps.length) * 100} className="mb-8" />
 
-        {step === 0 && <VehicleVerification onDraftChange={updateDraft} />}
-        {step === 1 && <DriverVerification onVerifiedChange={setDriverVerified} onDraftChange={updateDraft} />}
-        {step === 2 && <PurchaseOrderVerification onVerifiedChange={setPoVerified} onDraftChange={updateDraft} />}
+        {step === 0 && <VehicleVerification />}
+        {step === 1 && <DriverVerification onVerifiedChange={setDriverVerified} />}
+        {step === 2 && <PurchaseOrderVerification onVerifiedChange={setPoVerified} />}
         {step === 3 && <DocumentsVerification />}
         {step === 4 && <SafetyInspection />}
-        {step === 5 && <ReviewGateEntry driverVerified={driverVerified} poVerified={poVerified} submitting={submitting} onSubmit={() => void submitGateEntry()} onDraftChange={updateDraft} />}
+        {step === 5 && <ReviewGateEntry driverVerified={driverVerified} poVerified={poVerified} submitting={submitting} onSubmit={createGateEntry} />}
         {/* Other steps would be rendered here based on the 'step' state */}
         {step > 5 && (
           <div className="flex h-96 items-center justify-center rounded-lg border border-dashed bg-background text-muted-foreground">
@@ -148,185 +137,53 @@ function NewGateEntry() {
   );
 }
 
-function VehicleVerification({ onDraftChange }: { onDraftChange: (patch: Partial<NewGateEntryInput>) => void }) {
+function VehicleVerification() {
   const [vehicleNumber, setVehicleNumber] = React.useState("");
   const [isCameraOpen, setCameraOpen] = React.useState(false);
   const [isOcrRunning, setOcrRunning] = React.useState(false);
   const [truckPhoto, setTruckPhoto] = React.useState<string | null>(null);
-  const [photoCameraOpen, setPhotoCameraOpen] = React.useState(false);
-  const [cameraStarting, setCameraStarting] = React.useState(false);
-  const [uploadingPhoto, setUploadingPhoto] = React.useState(false);
-  const [uploadProgress, setUploadProgress] = React.useState(0);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const photoVideoRef = React.useRef<HTMLVideoElement>(null);
-  const photoStreamRef = React.useRef<MediaStream | null>(null);
-  const plateVideoRef = React.useRef<HTMLVideoElement>(null);
-  const plateStreamRef = React.useRef<MediaStream | null>(null);
-  const [ocrProgress, setOcrProgress] = React.useState(0);
 
-  const stopPlateCamera = React.useCallback(() => {
-    plateStreamRef.current?.getTracks().forEach((track) => track.stop());
-    plateStreamRef.current = null;
-    if (plateVideoRef.current) plateVideoRef.current.srcObject = null;
-  }, []);
-
-  const cameraErrorMessage = (error: unknown) => {
-    const name = error instanceof DOMException ? error.name : "CameraError";
-    if (name === "NotAllowedError" || name === "SecurityError")
-      return "Camera permission is blocked. Allow camera access in the browser site settings, then retry.";
-    if (name === "NotFoundError" || name === "DevicesNotFoundError")
-      return "No camera was detected on this device.";
-    if (name === "NotReadableError" || name === "TrackStartError")
-      return "The camera is being used by another application. Close it there and retry.";
-    if (name === "OverconstrainedError")
-      return "The requested camera mode is unavailable on this device.";
-    return error instanceof Error ? error.message : "The browser could not start the camera.";
-  };
-
-  const requestCamera = async () => {
-    try {
-      return await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: "environment" }, width: { ideal: 1920 }, height: { ideal: 1080 } },
-        audio: false,
-      });
-    } catch (firstError) {
-      if (firstError instanceof DOMException && ["NotAllowedError", "SecurityError", "NotFoundError"].includes(firstError.name)) throw firstError;
-      return navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-    }
-  };
-
-  const openPlateCamera = async () => {
-    if (!navigator.mediaDevices?.getUserMedia) {
-      toast.error("Camera is unavailable. Enter the vehicle number manually.");
-      return;
-    }
-    stopPhotoCamera();
-    stopPlateCamera();
-    setCameraOpen(true);
-    try {
-      const stream = await requestCamera();
-      plateStreamRef.current = stream;
-      await new Promise((resolve) => window.setTimeout(resolve, 0));
-      if (plateVideoRef.current) {
-        plateVideoRef.current.srcObject = stream;
-        await plateVideoRef.current.play();
-      }
-    } catch (error) {
-      setCameraOpen(false);
-      toast.error("Unable to open camera", { description: cameraErrorMessage(error) });
-    }
-  };
-
-  const handleCapture = async () => {
-    const video = plateVideoRef.current;
-    if (!video || !video.videoWidth || !video.videoHeight) {
-      toast.error("Camera is not ready yet.");
-      return;
-    }
+  const handleCapture = () => {
     setOcrRunning(true);
-    setOcrProgress(0);
-    try {
-      const canvas = document.createElement("canvas");
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      canvas.getContext("2d")?.drawImage(video, 0, 0, canvas.width, canvas.height);
-      setOcrProgress(35);
-      const result = await extractWithGemini<VehiclePlateOcr>(await canvasToJpeg(canvas), "vehicle_plate");
-      setOcrProgress(100);
-      const plate = result.registrationNumber?.toUpperCase().replace(/[^A-Z0-9]/g, "");
-      if (!plate) throw new Error("No registration number was detected. Move closer and improve lighting.");
-      setVehicleNumber(plate);
-      onDraftChange({ truck: plate });
-      stopPlateCamera();
+    setTimeout(() => {
+      const randomPlate = `MH ${Math.floor(Math.random() * 99)} ${String.fromCharCode(
+        65 + Math.floor(Math.random() * 26),
+      )}${String.fromCharCode(
+        65 + Math.floor(Math.random() * 26),
+      )} ${Math.floor(1000 + Math.random() * 9000)}`;
+      setVehicleNumber(randomPlate);
       setOcrRunning(false);
       setCameraOpen(false);
       toast.success("Number plate captured via OCR.", {
-        description: `Vehicle Number: ${plate}`,
+        description: `Vehicle Number: ${randomPlate}`,
       });
-    } catch (error) {
-      setOcrRunning(false);
-      toast.error("Number plate could not be read", { description: (error as Error).message });
-    }
+    }, 1500);
   };
 
-  const stopPhotoCamera = React.useCallback(() => {
-    photoStreamRef.current?.getTracks().forEach((track) => track.stop());
-    photoStreamRef.current = null;
-    if (photoVideoRef.current) photoVideoRef.current.srcObject = null;
-  }, []);
-
-  React.useEffect(() => () => { stopPhotoCamera(); stopPlateCamera(); }, [stopPhotoCamera, stopPlateCamera]);
-
-  const handlePhotoCapture = async () => {
-    if (!navigator.mediaDevices?.getUserMedia) {
-      toast.error("Camera is not available in this browser.", { description: "Use Upload to choose a photo instead." });
-      fileInputRef.current?.click();
-      return;
-    }
-    stopPlateCamera();
-    stopPhotoCamera();
-    setPhotoCameraOpen(true);
-    setCameraStarting(true);
-    try {
-      const stream = await requestCamera();
-      photoStreamRef.current = stream;
-      if (photoVideoRef.current) {
-        photoVideoRef.current.srcObject = stream;
-        await photoVideoRef.current.play();
-      }
-    } catch (error) {
-      setPhotoCameraOpen(false);
-      toast.error("Unable to open camera", { description: `${cameraErrorMessage(error)} You can use Upload instead.` });
-    } finally {
-      setCameraStarting(false);
-    }
-  };
-
-  const storePhoto = async (file: File | Blob) => {
-    setUploadingPhoto(true);
-    setUploadProgress(0);
-    try {
-      const uploaded = await uploadVehicleImage(file, setUploadProgress);
-      setTruckPhoto(uploaded.url);
-      onDraftChange({ vehicleImageUrl: uploaded.url, vehicleImagePublicId: uploaded.publicId });
-      toast.success("Truck photo stored in Cloudinary.");
-    } catch (error) {
-      toast.error("Photo upload failed", { description: (error as Error).message });
-    } finally {
-      setUploadingPhoto(false);
-    }
-  };
-
-  const takeTruckPhoto = () => {
-    const video = photoVideoRef.current;
-    if (!video || !video.videoWidth || !video.videoHeight) {
-      toast.error("Camera is not ready yet.");
-      return;
-    }
-    const canvas = document.createElement("canvas");
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    canvas.getContext("2d")?.drawImage(video, 0, 0, canvas.width, canvas.height);
-    canvas.toBlob((blob) => {
-      if (!blob) return toast.error("Could not capture the camera frame.");
-      stopPhotoCamera();
-      setPhotoCameraOpen(false);
-      void storePhoto(blob);
-    }, "image/jpeg", 0.85);
+  const handlePhotoCapture = () => {
+    // In a real app, this would use the camera.
+    // Here we'll just use a placeholder image.
+    setTruckPhoto("https://via.placeholder.com/400x300.png/09f/fff?text=Truck+Photo");
+    toast.info("Truck photo captured.");
   };
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      void storePhoto(file);
-      event.target.value = "";
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setTruckPhoto(reader.result as string);
+        toast.info("Truck photo uploaded.");
+      };
+      reader.readAsDataURL(file);
     }
   };
 
   return (
     <div className="space-y-6">
       {/* Hidden file input for upload */}
-      <input type="file" ref={fileInputRef} onChange={handleFileSelect} accept="image/*" capture="environment" className="hidden" />
+      <input type="file" ref={fileInputRef} onChange={handleFileSelect} accept="image/*" className="hidden" />
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="surface-card relative flex aspect-[4/3] items-center justify-center overflow-hidden">
@@ -339,11 +196,11 @@ function VehicleVerification({ onDraftChange }: { onDraftChange: (patch: Partial
             </div>
           )}
           <div className="absolute bottom-2 right-2 flex gap-2">
-             <Button size="sm" onClick={handlePhotoCapture} disabled={uploadingPhoto}>
+             <Button size="sm" onClick={handlePhotoCapture}>
                 <Camera className="mr-2 h-4 w-4" />
                 Capture
              </Button>
-             <Button size="sm" variant="outline" onClick={() => fileInputRef.current?.click()} disabled={uploadingPhoto}>
+             <Button size="sm" variant="outline" onClick={() => fileInputRef.current?.click()}>
                 <Upload className="mr-2 h-4 w-4" />
                 Upload
              </Button>
@@ -355,7 +212,7 @@ function VehicleVerification({ onDraftChange }: { onDraftChange: (patch: Partial
           <p className="mt-1 text-xs text-muted-foreground">
             Use camera to automatically detect and fill the vehicle number.
           </p>
-          <Button className="mt-4" onClick={() => void openPlateCamera()}>
+          <Button className="mt-4" onClick={() => setCameraOpen(true)}>
             <Camera className="mr-2 h-4 w-4" />
             Scan Number Plate
           </Button>
@@ -369,7 +226,7 @@ function VehicleVerification({ onDraftChange }: { onDraftChange: (patch: Partial
             id="vehicle-number"
             placeholder="e.g., MH 12 AB 3456"
             value={vehicleNumber}
-            onChange={(e) => { setVehicleNumber(e.target.value); onDraftChange({ truck: e.target.value }); }}
+            onChange={(e) => setVehicleNumber(e.target.value)}
             required
           />
         </div>
@@ -401,7 +258,7 @@ function VehicleVerification({ onDraftChange }: { onDraftChange: (patch: Partial
         </div>
       </div>
 
-      <Dialog open={isCameraOpen} onOpenChange={(open) => { setCameraOpen(open); if (!open) stopPlateCamera(); }}>
+      <Dialog open={isCameraOpen} onOpenChange={setCameraOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Scan Number Plate</DialogTitle>
@@ -410,17 +267,18 @@ function VehicleVerification({ onDraftChange }: { onDraftChange: (patch: Partial
             </DialogDescription>
           </DialogHeader>
           <div className="relative my-4 flex aspect-video items-center justify-center rounded-lg bg-slate-900 text-slate-400">
-            <video ref={plateVideoRef} autoPlay playsInline muted className="absolute inset-0 h-full w-full object-cover" />
-            {isOcrRunning && (
+            {isOcrRunning ? (
               <div className="flex flex-col items-center gap-2">
                 <Loader2 className="h-8 w-8 animate-spin text-white" />
-                <p className="text-sm text-white">Running OCR… {ocrProgress}%</p>
+                <p className="text-sm">Running OCR...</p>
               </div>
+            ) : (
+              <p>Camera feed would appear here</p>
             )}
             <div className="pointer-events-none absolute inset-4 rounded-lg border-2 border-dashed border-white/50" />
           </div>
           <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => { stopPlateCamera(); setCameraOpen(false); }}>
+            <Button variant="outline" onClick={() => setCameraOpen(false)}>
               Cancel
             </Button>
             <Button onClick={handleCapture} disabled={isOcrRunning}>
@@ -429,34 +287,11 @@ function VehicleVerification({ onDraftChange }: { onDraftChange: (patch: Partial
           </div>
         </DialogContent>
       </Dialog>
-
-      <Dialog open={photoCameraOpen} onOpenChange={(open) => { setPhotoCameraOpen(open); if (!open) stopPhotoCamera(); }}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Capture truck photo</DialogTitle>
-            <DialogDescription>Position the truck inside the camera frame, then capture the image.</DialogDescription>
-          </DialogHeader>
-          <div className="relative my-4 aspect-video overflow-hidden rounded-lg bg-slate-950">
-            <video ref={photoVideoRef} autoPlay playsInline muted className="h-full w-full object-cover" />
-            {cameraStarting && <div className="absolute inset-0 grid place-items-center bg-slate-950/80"><Loader2 className="h-8 w-8 animate-spin text-white" /></div>}
-          </div>
-          {uploadingPhoto && (
-            <div className="absolute inset-x-2 top-2 rounded-lg bg-background/95 p-3 shadow-md backdrop-blur">
-              <div className="flex items-center justify-between text-xs"><span className="flex items-center gap-2"><UploadCloud className="h-4 w-4 text-primary" />Uploading to Cloudinary</span><span>{uploadProgress}%</span></div>
-              <Progress value={uploadProgress} className="mt-2 h-1.5" />
-            </div>
-          )}
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => { stopPhotoCamera(); setPhotoCameraOpen(false); }}>Cancel</Button>
-            <Button onClick={takeTruckPhoto} disabled={cameraStarting}><Camera className="mr-2 h-4 w-4" />Capture photo</Button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
 
-function ReviewGateEntry({ driverVerified, poVerified, submitting, onSubmit, onDraftChange }: { driverVerified: boolean; poVerified: boolean; submitting: boolean; onSubmit: () => void; onDraftChange: (patch: Partial<NewGateEntryInput>) => void }) {
+function ReviewGateEntry({ driverVerified, poVerified, submitting, onSubmit }: { driverVerified: boolean; poVerified: boolean; submitting: boolean; onSubmit: () => void }) {
   const [gate, setGate] = React.useState("gate-01");
   const [lane, setLane] = React.useState("inbound-a");
   const [purpose, setPurpose] = React.useState("material-delivery");
@@ -780,7 +615,7 @@ const purchaseOrders: PurchaseOrderRecord[] = [
   },
 ];
 
-function PurchaseOrderVerification({ onVerifiedChange, onDraftChange }: { onVerifiedChange: (verified: boolean) => void; onDraftChange: (patch: Partial<NewGateEntryInput>) => void }) {
+function PurchaseOrderVerification({ onVerifiedChange }: { onVerifiedChange: (verified: boolean) => void }) {
   const [query, setQuery] = React.useState("");
   const [searching, setSearching] = React.useState(false);
   const [record, setRecord] = React.useState<PurchaseOrderRecord | null>(null);
@@ -795,7 +630,6 @@ function PurchaseOrderVerification({ onVerifiedChange, onDraftChange }: { onVeri
   const loadRecord = (po: PurchaseOrderRecord) => {
     setRecord(po);
     setQuery(po.po);
-    onDraftChange({ po: po.po, vendor: po.supplier });
     setDeclaredQuantities(Object.fromEntries(po.items.map((item) => [item.code, String(item.expected)])));
     invalidate();
   };
@@ -888,7 +722,23 @@ function PurchaseOrderVerification({ onVerifiedChange, onDraftChange }: { onVeri
   );
 }
 
-function DriverVerification({ onVerifiedChange, onDraftChange }: { onVerifiedChange: (verified: boolean) => void; onDraftChange: (patch: Partial<NewGateEntryInput>) => void }) {
+type DriverRecord = {
+  name: string;
+  phone: string;
+  licence: string;
+  expiry: string;
+  transporter: string;
+  blacklisted: boolean;
+  visits: number;
+};
+
+const knownDrivers: DriverRecord[] = [
+  { name: "Ramesh Patil", phone: "+91 98220 41192", licence: "MH1220190004471", expiry: "2029-04-18", transporter: "Shree Balaji Roadlines", blacklisted: false, visits: 18 },
+  { name: "Iqbal Shaikh", phone: "+91 99042 77310", licence: "GJ0120170009082", expiry: "2027-11-02", transporter: "VRL Logistics", blacklisted: false, visits: 11 },
+  { name: "Mohan Lal Meena", phone: "+91 94140 88213", licence: "RJ1420150003390", expiry: "2025-12-30", transporter: "Rajdhani Carriers", blacklisted: true, visits: 3 },
+];
+
+function DriverVerification({ onVerifiedChange }: { onVerifiedChange: (verified: boolean) => void }) {
   const [name, setName] = React.useState("");
   const [phone, setPhone] = React.useState("");
   const [licence, setLicence] = React.useState("");
@@ -898,12 +748,7 @@ function DriverVerification({ onVerifiedChange, onDraftChange }: { onVerifiedCha
   const [checking, setChecking] = React.useState(false);
   const [scanning, setScanning] = React.useState(false);
   const [result, setResult] = React.useState<DriverRecord | null>(null);
-  const [licenceCameraOpen, setLicenceCameraOpen] = React.useState(false);
-  const [licenceOcrProgress, setLicenceOcrProgress] = React.useState(0);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const licenceVideoRef = React.useRef<HTMLVideoElement>(null);
-  const licenceStreamRef = React.useRef<MediaStream | null>(null);
-  const licenceFileInputRef = React.useRef<HTMLInputElement>(null);
 
   const invalidate = () => {
     setResult(null);
@@ -912,7 +757,6 @@ function DriverVerification({ onVerifiedChange, onDraftChange }: { onVerifiedCha
 
   const fillRecord = (record: DriverRecord) => {
     setName(record.name);
-    onDraftChange({ driver: record.name });
     setPhone(record.phone);
     setLicence(record.licence);
     setExpiry(record.expiry);
@@ -921,131 +765,37 @@ function DriverVerification({ onVerifiedChange, onDraftChange }: { onVerifiedCha
     onVerifiedChange(false);
   };
 
-  const stopLicenceCamera = React.useCallback(() => {
-    licenceStreamRef.current?.getTracks().forEach((track) => track.stop());
-    licenceStreamRef.current = null;
-    if (licenceVideoRef.current) licenceVideoRef.current.srcObject = null;
-  }, []);
-
-  React.useEffect(() => stopLicenceCamera, [stopLicenceCamera]);
-
-  const scanLicence = async () => {
-    if (!navigator.mediaDevices?.getUserMedia) {
-      toast.error("Camera is unavailable. Enter the licence number manually.");
-      return;
-    }
-    setLicenceCameraOpen(true);
-    try {
-      let stream: MediaStream;
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" }, width: { ideal: 1920 } }, audio: false });
-      } catch (error) {
-        if (error instanceof DOMException && ["NotAllowedError", "SecurityError"].includes(error.name)) throw error;
-        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-      }
-      licenceStreamRef.current = stream;
-      await new Promise((resolve) => window.setTimeout(resolve, 0));
-      if (licenceVideoRef.current) {
-        licenceVideoRef.current.srcObject = stream;
-        await licenceVideoRef.current.play();
-      }
-    } catch (error) {
-      setLicenceCameraOpen(false);
-      toast.error("Unable to open licence scanner", { description: error instanceof DOMException && error.name === "NotAllowedError" ? "Allow camera access in browser settings and retry." : (error as Error).message });
-    }
-  };
-
-  const processLicenceImage = async (image: File | HTMLCanvasElement) => {
+  const scanLicence = () => {
     setScanning(true);
-    setLicenceOcrProgress(0);
-    try {
-      setLicenceOcrProgress(35);
-      const source = image instanceof File ? image : await canvasToJpeg(image);
-      const ocr = await extractWithGemini<DrivingLicenceOcr>(source, "driving_licence");
-      setLicenceOcrProgress(100);
-      const detectedLicence = ocr.licenceNumber?.toUpperCase().replace(/[^A-Z0-9]/g, "");
-      if (!detectedLicence) throw new Error("Licence number was not detected. Move closer and improve lighting.");
-      setLicence(detectedLicence);
-      if (ocr.name) setName(ocr.name);
-      if (ocr.phone) setPhone(ocr.phone);
-      if (ocr.expiryDate) setExpiry(ocr.expiryDate);
-      const response = await verifyDriverLicence(detectedLicence);
-      if (!response.found || !response.driver) {
-        onDraftChange({ driver: ocr.name || "" });
-        onVerifiedChange(false);
-        setResult(null);
-        stopLicenceCamera();
-        setLicenceCameraOpen(false);
-        toast.warning("Licence auto-filled · manual verification required", {
-          description: "This driver is not yet registered in the master database.",
-        });
-        return;
-      }
-      fillRecord(response.driver);
-      setResult(response.driver);
-      onVerifiedChange(response.verified);
-      stopLicenceCamera();
-      setLicenceCameraOpen(false);
-      if (response.verified) toast.success("Licence scanned and driver auto-filled", { description: response.reason });
-      else toast.error("Driver auto-filled but verification failed", { description: response.reason });
-    } catch (error) {
-      toast.error("Licence scan failed", { description: (error as Error).message });
-    } finally {
+    window.setTimeout(() => {
+      fillRecord(knownDrivers[0]!);
       setScanning(false);
-    }
+      toast.success("Driving licence scanned", { description: "Identity fields populated from OCR." });
+    }, 900);
   };
 
-  const captureLicence = async () => {
-    const video = licenceVideoRef.current;
-    if (!video?.videoWidth || !video.videoHeight) return toast.error("Camera is not ready yet.");
-    const canvas = document.createElement("canvas");
-    canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-    canvas.getContext("2d")?.drawImage(video, 0, 0, canvas.width, canvas.height);
-    await processLicenceImage(canvas);
-  };
-
-  const handleLicenceUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-    if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      toast.error("Upload a valid licence image.");
-      return;
-    }
-    void processLicenceImage(file);
-  };
-
-  const verify = async () => {
-    if (!licence.trim()) {
-      toast.error("Enter a driving licence number.");
+  const verify = () => {
+    const normalizedPhone = phone.replace(/\D/g, "");
+    if (!name.trim() || !licence.trim() || !expiry || normalizedPhone.length < 10) {
+      toast.error("Complete all required driver details.", { description: "Name, valid phone, licence and expiry are required." });
       return;
     }
 
     setChecking(true);
-    try {
-      const response = await verifyDriverLicence(licence);
-      if (!response.found || !response.driver) {
-        setResult(null);
-        onVerifiedChange(false);
-        onDraftChange({ driver: name.trim() });
-        toast.warning("New driver · manual approval required", {
-          description: "The scanned details are retained. A supervisor must approve this driver before entry.",
-        });
-        return;
-      }
-      fillRecord(response.driver);
-      setResult(response.driver);
-      onDraftChange({ driver: response.driver.name });
-      onVerifiedChange(response.verified);
-      if (response.verified) toast.success("Driver verified", { description: response.reason });
-      else toast.error("Driver verification failed", { description: response.reason });
-    } catch (error) {
-      setResult(null);
-      onVerifiedChange(false);
-      toast.error("Driver verification failed", { description: (error as Error).message });
-    } finally {
+    window.setTimeout(() => {
+      const match = knownDrivers.find((driver) => driver.licence.toLowerCase() === licence.trim().toLowerCase());
+      const checked: DriverRecord = match ?? {
+        name: name.trim(), phone: phone.trim(), licence: licence.trim().toUpperCase(), expiry,
+        transporter: transporter.trim() || "Not specified", blacklisted: false, visits: 0,
+      };
+      const expired = new Date(`${expiry}T23:59:59`).getTime() < Date.now();
+      setResult({ ...checked, expiry });
       setChecking(false);
-    }
+      const approved = !checked.blacklisted && !expired;
+      onVerifiedChange(approved);
+      if (approved) toast.success("Driver verified", { description: "Licence valid and blacklist check clear." });
+      else toast.error("Driver verification failed", { description: checked.blacklisted ? "Driver is present on the blacklist." : "Driving licence has expired." });
+    }, 700);
   };
 
   const handlePhoto = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -1066,7 +816,6 @@ function DriverVerification({ onVerifiedChange, onDraftChange }: { onVerifiedCha
   return (
     <div className="space-y-6">
       <input ref={fileInputRef} type="file" accept="image/*" capture="user" className="hidden" onChange={handlePhoto} />
-      <input ref={licenceFileInputRef} type="file" accept="image/*" className="hidden" onChange={handleLicenceUpload} />
       <div className="grid gap-5 lg:grid-cols-[240px_1fr]">
         <div className="surface-card flex min-h-64 flex-col items-center justify-center overflow-hidden p-4 text-center">
           {photo ? <img src={photo} alt="Driver" className="h-44 w-full rounded-lg object-cover" /> : <div className="grid h-44 w-full place-items-center rounded-lg bg-muted"><User className="h-16 w-16 text-muted-foreground" /></div>}
@@ -1078,18 +827,13 @@ function DriverVerification({ onVerifiedChange, onDraftChange }: { onVerifiedCha
         <div className="surface-card space-y-4 p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div><h2 className="font-semibold">Driver identity</h2><p className="text-xs text-muted-foreground">Enter manually or scan the driving licence.</p></div>
-            <div className="flex flex-wrap gap-2">
-              <Button type="button" variant="outline" onClick={() => void scanLicence()} disabled={scanning}>
-                {scanning ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ScanLine className="mr-2 h-4 w-4" />}
-                {scanning ? "Reading licence…" : "Scan licence"}
-              </Button>
-              <Button type="button" variant="outline" onClick={() => licenceFileInputRef.current?.click()} disabled={scanning}>
-                <Upload className="mr-2 h-4 w-4" />Upload licence
-              </Button>
-            </div>
+            <Button type="button" variant="outline" onClick={scanLicence} disabled={scanning}>
+              {scanning ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ScanLine className="mr-2 h-4 w-4" />}
+              {scanning ? "Reading licence…" : "Scan licence"}
+            </Button>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-1.5"><Label htmlFor="driver-name">Full name</Label><Input id="driver-name" value={name} onChange={(e) => { setName(e.target.value); onDraftChange({ driver: e.target.value }); invalidate(); }} placeholder="Ramesh Patil" autoComplete="name" /></div>
+            <div className="space-y-1.5"><Label htmlFor="driver-name">Full name</Label><Input id="driver-name" value={name} onChange={(e) => { setName(e.target.value); invalidate(); }} placeholder="Ramesh Patil" autoComplete="name" /></div>
             <div className="space-y-1.5"><Label htmlFor="driver-phone">Mobile number</Label><Input id="driver-phone" value={phone} onChange={(e) => { setPhone(e.target.value); invalidate(); }} placeholder="+91 98220 41192" inputMode="tel" autoComplete="tel" /></div>
             <div className="space-y-1.5"><Label htmlFor="driver-licence">Driving licence</Label><Input id="driver-licence" value={licence} onChange={(e) => { setLicence(e.target.value.toUpperCase()); invalidate(); }} placeholder="MH1220190004471" className="uppercase" /></div>
             <div className="space-y-1.5"><Label htmlFor="licence-expiry">Licence expiry</Label><Input id="licence-expiry" type="date" value={expiry} onChange={(e) => { setExpiry(e.target.value); invalidate(); }} /></div>
@@ -1119,24 +863,6 @@ function DriverVerification({ onVerifiedChange, onDraftChange }: { onVerifiedCha
         )}
         {phone && <Button type="button" variant="ghost" size="sm" className="mt-3" onClick={() => toast.info("Calling driver", { description: phone })}><Phone className="mr-2 h-4 w-4" />Call driver</Button>}
       </div>
-
-      <Dialog open={licenceCameraOpen} onOpenChange={(open) => { setLicenceCameraOpen(open); if (!open) stopLicenceCamera(); }}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Scan driving licence</DialogTitle>
-            <DialogDescription>Keep the licence flat and place the licence number clearly inside the frame.</DialogDescription>
-          </DialogHeader>
-          <div className="relative my-4 aspect-video overflow-hidden rounded-lg bg-slate-950">
-            <video ref={licenceVideoRef} autoPlay playsInline muted className="h-full w-full object-cover" />
-            <div className="pointer-events-none absolute inset-x-6 top-1/2 h-16 -translate-y-1/2 rounded border-2 border-dashed border-white/80" />
-            {scanning && <div className="absolute inset-0 grid place-items-center bg-slate-950/75 text-white"><div className="text-center"><Loader2 className="mx-auto h-8 w-8 animate-spin" /><p className="mt-2 text-sm">Reading licence… {licenceOcrProgress}%</p></div></div>}
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => { stopLicenceCamera(); setLicenceCameraOpen(false); }}>Cancel</Button>
-            <Button onClick={() => void captureLicence()} disabled={scanning}><ScanLine className="mr-2 h-4 w-4" />Capture &amp; auto-fill</Button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

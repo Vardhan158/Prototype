@@ -9,14 +9,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { AppShell } from "@/apps/gate-pass-pro/components/wms/AppShell";
 import { StatusChip } from "@/apps/gate-pass-pro/components/wms/StatusChip";
-import {
-  getDashboardData,
-  type DashboardData,
-  useRealtimeDashboard,
-} from "@/apps/gate-pass-pro/lib/dashboard-api";
+import { activities, gateEntries, hourlyTraffic, kpis, notifications } from "@/apps/gate-pass-pro/lib/wms-data";
 
 export const Route = createFileRoute("/gate-pass-pro/")({
-  loader: () => getDashboardData(),
   head: () => ({
     meta: [
       { title: "Gate Control Dashboard — NexusWMS" },
@@ -25,7 +20,7 @@ export const Route = createFileRoute("/gate-pass-pro/")({
       { property: "og:description", content: "Live gate KPIs, truck queue and arrival activity in one control tower." },
     ],
   }),
-  component: GatePassDashboardRoute,
+  component: Dashboard,
 });
 
 const icons = { LogIn, LogOut, Timer, ShieldQuestion, Ban, Warehouse };
@@ -37,22 +32,10 @@ const kpiTone: Record<string, string> = {
   success: "bg-success/12 text-success",
 };
 
-const kpiRoutes: Record<string, string> = {
-  "Today's Entries": "/gate-pass-pro/gate-entry",
-  "Today's Exits": "/gate-pass-pro/vehicle-exit",
-  "Vehicles Waiting": "/gate-pass-pro/queue",
-  "Pending Approval": "/gate-pass-pro/pending-approval",
-  "Rejected Trucks": "/gate-pass-pro/gate-entry",
-  "Inside Vehicles": "/gate-pass-pro/queue",
-};
-
-function GatePassDashboardRoute() {
-  const data = Route.useLoaderData();
-  return <Dashboard data={data} />;
-}
-
-export function Dashboard({ data }: { data: DashboardData }) {
-  const { activities, hourlyTraffic, kpis, notifications, queue } = useRealtimeDashboard(data);
+export function Dashboard() {
+  const queue = gateEntries.filter((e) =>
+    ["Draft", "Pending Approval", "On Hold", "Waiting Warehouse", "Vehicle Verified"].includes(e.status),
+  );
 
   return (
     <AppShell
@@ -72,14 +55,8 @@ export function Dashboard({ data }: { data: DashboardData }) {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
         {kpis.map((k) => {
           const Icon = icons[k.icon as keyof typeof icons];
-          const destination = kpiRoutes[k.label] ?? "/gate-pass-pro/gate-entry";
           return (
-            <Link
-              key={k.label}
-              to={destination}
-              aria-label={`View ${k.label}`}
-              className="surface-card block p-4 transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-            >
+            <div key={k.label} className="surface-card p-4">
               <div className="flex items-start justify-between">
                 <span className={`grid h-9 w-9 place-items-center rounded-lg ${kpiTone[k.tone]}`}>
                   <Icon className="h-4 w-4" />
@@ -88,7 +65,7 @@ export function Dashboard({ data }: { data: DashboardData }) {
               </div>
               <p className="mt-3 text-sm font-medium">{k.label}</p>
               <p className="mt-0.5 text-[11px] text-muted-foreground">{k.delta}</p>
-            </Link>
+            </div>
           );
         })}
       </div>

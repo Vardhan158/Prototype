@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";
-import QRCode from "qrcode";
-import { CheckCircle2, Printer, ScanLine, UserCog } from "lucide-react";
+import { CheckCircle2, ScanLine, UserCog } from "lucide-react";
 import { PageHeader } from "@/apps/storage-guardian/components/warehouse/app-shell";
 import { QrCode } from "@/apps/storage-guardian/components/warehouse/qr-code";
 import { QrScanner } from "@/apps/storage-guardian/components/warehouse/qr-scanner";
@@ -49,7 +48,7 @@ function PutAwayPage() {
     <div className="space-y-6">
       <PageHeader
         title="Put-Away Queue"
-        subtitle="Workflow: scan the item QR → scan the assigned location QR → confirm put-away."
+        subtitle="Scan the item QR and the location QR. The pair must match the task before inventory is committed."
       />
 
       <div className="space-y-4">
@@ -83,7 +82,7 @@ function TaskCard({ task }: { task: PutAwayTask }) {
   const { items, confirmPutAway, reassignTask } = useWarehouse();
   const item = items.find((i) => i.id === task.itemId);
   const [itemScan, setItemScan] = useState("");
-  const [locScan, setLocScan] = useState(task.locationCode);
+  const [locScan, setLocScan] = useState("");
 
   const submit = () => {
     const res = confirmPutAway(task.id, itemScan, locScan);
@@ -91,46 +90,6 @@ function TaskCard({ task }: { task: PutAwayTask }) {
     if (res.ok) {
       setItemScan("");
       setLocScan("");
-    }
-  };
-
-  const printQr = async () => {
-    if (!item?.code) {
-      toast.error("This item does not have a QR code yet.");
-      return;
-    }
-
-    const printWindow = window.open("", "_blank", "width=520,height=700");
-    if (!printWindow) {
-      toast.error("Allow pop-ups to print the QR label.");
-      return;
-    }
-
-    try {
-      const qrImage = await QRCode.toDataURL(item.code, { width: 320, margin: 2 });
-      printWindow.document.write(`<!doctype html>
-        <html><head><title>QR Label — ${task.id}</title>
-        <style>
-          @page { size: 100mm 75mm; margin: 5mm; }
-          body { margin: 0; font-family: Arial, sans-serif; color: #111; }
-          .label { box-sizing: border-box; width: 90mm; min-height: 65mm; border: 2px solid #111; padding: 5mm; display: flex; align-items: center; gap: 5mm; }
-          img { width: 42mm; height: 42mm; }
-          h1 { margin: 0 0 3mm; font-size: 16px; }
-          p { margin: 1.5mm 0; font-size: 11px; }
-          .code { font-family: monospace; font-weight: 700; overflow-wrap: anywhere; }
-        </style></head><body>
-        <div class="label"><img src="${qrImage}" alt="QR code" />
-          <div><h1>${item.name}</h1><p class="code">${item.code}</p><p>Task: ${task.id}</p><p>Quantity: ${item.qty} units</p><p>Put away: ${task.locationCode}</p></div>
-        </div></body></html>`);
-      printWindow.document.close();
-      printWindow.addEventListener("load", () => {
-        printWindow.focus();
-        printWindow.print();
-        printWindow.close();
-      });
-    } catch {
-      printWindow.close();
-      toast.error("Could not generate the QR label.");
     }
   };
 
@@ -159,12 +118,11 @@ function TaskCard({ task }: { task: PutAwayTask }) {
       </div>
 
       <div className="mt-4 grid gap-5 md:grid-cols-[auto_1fr]">
-        <div className="flex flex-wrap gap-3">
-          {item?.code ? (
-            <QrCode value={item.code} size={104} />
-          ) : (
+        <div className="flex gap-3">
+          {item?.code ? <QrCode value={item.code} size={104} /> : (
             <p className="text-xs text-warning">Item has no label yet — generate a QR in the pipeline.</p>
           )}
+          <QrCode value={task.locationCode} size={104} />
         </div>
 
         <div className="space-y-3">
@@ -184,9 +142,6 @@ function TaskCard({ task }: { task: PutAwayTask }) {
             </Button>
             <Button size="sm" variant="ghost" onClick={() => { setItemScan(item?.code ?? ""); setLocScan(task.locationCode); }}>
               Autofill scans
-            </Button>
-            <Button size="sm" variant="outline" onClick={printQr} disabled={!item?.code}>
-              <Printer className="size-4" /> Print QR
             </Button>
             <QrScanner onScan={(t) => (itemScan ? setLocScan(t) : setItemScan(t))} />
           </div>

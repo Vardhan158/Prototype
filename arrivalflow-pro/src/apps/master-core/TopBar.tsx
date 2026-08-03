@@ -35,7 +35,7 @@ import { useAuth } from "@/lib/auth";
 const notifications = [
   { title: "Certification expiring", body: "Lumière Électronique SAS certificate expired.", time: "12m" },
   { title: "Import completed", body: "342 item records imported without errors.", time: "1h" },
-  { title: "Approval required", body: "3 supplier records awaiting Master Data Management review.", time: "4h" },
+  { title: "Approval required", body: "3 supplier records awaiting data steward review.", time: "4h" },
 ];
 
 export function TopBar() {

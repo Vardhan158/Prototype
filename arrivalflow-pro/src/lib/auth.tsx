@@ -2,14 +2,14 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 
 export type AppRole =
   | "Warehouse Gate Entry & Arrival Management"
-  | "Master Data Management"
+  | "Data Steward"
   | "Outbound Order Fulfillment & Wave Management"
-  | "Assembly Manager"
+  | "Production Manager"
   | "Inventory Controller"
-  | "Warehouse Executive / Department Manager"
+  | "Warehouse Supervisor"
   | "Goods Receiving"
   | "Document Management & OCR"
-  | "Warehouse Manager"
+  | "Storage Manager"
   | "Quality Inspection"
   | "Inventory Lifecycle Manager"
   | "Supplier & Purchase Order Management";
@@ -65,7 +65,7 @@ export const SEEDED_USERS: SeededUser[] = [
     name: "Amara Okafor",
     email: "amara@nexuswms.com",
     password: "master@2026",
-    role: "Master Data Management",
+    role: "Data Steward",
     modules: ["master"],
     dashboard: "/master-core",
   },
@@ -83,7 +83,7 @@ export const SEEDED_USERS: SeededUser[] = [
     name: "Ana Fernandes",
     email: "ana@nexuswms.com",
     password: "work@2026",
-    role: "Assembly Manager",
+    role: "Production Manager",
     modules: ["workcraft"],
     dashboard: "/work-craft",
   },
@@ -101,7 +101,7 @@ export const SEEDED_USERS: SeededUser[] = [
     name: "Anjali Sharma",
     email: "anjali@nexuswms.com",
     password: "warehouse@2026",
-    role: "Warehouse Executive / Department Manager",
+    role: "Warehouse Supervisor",
     modules: ["warehouse"],
     dashboard: "/warehouse-flow",
   },
@@ -128,7 +128,7 @@ export const SEEDED_USERS: SeededUser[] = [
     name: "Storage Guardian Manager",
     email: "storage@nexuswms.com",
     password: "storage@2026",
-    role: "Warehouse Manager",
+    role: "Storage Manager",
     modules: ["storage"],
     dashboard: "/storage-guardian",
   },

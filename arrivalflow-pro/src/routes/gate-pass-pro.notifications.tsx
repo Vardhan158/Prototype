@@ -1,21 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Bell, CheckCheck, Truck, CheckCircle2, PauseCircle, XCircle, Warehouse, PackageCheck } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AppShell } from "@/apps/gate-pass-pro/components/wms/AppShell";
-import {
-  getNotifications,
-  markAllNotificationsRead,
-  markNotificationRead,
-  type LiveNotification,
-  useRealtimeNotifications,
-} from "@/apps/gate-pass-pro/lib/notification-api";
+import { notifications } from "@/apps/gate-pass-pro/lib/wms-data";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/gate-pass-pro/notifications")({
-  loader: () => getNotifications(),
   head: () => ({
     meta: [
       { title: "Notification Centre — NexusWMS" },
@@ -45,14 +38,11 @@ const toneFor: Record<string, string> = {
 };
 
 function NotificationCentre() {
-  const initial = Route.useLoaderData();
-  const { items: liveItems, connected, setSnapshot } = useRealtimeNotifications(initial);
-  const [items, setItems] = useState(liveItems);
-  useEffect(() => setItems(liveItems), [liveItems]);
+  const [items, setItems] = useState(notifications);
   const unread = items.filter((n) => !n.read);
   const read = items.filter((n) => n.read);
 
-  const List = ({ data }: { data: LiveNotification[] }) =>
+  const List = ({ data }: { data: typeof notifications }) =>
     data.length === 0 ? (
       <div className="surface-card p-16 text-center">
         <Bell className="mx-auto h-8 w-8 text-muted-foreground" />
@@ -81,12 +71,7 @@ function NotificationCentre() {
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={async () => {
-                      await markNotificationRead(n.id);
-                      const next = items.map((x) => (x.id === n.id ? { ...x, read: true } : x));
-                      setItems(next);
-                      setSnapshot({ items: next, unreadCount: next.filter((x) => !x.read).length });
-                    }}
+                    onClick={() => setItems((p) => p.map((x) => (x.id === n.id ? { ...x, read: true } : x)))}
                   >
                     Mark read
                   </Button>
@@ -101,17 +86,11 @@ function NotificationCentre() {
   return (
     <AppShell
       title="Notification Centre"
-      subtitle={`${unread.length} unread · ${connected ? "live" : "reconnecting"} gate, yard and warehouse events`}
+      subtitle={`${unread.length} unread · real-time gate, yard and warehouse events`}
       actions={
         <Button
           variant="outline"
-          onClick={async () => {
-            await markAllNotificationsRead();
-            const next = items.map((x) => ({ ...x, read: true }));
-            setItems(next);
-            setSnapshot({ items: next, unreadCount: 0 });
-            toast.success("All notifications marked read");
-          }}
+          onClick={() => { setItems((p) => p.map((x) => ({ ...x, read: true }))); toast.success("All notifications marked read"); }}
         >
           <CheckCheck className="mr-2 h-4 w-4" />Mark all read
         </Button>
