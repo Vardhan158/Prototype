@@ -48,7 +48,7 @@ function PutAwayPage() {
     <div className="space-y-6">
       <PageHeader
         title="Put-Away Queue"
-        subtitle="Scan the item QR and the location QR. The pair must match the task before inventory is committed."
+        subtitle="Workflow: scan the item QR → scan the assigned location QR → confirm put-away."
       />
 
       <div className="space-y-4">
@@ -82,7 +82,7 @@ function TaskCard({ task }: { task: PutAwayTask }) {
   const { items, confirmPutAway, reassignTask } = useWarehouse();
   const item = items.find((i) => i.id === task.itemId);
   const [itemScan, setItemScan] = useState("");
-  const [locScan, setLocScan] = useState("");
+  const [locScan, setLocScan] = useState(task.locationCode);
 
   const submit = () => {
     const res = confirmPutAway(task.id, itemScan, locScan);
@@ -118,11 +118,12 @@ function TaskCard({ task }: { task: PutAwayTask }) {
       </div>
 
       <div className="mt-4 grid gap-5 md:grid-cols-[auto_1fr]">
-        <div className="flex gap-3">
-          {item?.code ? <QrCode value={item.code} size={104} /> : (
+        <div className="flex flex-wrap gap-3">
+          {item?.code ? (
+            <QrCode value={item.code} size={104} />
+          ) : (
             <p className="text-xs text-warning">Item has no label yet — generate a QR in the pipeline.</p>
           )}
-          <QrCode value={task.locationCode} size={104} />
         </div>
 
         <div className="space-y-3">
