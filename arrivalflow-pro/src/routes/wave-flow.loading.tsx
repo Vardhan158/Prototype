@@ -1,159 +1,281 @@
-﻿import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { Truck } from "lucide-react";
 import { toast } from "sonner";
-import {
-  KpiCard,
-  PageHeader,
-  ProgressBar,
-  SectionCard,
-  StatusBadge,
-  Metric,
-  Timeline,
-} from "@/apps/wave-flow/components/wms/ui";
 import { Button } from "@/components/ui/button";
-import { Truck, Camera, Lock, CheckCircle2 } from "lucide-react";
-import { trucks } from "@/apps/wave-flow/lib/wms-data";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { DataTable, type Column } from "@/apps/wave-flow/integrated/components/data-table";
+import { PageHeader } from "@/apps/wave-flow/integrated/components/page-header";
+import { StatCard } from "@/apps/wave-flow/integrated/components/stat-card";
+import { StatusBadge } from "@/apps/wave-flow/integrated/components/status-badge";
+import { useRole } from "@/apps/wave-flow/integrated/context/role-context";
+import {
+  referenceQuery,
+  shipmentsQuery,
+  useWmsMutation,
+} from "@/apps/wave-flow/integrated/lib/wms-queries";
+import { updateShipmentFn } from "@/apps/wave-flow/integrated/lib/wms.functions";
+import { SHIPMENT_STATUSES, type Shipment } from "@/apps/wave-flow/integrated/lib/wms-types";
 
 export const Route = createFileRoute("/wave-flow/loading")({
   head: () => ({
     meta: [
-      { title: "Truck Loading â€” NexusWMS" },
+      { title: "Loading & Shipment | NEXUS WMS" },
       {
         name: "description",
         content:
-          "Truck assignment, loading sequence, checklist, live progress, seal capture and loading timeline.",
+          "BR-155 loading screen with vehicle, driver, dock, container and seal number assignment.",
       },
-      { property: "og:title", content: "Truck Loading â€” NexusWMS" },
+      { property: "og:title", content: "Loading & Shipment | NEXUS WMS" },
       {
         property: "og:description",
-        content:
-          "Truck assignment, loading sequence, checklist, live progress, seal capture and loading timeline.",
+        content: "Assign vehicles, drivers and docks, and record container and seal numbers.",
       },
     ],
   }),
-  component: Page,
+  component: LoadingPage,
 });
 
-function Page() {
+function LoadingPage() {
+  const { can } = useRole();
+  const { data: shipmentsResult } = useQuery(shipmentsQuery());
+  const { data: reference } = useQuery(referenceQuery());
+  const rows: Shipment[] = shipmentsResult?.rows ?? [];
+  const carriers = reference?.carriers ?? [];
+  const docks = reference?.docks ?? [];
+  const vehicles = reference?.vehicles ?? [];
+
+  const [shipmentId, setShipmentId] = useState("");
+  const [vehicle, setVehicle] = useState("");
+  const [driver, setDriver] = useState("");
+  const [carrier, setCarrier] = useState("");
+  const [dock, setDock] = useState("");
+  const [container, setContainer] = useState("");
+  const [seal, setSeal] = useState("");
+
+  const updateFn = useServerFn(updateShipmentFn);
+  const completeLoading = useWmsMutation(
+    (args: { id: string; data: Record<string, unknown> }) => updateFn({ data: args as never }),
+    { success: () => ({ title: "Loading complete", description: "Awaiting load verification." }) },
+  );
+  const assignMutation = useWmsMutation(
+    (args: { id: string; data: Record<string, unknown> }) => updateFn({ data: args as never }),
+    { success: (_r, args) => ({ title: `${args.id} load details assigned` }) },
+  );
+
+  const assign = () => {
+    if (!shipmentId) {
+      toast.error("Select a shipment to assign");
+      return;
+    }
+    assignMutation.mutate({
+      id: shipmentId,
+      data: {
+        vehicle: vehicle || undefined,
+        driver,
+        carrier: carrier || undefined,
+        dock,
+        container,
+        seal,
+        status: "Loading",
+      },
+    });
+  };
+
+  const columns: Column<Shipment>[] = [
+    {
+      key: "id",
+      header: "Shipment",
+      value: (r) => r.id,
+      render: (r) => <span className="font-medium text-primary">{r.id}</span>,
+    },
+    { key: "orders", header: "Orders", value: (r) => r.orders.join(", ") },
+    { key: "vehicle", header: "Vehicle", value: (r) => r.vehicle },
+    { key: "driver", header: "Driver", value: (r) => r.driver },
+    { key: "carrier", header: "Carrier", value: (r) => r.carrier },
+    { key: "dock", header: "Dock", value: (r) => r.dock },
+    { key: "container", header: "Container No.", value: (r) => r.container, className: "num" },
+    { key: "seal", header: "Seal No.", value: (r) => r.seal, className: "num" },
+    { key: "scheduledAt", header: "Scheduled", value: (r) => r.scheduledAt, className: "num" },
+    {
+      key: "status",
+      header: "Status",
+      value: (r) => r.status,
+      render: (r) => <StatusBadge value={r.status} />,
+    },
+    {
+      key: "actions",
+      header: "Actions",
+      sortable: false,
+      render: (r) => (
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={r.status !== "Loading" || !can("load.execute") || completeLoading.isPending}
+          onClick={() =>
+            completeLoading.mutate({ id: r.id, data: { status: "Ready for Shipment" } })
+          }
+        >
+          <Truck className="h-4 w-4" />
+          Complete Loading
+        </Button>
+      ),
+    },
+  ];
+
   return (
-    <div className="space-y-4">
+    <div>
       <PageHeader
-        title="Truck Loading"
-        description="3 trucks loading Â· avg 41 min per truck Â· 62% utilisation"
-        breadcrumb={["Outbound", "Loading"]}
-        actions={
-          <Button onClick={() => toast.success("Truck TRK-4495 assigned to DOCK-03")}>
-            <Truck className="size-4" /> Assign truck
-          </Button>
-        }
+        title="Loading & Shipment"
+        description="BR-155 · Record vehicle, driver, dock, container and seal details for each outbound load."
+        breadcrumbs={[{ label: "Outbound Logistics" }, { label: "Loading & Shipment" }]}
       />
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <KpiCard
-          label="Trucks loading"
-          value={3}
-          sub="Docks 01, 02, 05"
-          icon={<Truck className="size-4" />}
+
+      <div className="mb-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard
+          label="Active Loads"
+          value={rows.filter((r) => r.status === "Loading").length}
+          tone="warning"
         />
-        <KpiCard
-          label="Avg load time"
-          value="41 min"
-          sub="Target 45 min"
+        <StatCard
+          label="Ready for Shipment"
+          value={rows.filter((r) => r.status === "Ready for Shipment").length}
           tone="success"
-          delta="-6m"
-          icon={<CheckCircle2 className="size-4" />}
         />
-        <KpiCard
-          label="Capacity used"
-          value="68%"
-          sub="Weight-based"
-          tone="secondary"
-          icon={<Truck className="size-4" />}
-        />
-        <KpiCard
-          label="Seals applied"
-          value={11}
-          sub="All verified"
+        <StatCard
+          label="Vehicles Assigned"
+          value={new Set(rows.map((r) => r.vehicle)).size}
           tone="primary"
-          icon={<Lock className="size-4" />}
         />
+        <StatCard label="Docks In Use" value={new Set(rows.map((r) => r.dock)).size} />
       </div>
-      <div className="grid gap-4 lg:grid-cols-3">
-        {trucks.map((t) => (
-          <SectionCard
-            key={t.id}
-            title={t.id}
-            description={`${t.carrier} Â· ${t.plate}`}
-            actions={<StatusBadge status={t.status} />}
-          >
-            <div className="grid grid-cols-2 gap-3">
-              <Metric label="Driver" value={t.driver} />
-              <Metric label="Licence" value={t.licence} />
-              <Metric label="Trailer" value={t.trailer} />
-              <Metric label="Dock" value={t.dock} />
-              <Metric label="Capacity" value={`${t.capacityKg.toLocaleString()} kg`} />
-              <Metric label="Loaded" value={`${t.loadedKg.toLocaleString()} kg`} />
-              <Metric label="Seal number" value={t.seal} />
-              <Metric label="Progress" value={`${t.progress}%`} />
-            </div>
-            <div className="mt-3">
-              <ProgressBar value={t.progress} tone={t.progress > 75 ? "success" : "warning"} />
-            </div>
-            <ul className="mt-3 space-y-1.5 text-xs">
-              {[
-                "Loading sequence verified (LIFO by drop)",
-                "Pallets scanned into trailer",
-                "Load secured and strapped",
-                "Seal applied and photographed",
-              ].map((c, i) => (
-                <li key={c} className="flex gap-2">
-                  <span
-                    className={`mt-0.5 grid size-4 shrink-0 place-items-center rounded-full border ${i < 3 ? "border-success bg-success text-success-foreground" : "border-border"}`}
-                  >
-                    {i < 3 ? "âœ“" : ""}
-                  </span>
-                  <span className={i < 3 ? "" : "text-muted-foreground"}>{c}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-3 grid grid-cols-2 gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => toast.success("Loading photo captured")}
-              >
-                <Camera className="size-4" /> Photo
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => toast.success(`${t.id} loading completed Â· seal ${t.seal}`)}
-              >
-                Complete
-              </Button>
-            </div>
-          </SectionCard>
-        ))}
-      </div>
-      <SectionCard title="Loading timeline Â· TRK-4471">
-        <Timeline
-          steps={[
-            {
-              label: "Truck checked in at gatehouse",
-              at: "18 Mar Â· 09:31",
-              by: "Gatehouse",
-              done: true,
-            },
-            { label: "Assigned to DOCK-01", at: "18 Mar Â· 09:48", by: "G. Ruiz", done: true },
-            { label: "Loading started", at: "18 Mar Â· 10:55", by: "Loading crew B", done: true },
-            {
-              label: "Axle weight exception resolved",
-              at: "18 Mar Â· 11:12",
-              by: "G. Ruiz",
-              done: true,
-            },
-            { label: "Seal applied", at: "â€”", by: "â€”", done: false },
-            { label: "Released to dispatch verification", at: "â€”", by: "â€”", done: false },
-          ]}
-        />
-      </SectionCard>
+
+      <Card className="mb-4 border-border shadow-[var(--shadow-card)]">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm">Assign Load Details</CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-4 sm:grid-cols-3 xl:grid-cols-6">
+          <Field label="Shipment">
+            <Picker
+              options={rows.map((r) => r.id)}
+              value={shipmentId}
+              onChange={setShipmentId}
+              placeholder="Select shipment"
+            />
+          </Field>
+          <Field label="Vehicle">
+            <Picker
+              options={vehicles.map((v) => `${v.id} · ${v.plate}`)}
+              value={vehicle}
+              onChange={(v) => setVehicle(v.split(" · ")[0] ?? v)}
+              placeholder="Select vehicle"
+            />
+          </Field>
+          <Field label="Driver">
+            <Picker
+              options={[...new Set(vehicles.map((v) => v.driver))]}
+              value={driver}
+              onChange={setDriver}
+              placeholder="Select driver"
+            />
+          </Field>
+          <Field label="Carrier">
+            <Picker
+              options={carriers}
+              value={carrier}
+              onChange={setCarrier}
+              placeholder="Select carrier"
+            />
+          </Field>
+          <Field label="Dock">
+            <Picker options={docks} value={dock} onChange={setDock} placeholder="Select dock" />
+          </Field>
+          <Field label="Container Number">
+            <Input
+              placeholder="CNT-88125"
+              value={container}
+              onChange={(e) => setContainer(e.target.value)}
+            />
+          </Field>
+          <Field label="Seal Number">
+            <Input
+              placeholder="SEAL-441214"
+              value={seal}
+              onChange={(e) => setSeal(e.target.value)}
+            />
+          </Field>
+          <div className="flex items-end xl:col-span-6">
+            <Button disabled={assignMutation.isPending} onClick={assign}>
+              <Truck className="h-4 w-4" />
+              Assign Load
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <DataTable
+        data={rows}
+        columns={columns}
+        searchKeys={(r) => `${r.id} ${r.vehicle} ${r.driver} ${r.carrier} ${r.container} ${r.seal}`}
+        onExport={() => toast.success("Loading manifest exported")}
+        filters={[
+          { key: "carrier", label: "Carrier", options: carriers, match: (r, v) => r.carrier === v },
+          { key: "dock", label: "Dock", options: docks, match: (r, v) => r.dock === v },
+          {
+            key: "status",
+            label: "Status",
+            options: [...SHIPMENT_STATUSES],
+            match: (r, v) => r.status === v,
+          },
+        ]}
+      />
     </div>
+  );
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="min-w-0">
+      <Label className="mb-1.5 block text-xs text-muted-foreground">{label}</Label>
+      {children}
+    </div>
+  );
+}
+
+function Picker({
+  options,
+  value,
+  onChange,
+  placeholder,
+}: {
+  options: string[];
+  value: string;
+  onChange: (v: string) => void;
+  placeholder: string;
+}) {
+  return (
+    <Select value={value} onValueChange={onChange}>
+      <SelectTrigger className="w-full">
+        <SelectValue placeholder={placeholder} />
+      </SelectTrigger>
+      <SelectContent>
+        {options.map((o) => (
+          <SelectItem key={o} value={o}>
+            {o}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }

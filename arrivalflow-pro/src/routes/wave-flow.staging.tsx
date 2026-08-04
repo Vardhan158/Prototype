@@ -1,126 +1,167 @@
-﻿import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { ClipboardCheck, MapPin } from "lucide-react";
 import { toast } from "sonner";
-import {
-  KpiCard,
-  PageHeader,
-  ProgressBar,
-  SectionCard,
-  StatusBadge,
-  Metric,
-  Timeline,
-} from "@/apps/wave-flow/components/wms/ui";
 import { Button } from "@/components/ui/button";
-import { Warehouse, Truck, Clock, CheckCircle2 } from "lucide-react";
-import { docks, orders } from "@/apps/wave-flow/lib/wms-data";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DataTable, type Column } from "@/apps/wave-flow/integrated/components/data-table";
+import { PageHeader } from "@/apps/wave-flow/integrated/components/page-header";
+import { StatCard } from "@/apps/wave-flow/integrated/components/stat-card";
+import { StatusBadge } from "@/apps/wave-flow/integrated/components/status-badge";
+import { useRole } from "@/apps/wave-flow/integrated/context/role-context";
+import {
+  referenceQuery,
+  shipmentsQuery,
+  useWmsMutation,
+} from "@/apps/wave-flow/integrated/lib/wms-queries";
+import { updateShipmentFn } from "@/apps/wave-flow/integrated/lib/wms.functions";
+import { SHIPMENT_STATUSES, type Shipment } from "@/apps/wave-flow/integrated/lib/wms-types";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/wave-flow/staging")({
   head: () => ({
     meta: [
-      { title: "Staging Management â€” NexusWMS" },
+      { title: "Staging Area | NEXUS WMS" },
       {
         name: "description",
         content:
-          "Staging lane map, dock assignment, waiting trucks and staging queue for outbound shipments.",
+          "Track packed shipments moved to staging lanes and dock assignments before loading.",
       },
-      { property: "og:title", content: "Staging Management â€” NexusWMS" },
+      { property: "og:title", content: "Staging Area | NEXUS WMS" },
       {
         property: "og:description",
-        content:
-          "Staging lane map, dock assignment, waiting trucks and staging queue for outbound shipments.",
+        content: "Monitor staging lanes, dock readiness and shipments waiting to load.",
       },
     ],
   }),
-  component: Page,
+  component: StagingPage,
 });
 
-function Page() {
+function StagingPage() {
+  const { can } = useRole();
+  const { data: shipmentsResult } = useQuery(shipmentsQuery());
+  const { data: reference } = useQuery(referenceQuery());
+  const rows: Shipment[] = shipmentsResult?.rows ?? [];
+  const docks = reference?.docks ?? [];
+
+  const updateFn = useServerFn(updateShipmentFn);
+  const moveToLoading = useWmsMutation(
+    (args: { id: string; data: Record<string, unknown> }) => updateFn({ data: args as never }),
+    {
+      success: (_r, args) => ({ title: `${args.id} moved to loading` }),
+    },
+  );
+
+  const columns: Column<Shipment>[] = [
+    {
+      key: "id",
+      header: "Shipment",
+      value: (r) => r.id,
+      render: (r) => <span className="font-medium text-primary">{r.id}</span>,
+    },
+    { key: "orders", header: "Orders", value: (r) => r.orders.join(", ") },
+    { key: "carrier", header: "Carrier", value: (r) => r.carrier },
+    { key: "dock", header: "Staging Lane / Dock", value: (r) => r.dock },
+    { key: "destination", header: "Destination", value: (r) => r.destination },
+    { key: "scheduledAt", header: "Scheduled", value: (r) => r.scheduledAt, className: "num" },
+    {
+      key: "status",
+      header: "Status",
+      value: (r) => r.status,
+      render: (r) => <StatusBadge value={r.status} />,
+    },
+    {
+      key: "actions",
+      header: "Actions",
+      sortable: false,
+      render: (r) => (
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={r.status !== "Staged" || !can("load.execute") || moveToLoading.isPending}
+          onClick={() => moveToLoading.mutate({ id: r.id, data: { status: "Loading" } })}
+        >
+          <ClipboardCheck className="h-4 w-4" />
+          Move to Loading
+        </Button>
+      ),
+    },
+  ];
+
   return (
-    <div className="space-y-4">
+    <div>
       <PageHeader
-        title="Staging Management"
-        description="6 docks Â· 4 staging lanes Â· 2 trucks waiting at gatehouse"
-        breadcrumb={["Outbound", "Staging"]}
+        title="Staging Area"
+        description="Packed shipments held in staging lanes awaiting dock assignment and loading."
+        breadcrumbs={[{ label: "Outbound Logistics" }, { label: "Staging" }]}
       />
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <KpiCard
-          label="Staged shipments"
-          value={4}
-          sub="Lanes S-01 to S-04"
-          icon={<Warehouse className="size-4" />}
-        />
-        <KpiCard
-          label="Waiting trucks"
-          value={2}
-          sub="Avg wait 18 min"
+
+      <div className="mb-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard
+          label="Staged Shipments"
+          value={rows.filter((r) => r.status === "Staged").length}
           tone="warning"
-          icon={<Clock className="size-4" />}
         />
-        <KpiCard
-          label="Docks in use"
-          value="3 / 6"
-          sub="1 under maintenance"
+        <StatCard
+          label="Loading"
+          value={rows.filter((r) => r.status === "Loading").length}
           tone="primary"
-          icon={<Truck className="size-4" />}
         />
-        <KpiCard
-          label="Completed"
-          value={11}
-          sub="Handed to loading"
+        <StatCard
+          label="Ready for Shipment"
+          value={rows.filter((r) => r.status === "Ready for Shipment").length}
           tone="success"
-          icon={<CheckCircle2 className="size-4" />}
+        />
+        <StatCard
+          label="Docks Active"
+          value={`${new Set(rows.map((r) => r.dock)).size} / ${docks.length}`}
         />
       </div>
-      <SectionCard title="Staging area map" description="Live dock and lane occupancy">
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-          {docks.map((d) => (
-            <div key={d.id} className="glass-panel rounded-xl p-3">
-              <div className="flex items-center justify-between gap-2">
-                <p className="num text-sm font-semibold">{d.id}</p>
-                <StatusBadge status={d.status} />
-              </div>
-              <p className="mt-1 truncate text-xs text-muted-foreground">
-                {d.truck !== "â€”" ? `${d.truck} Â· ${d.order}` : "Available"}
-              </p>
-              <p className="num mt-1 text-xs text-muted-foreground">ETA {d.eta}</p>
-              <div className="mt-2">
-                <ProgressBar
-                  value={d.utilization}
-                  tone={d.utilization > 75 ? "success" : "warning"}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      </SectionCard>
-      <SectionCard title="Staging queue" bodyClassName="p-0">
-        <ul className="divide-y divide-border">
-          {orders
-            .filter((o) => ["Staged", "Packed", "Quality Verified"].includes(o.status))
-            .map((o) => (
-              <li
-                key={o.id}
-                className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-3"
+
+      <Card className="mb-4 border-border shadow-[var(--shadow-card)]">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm">Dock Occupancy</CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-2 sm:grid-cols-3 xl:grid-cols-6">
+          {docks.map((d) => {
+            const occ = rows.find((r) => r.dock === d);
+            return (
+              <div
+                key={d}
+                className={cn(
+                  "rounded-md border p-3 text-xs",
+                  occ ? "border-primary/30 bg-primary-soft" : "border-border bg-muted",
+                )}
               >
-                <div className="min-w-0">
-                  <p className="num truncate text-sm font-medium">{o.id}</p>
-                  <p className="truncate text-xs text-muted-foreground">
-                    {o.customer} Â· {o.carrier} Â· {o.dispatchWindow}
-                  </p>
-                </div>
-                <div className="flex shrink-0 items-center gap-2">
-                  <StatusBadge status={o.status} />
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => toast.success(`${o.id} assigned to DOCK-03`)}
-                  >
-                    Assign dock
-                  </Button>
-                </div>
-              </li>
-            ))}
-        </ul>
-      </SectionCard>
+                <p className="flex items-center gap-1 font-medium text-foreground">
+                  <MapPin className="h-3 w-3" />
+                  {d}
+                </p>
+                <p className="mt-1 text-muted-foreground">
+                  {occ ? `${occ.id} · ${occ.carrier}` : "Available"}
+                </p>
+              </div>
+            );
+          })}
+        </CardContent>
+      </Card>
+
+      <DataTable
+        data={rows}
+        columns={columns}
+        searchKeys={(r) => `${r.id} ${r.carrier} ${r.dock} ${r.destination} ${r.orders.join(" ")}`}
+        onExport={() => toast.success("Staging report exported")}
+        filters={[
+          { key: "dock", label: "Dock", options: docks, match: (r, v) => r.dock === v },
+          {
+            key: "status",
+            label: "Status",
+            options: [...SHIPMENT_STATUSES],
+            match: (r, v) => r.status === v,
+          },
+        ]}
+      />
     </div>
   );
 }

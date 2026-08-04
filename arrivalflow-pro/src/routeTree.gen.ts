@@ -134,23 +134,19 @@ import { Route as WarehouseFlowReturnsRouteImport } from './routes/warehouse-flo
 import { Route as WarehouseFlowSettingsRouteImport } from './routes/warehouse-flow.settings'
 import { Route as WaveFlowIndexRouteImport } from './routes/wave-flow.index'
 import { Route as WaveFlowAllocationRouteImport } from './routes/wave-flow.allocation'
-import { Route as WaveFlowAnalyticsRouteImport } from './routes/wave-flow.analytics'
 import { Route as WaveFlowBackordersRouteImport } from './routes/wave-flow.backorders'
 import { Route as WaveFlowDispatchRouteImport } from './routes/wave-flow.dispatch'
-import { Route as WaveFlowExceptionsRouteImport } from './routes/wave-flow.exceptions'
 import { Route as WaveFlowLoadVerificationRouteImport } from './routes/wave-flow.load-verification'
 import { Route as WaveFlowLoadingRouteImport } from './routes/wave-flow.loading'
 import { Route as WaveFlowPackingRouteImport } from './routes/wave-flow.packing'
 import { Route as WaveFlowPickListsRouteImport } from './routes/wave-flow.pick-lists'
 import { Route as WaveFlowPickingRouteImport } from './routes/wave-flow.picking'
-import { Route as WaveFlowQualityRouteImport } from './routes/wave-flow.quality'
 import { Route as WaveFlowReportsRouteImport } from './routes/wave-flow.reports'
 import { Route as WaveFlowSalesOrdersRouteImport } from './routes/wave-flow.sales-orders'
 import { Route as WaveFlowSettingsRouteImport } from './routes/wave-flow.settings'
 import { Route as WaveFlowShippingRouteImport } from './routes/wave-flow.shipping'
 import { Route as WaveFlowShippingLabelsRouteImport } from './routes/wave-flow.shipping-labels'
 import { Route as WaveFlowStagingRouteImport } from './routes/wave-flow.staging'
-import { Route as WaveFlowTrackingRouteImport } from './routes/wave-flow.tracking'
 import { Route as WaveFlowWavePlanningRouteImport } from './routes/wave-flow.wave-planning'
 import { Route as WaveFlowWaveReleaseRouteImport } from './routes/wave-flow.wave-release'
 import { Route as WorkCraftIndexRouteImport } from './routes/work-craft.index'
@@ -204,10 +200,6 @@ import { Route as SupplierFlowVendorPerformanceIndexRouteImport } from './routes
 import { Route as SupplierFlowVendorPerformanceSupplierIdRouteImport } from './routes/supplier-flow.vendor-performance.$supplierId'
 import { Route as WarehouseFlowRequestsIndexRouteImport } from './routes/warehouse-flow.requests.index'
 import { Route as WarehouseFlowRequestsNewRouteImport } from './routes/warehouse-flow.requests.new'
-import { Route as WaveFlowOrdersIndexRouteImport } from './routes/wave-flow.orders.index'
-import { Route as WaveFlowOrdersOrderIdRouteImport } from './routes/wave-flow.orders.$orderId'
-import { Route as WaveFlowWavesIndexRouteImport } from './routes/wave-flow.waves.index'
-import { Route as WaveFlowWavesWaveIdRouteImport } from './routes/wave-flow.waves.$waveId'
 import { Route as WorkCraftCertificatesIndexRouteImport } from './routes/work-craft.certificates.index'
 import { Route as WorkCraftCertificatesNumberRouteImport } from './routes/work-craft.certificates.$number'
 import { Route as WorkCraftWorkOrdersIndexRouteImport } from './routes/work-craft.work-orders.index'
@@ -869,11 +861,6 @@ const WaveFlowAllocationRoute = WaveFlowAllocationRouteImport.update({
   path: '/allocation',
   getParentRoute: () => WaveFlowRoute,
 } as any)
-const WaveFlowAnalyticsRoute = WaveFlowAnalyticsRouteImport.update({
-  id: '/analytics',
-  path: '/analytics',
-  getParentRoute: () => WaveFlowRoute,
-} as any)
 const WaveFlowBackordersRoute = WaveFlowBackordersRouteImport.update({
   id: '/backorders',
   path: '/backorders',
@@ -882,11 +869,6 @@ const WaveFlowBackordersRoute = WaveFlowBackordersRouteImport.update({
 const WaveFlowDispatchRoute = WaveFlowDispatchRouteImport.update({
   id: '/dispatch',
   path: '/dispatch',
-  getParentRoute: () => WaveFlowRoute,
-} as any)
-const WaveFlowExceptionsRoute = WaveFlowExceptionsRouteImport.update({
-  id: '/exceptions',
-  path: '/exceptions',
   getParentRoute: () => WaveFlowRoute,
 } as any)
 const WaveFlowLoadVerificationRoute =
@@ -913,11 +895,6 @@ const WaveFlowPickListsRoute = WaveFlowPickListsRouteImport.update({
 const WaveFlowPickingRoute = WaveFlowPickingRouteImport.update({
   id: '/picking',
   path: '/picking',
-  getParentRoute: () => WaveFlowRoute,
-} as any)
-const WaveFlowQualityRoute = WaveFlowQualityRouteImport.update({
-  id: '/quality',
-  path: '/quality',
   getParentRoute: () => WaveFlowRoute,
 } as any)
 const WaveFlowReportsRoute = WaveFlowReportsRouteImport.update({
@@ -948,11 +925,6 @@ const WaveFlowShippingLabelsRoute = WaveFlowShippingLabelsRouteImport.update({
 const WaveFlowStagingRoute = WaveFlowStagingRouteImport.update({
   id: '/staging',
   path: '/staging',
-  getParentRoute: () => WaveFlowRoute,
-} as any)
-const WaveFlowTrackingRoute = WaveFlowTrackingRouteImport.update({
-  id: '/tracking',
-  path: '/tracking',
   getParentRoute: () => WaveFlowRoute,
 } as any)
 const WaveFlowWavePlanningRoute = WaveFlowWavePlanningRouteImport.update({
@@ -1246,26 +1218,6 @@ const WarehouseFlowRequestsNewRoute =
     path: '/requests/new',
     getParentRoute: () => WarehouseFlowRoute,
   } as any)
-const WaveFlowOrdersIndexRoute = WaveFlowOrdersIndexRouteImport.update({
-  id: '/orders/',
-  path: '/orders/',
-  getParentRoute: () => WaveFlowRoute,
-} as any)
-const WaveFlowOrdersOrderIdRoute = WaveFlowOrdersOrderIdRouteImport.update({
-  id: '/orders/$orderId',
-  path: '/orders/$orderId',
-  getParentRoute: () => WaveFlowRoute,
-} as any)
-const WaveFlowWavesIndexRoute = WaveFlowWavesIndexRouteImport.update({
-  id: '/waves/',
-  path: '/waves/',
-  getParentRoute: () => WaveFlowRoute,
-} as any)
-const WaveFlowWavesWaveIdRoute = WaveFlowWavesWaveIdRouteImport.update({
-  id: '/waves/$waveId',
-  path: '/waves/$waveId',
-  getParentRoute: () => WaveFlowRoute,
-} as any)
 const WorkCraftCertificatesIndexRoute =
   WorkCraftCertificatesIndexRouteImport.update({
     id: '/certificates/',
@@ -1452,23 +1404,19 @@ export interface FileRoutesByFullPath {
   '/warehouse-flow/returns': typeof WarehouseFlowReturnsRoute
   '/warehouse-flow/settings': typeof WarehouseFlowSettingsRoute
   '/wave-flow/allocation': typeof WaveFlowAllocationRoute
-  '/wave-flow/analytics': typeof WaveFlowAnalyticsRoute
   '/wave-flow/backorders': typeof WaveFlowBackordersRoute
   '/wave-flow/dispatch': typeof WaveFlowDispatchRoute
-  '/wave-flow/exceptions': typeof WaveFlowExceptionsRoute
   '/wave-flow/load-verification': typeof WaveFlowLoadVerificationRoute
   '/wave-flow/loading': typeof WaveFlowLoadingRoute
   '/wave-flow/packing': typeof WaveFlowPackingRoute
   '/wave-flow/pick-lists': typeof WaveFlowPickListsRoute
   '/wave-flow/picking': typeof WaveFlowPickingRoute
-  '/wave-flow/quality': typeof WaveFlowQualityRoute
   '/wave-flow/reports': typeof WaveFlowReportsRoute
   '/wave-flow/sales-orders': typeof WaveFlowSalesOrdersRoute
   '/wave-flow/settings': typeof WaveFlowSettingsRoute
   '/wave-flow/shipping': typeof WaveFlowShippingRoute
   '/wave-flow/shipping-labels': typeof WaveFlowShippingLabelsRoute
   '/wave-flow/staging': typeof WaveFlowStagingRoute
-  '/wave-flow/tracking': typeof WaveFlowTrackingRoute
   '/wave-flow/wave-planning': typeof WaveFlowWavePlanningRoute
   '/wave-flow/wave-release': typeof WaveFlowWaveReleaseRoute
   '/work-craft/exceptions': typeof WorkCraftExceptionsRoute
@@ -1515,8 +1463,6 @@ export interface FileRoutesByFullPath {
   '/supplier-flow/suppliers/new': typeof SupplierFlowSuppliersNewRoute
   '/supplier-flow/vendor-performance/$supplierId': typeof SupplierFlowVendorPerformanceSupplierIdRoute
   '/warehouse-flow/requests/new': typeof WarehouseFlowRequestsNewRoute
-  '/wave-flow/orders/$orderId': typeof WaveFlowOrdersOrderIdRoute
-  '/wave-flow/waves/$waveId': typeof WaveFlowWavesWaveIdRoute
   '/work-craft/certificates/$number': typeof WorkCraftCertificatesNumberRoute
   '/work-craft/work-orders/$id': typeof WorkCraftWorkOrdersIdRouteWithChildren
   '/work-craft/work-orders/new': typeof WorkCraftWorkOrdersNewRoute
@@ -1538,8 +1484,6 @@ export interface FileRoutesByFullPath {
   '/supplier-flow/suppliers/': typeof SupplierFlowSuppliersIndexRoute
   '/supplier-flow/vendor-performance/': typeof SupplierFlowVendorPerformanceIndexRoute
   '/warehouse-flow/requests/': typeof WarehouseFlowRequestsIndexRoute
-  '/wave-flow/orders/': typeof WaveFlowOrdersIndexRoute
-  '/wave-flow/waves/': typeof WaveFlowWavesIndexRoute
   '/work-craft/certificates/': typeof WorkCraftCertificatesIndexRoute
   '/work-craft/work-orders/': typeof WorkCraftWorkOrdersIndexRoute
   '/work-craft/work-orders/$id/bom': typeof WorkCraftWorkOrdersIdBomRoute
@@ -1653,23 +1597,19 @@ export interface FileRoutesByTo {
   '/warehouse-flow/returns': typeof WarehouseFlowReturnsRoute
   '/warehouse-flow/settings': typeof WarehouseFlowSettingsRoute
   '/wave-flow/allocation': typeof WaveFlowAllocationRoute
-  '/wave-flow/analytics': typeof WaveFlowAnalyticsRoute
   '/wave-flow/backorders': typeof WaveFlowBackordersRoute
   '/wave-flow/dispatch': typeof WaveFlowDispatchRoute
-  '/wave-flow/exceptions': typeof WaveFlowExceptionsRoute
   '/wave-flow/load-verification': typeof WaveFlowLoadVerificationRoute
   '/wave-flow/loading': typeof WaveFlowLoadingRoute
   '/wave-flow/packing': typeof WaveFlowPackingRoute
   '/wave-flow/pick-lists': typeof WaveFlowPickListsRoute
   '/wave-flow/picking': typeof WaveFlowPickingRoute
-  '/wave-flow/quality': typeof WaveFlowQualityRoute
   '/wave-flow/reports': typeof WaveFlowReportsRoute
   '/wave-flow/sales-orders': typeof WaveFlowSalesOrdersRoute
   '/wave-flow/settings': typeof WaveFlowSettingsRoute
   '/wave-flow/shipping': typeof WaveFlowShippingRoute
   '/wave-flow/shipping-labels': typeof WaveFlowShippingLabelsRoute
   '/wave-flow/staging': typeof WaveFlowStagingRoute
-  '/wave-flow/tracking': typeof WaveFlowTrackingRoute
   '/wave-flow/wave-planning': typeof WaveFlowWavePlanningRoute
   '/wave-flow/wave-release': typeof WaveFlowWaveReleaseRoute
   '/work-craft/exceptions': typeof WorkCraftExceptionsRoute
@@ -1716,8 +1656,6 @@ export interface FileRoutesByTo {
   '/supplier-flow/suppliers/new': typeof SupplierFlowSuppliersNewRoute
   '/supplier-flow/vendor-performance/$supplierId': typeof SupplierFlowVendorPerformanceSupplierIdRoute
   '/warehouse-flow/requests/new': typeof WarehouseFlowRequestsNewRoute
-  '/wave-flow/orders/$orderId': typeof WaveFlowOrdersOrderIdRoute
-  '/wave-flow/waves/$waveId': typeof WaveFlowWavesWaveIdRoute
   '/work-craft/certificates/$number': typeof WorkCraftCertificatesNumberRoute
   '/work-craft/work-orders/new': typeof WorkCraftWorkOrdersNewRoute
   '/document-flow/documents': typeof DocumentFlowDocumentsIndexRoute
@@ -1738,8 +1676,6 @@ export interface FileRoutesByTo {
   '/supplier-flow/suppliers': typeof SupplierFlowSuppliersIndexRoute
   '/supplier-flow/vendor-performance': typeof SupplierFlowVendorPerformanceIndexRoute
   '/warehouse-flow/requests': typeof WarehouseFlowRequestsIndexRoute
-  '/wave-flow/orders': typeof WaveFlowOrdersIndexRoute
-  '/wave-flow/waves': typeof WaveFlowWavesIndexRoute
   '/work-craft/certificates': typeof WorkCraftCertificatesIndexRoute
   '/work-craft/work-orders': typeof WorkCraftWorkOrdersIndexRoute
   '/work-craft/work-orders/$id/bom': typeof WorkCraftWorkOrdersIdBomRoute
@@ -1866,23 +1802,19 @@ export interface FileRoutesById {
   '/warehouse-flow/returns': typeof WarehouseFlowReturnsRoute
   '/warehouse-flow/settings': typeof WarehouseFlowSettingsRoute
   '/wave-flow/allocation': typeof WaveFlowAllocationRoute
-  '/wave-flow/analytics': typeof WaveFlowAnalyticsRoute
   '/wave-flow/backorders': typeof WaveFlowBackordersRoute
   '/wave-flow/dispatch': typeof WaveFlowDispatchRoute
-  '/wave-flow/exceptions': typeof WaveFlowExceptionsRoute
   '/wave-flow/load-verification': typeof WaveFlowLoadVerificationRoute
   '/wave-flow/loading': typeof WaveFlowLoadingRoute
   '/wave-flow/packing': typeof WaveFlowPackingRoute
   '/wave-flow/pick-lists': typeof WaveFlowPickListsRoute
   '/wave-flow/picking': typeof WaveFlowPickingRoute
-  '/wave-flow/quality': typeof WaveFlowQualityRoute
   '/wave-flow/reports': typeof WaveFlowReportsRoute
   '/wave-flow/sales-orders': typeof WaveFlowSalesOrdersRoute
   '/wave-flow/settings': typeof WaveFlowSettingsRoute
   '/wave-flow/shipping': typeof WaveFlowShippingRoute
   '/wave-flow/shipping-labels': typeof WaveFlowShippingLabelsRoute
   '/wave-flow/staging': typeof WaveFlowStagingRoute
-  '/wave-flow/tracking': typeof WaveFlowTrackingRoute
   '/wave-flow/wave-planning': typeof WaveFlowWavePlanningRoute
   '/wave-flow/wave-release': typeof WaveFlowWaveReleaseRoute
   '/work-craft/exceptions': typeof WorkCraftExceptionsRoute
@@ -1929,8 +1861,6 @@ export interface FileRoutesById {
   '/supplier-flow/suppliers/new': typeof SupplierFlowSuppliersNewRoute
   '/supplier-flow/vendor-performance/$supplierId': typeof SupplierFlowVendorPerformanceSupplierIdRoute
   '/warehouse-flow/requests/new': typeof WarehouseFlowRequestsNewRoute
-  '/wave-flow/orders/$orderId': typeof WaveFlowOrdersOrderIdRoute
-  '/wave-flow/waves/$waveId': typeof WaveFlowWavesWaveIdRoute
   '/work-craft/certificates/$number': typeof WorkCraftCertificatesNumberRoute
   '/work-craft/work-orders/$id': typeof WorkCraftWorkOrdersIdRouteWithChildren
   '/work-craft/work-orders/new': typeof WorkCraftWorkOrdersNewRoute
@@ -1952,8 +1882,6 @@ export interface FileRoutesById {
   '/supplier-flow/suppliers/': typeof SupplierFlowSuppliersIndexRoute
   '/supplier-flow/vendor-performance/': typeof SupplierFlowVendorPerformanceIndexRoute
   '/warehouse-flow/requests/': typeof WarehouseFlowRequestsIndexRoute
-  '/wave-flow/orders/': typeof WaveFlowOrdersIndexRoute
-  '/wave-flow/waves/': typeof WaveFlowWavesIndexRoute
   '/work-craft/certificates/': typeof WorkCraftCertificatesIndexRoute
   '/work-craft/work-orders/': typeof WorkCraftWorkOrdersIndexRoute
   '/work-craft/work-orders/$id/bom': typeof WorkCraftWorkOrdersIdBomRoute
@@ -2081,23 +2009,19 @@ export interface FileRouteTypes {
     | '/warehouse-flow/returns'
     | '/warehouse-flow/settings'
     | '/wave-flow/allocation'
-    | '/wave-flow/analytics'
     | '/wave-flow/backorders'
     | '/wave-flow/dispatch'
-    | '/wave-flow/exceptions'
     | '/wave-flow/load-verification'
     | '/wave-flow/loading'
     | '/wave-flow/packing'
     | '/wave-flow/pick-lists'
     | '/wave-flow/picking'
-    | '/wave-flow/quality'
     | '/wave-flow/reports'
     | '/wave-flow/sales-orders'
     | '/wave-flow/settings'
     | '/wave-flow/shipping'
     | '/wave-flow/shipping-labels'
     | '/wave-flow/staging'
-    | '/wave-flow/tracking'
     | '/wave-flow/wave-planning'
     | '/wave-flow/wave-release'
     | '/work-craft/exceptions'
@@ -2144,8 +2068,6 @@ export interface FileRouteTypes {
     | '/supplier-flow/suppliers/new'
     | '/supplier-flow/vendor-performance/$supplierId'
     | '/warehouse-flow/requests/new'
-    | '/wave-flow/orders/$orderId'
-    | '/wave-flow/waves/$waveId'
     | '/work-craft/certificates/$number'
     | '/work-craft/work-orders/$id'
     | '/work-craft/work-orders/new'
@@ -2167,8 +2089,6 @@ export interface FileRouteTypes {
     | '/supplier-flow/suppliers/'
     | '/supplier-flow/vendor-performance/'
     | '/warehouse-flow/requests/'
-    | '/wave-flow/orders/'
-    | '/wave-flow/waves/'
     | '/work-craft/certificates/'
     | '/work-craft/work-orders/'
     | '/work-craft/work-orders/$id/bom'
@@ -2282,23 +2202,19 @@ export interface FileRouteTypes {
     | '/warehouse-flow/returns'
     | '/warehouse-flow/settings'
     | '/wave-flow/allocation'
-    | '/wave-flow/analytics'
     | '/wave-flow/backorders'
     | '/wave-flow/dispatch'
-    | '/wave-flow/exceptions'
     | '/wave-flow/load-verification'
     | '/wave-flow/loading'
     | '/wave-flow/packing'
     | '/wave-flow/pick-lists'
     | '/wave-flow/picking'
-    | '/wave-flow/quality'
     | '/wave-flow/reports'
     | '/wave-flow/sales-orders'
     | '/wave-flow/settings'
     | '/wave-flow/shipping'
     | '/wave-flow/shipping-labels'
     | '/wave-flow/staging'
-    | '/wave-flow/tracking'
     | '/wave-flow/wave-planning'
     | '/wave-flow/wave-release'
     | '/work-craft/exceptions'
@@ -2345,8 +2261,6 @@ export interface FileRouteTypes {
     | '/supplier-flow/suppliers/new'
     | '/supplier-flow/vendor-performance/$supplierId'
     | '/warehouse-flow/requests/new'
-    | '/wave-flow/orders/$orderId'
-    | '/wave-flow/waves/$waveId'
     | '/work-craft/certificates/$number'
     | '/work-craft/work-orders/new'
     | '/document-flow/documents'
@@ -2367,8 +2281,6 @@ export interface FileRouteTypes {
     | '/supplier-flow/suppliers'
     | '/supplier-flow/vendor-performance'
     | '/warehouse-flow/requests'
-    | '/wave-flow/orders'
-    | '/wave-flow/waves'
     | '/work-craft/certificates'
     | '/work-craft/work-orders'
     | '/work-craft/work-orders/$id/bom'
@@ -2494,23 +2406,19 @@ export interface FileRouteTypes {
     | '/warehouse-flow/returns'
     | '/warehouse-flow/settings'
     | '/wave-flow/allocation'
-    | '/wave-flow/analytics'
     | '/wave-flow/backorders'
     | '/wave-flow/dispatch'
-    | '/wave-flow/exceptions'
     | '/wave-flow/load-verification'
     | '/wave-flow/loading'
     | '/wave-flow/packing'
     | '/wave-flow/pick-lists'
     | '/wave-flow/picking'
-    | '/wave-flow/quality'
     | '/wave-flow/reports'
     | '/wave-flow/sales-orders'
     | '/wave-flow/settings'
     | '/wave-flow/shipping'
     | '/wave-flow/shipping-labels'
     | '/wave-flow/staging'
-    | '/wave-flow/tracking'
     | '/wave-flow/wave-planning'
     | '/wave-flow/wave-release'
     | '/work-craft/exceptions'
@@ -2557,8 +2465,6 @@ export interface FileRouteTypes {
     | '/supplier-flow/suppliers/new'
     | '/supplier-flow/vendor-performance/$supplierId'
     | '/warehouse-flow/requests/new'
-    | '/wave-flow/orders/$orderId'
-    | '/wave-flow/waves/$waveId'
     | '/work-craft/certificates/$number'
     | '/work-craft/work-orders/$id'
     | '/work-craft/work-orders/new'
@@ -2580,8 +2486,6 @@ export interface FileRouteTypes {
     | '/supplier-flow/suppliers/'
     | '/supplier-flow/vendor-performance/'
     | '/warehouse-flow/requests/'
-    | '/wave-flow/orders/'
-    | '/wave-flow/waves/'
     | '/work-craft/certificates/'
     | '/work-craft/work-orders/'
     | '/work-craft/work-orders/$id/bom'
@@ -3505,13 +3409,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WaveFlowAllocationRouteImport
       parentRoute: typeof WaveFlowRoute
     }
-    '/wave-flow/analytics': {
-      id: '/wave-flow/analytics'
-      path: '/analytics'
-      fullPath: '/wave-flow/analytics'
-      preLoaderRoute: typeof WaveFlowAnalyticsRouteImport
-      parentRoute: typeof WaveFlowRoute
-    }
     '/wave-flow/backorders': {
       id: '/wave-flow/backorders'
       path: '/backorders'
@@ -3524,13 +3421,6 @@ declare module '@tanstack/react-router' {
       path: '/dispatch'
       fullPath: '/wave-flow/dispatch'
       preLoaderRoute: typeof WaveFlowDispatchRouteImport
-      parentRoute: typeof WaveFlowRoute
-    }
-    '/wave-flow/exceptions': {
-      id: '/wave-flow/exceptions'
-      path: '/exceptions'
-      fullPath: '/wave-flow/exceptions'
-      preLoaderRoute: typeof WaveFlowExceptionsRouteImport
       parentRoute: typeof WaveFlowRoute
     }
     '/wave-flow/load-verification': {
@@ -3566,13 +3456,6 @@ declare module '@tanstack/react-router' {
       path: '/picking'
       fullPath: '/wave-flow/picking'
       preLoaderRoute: typeof WaveFlowPickingRouteImport
-      parentRoute: typeof WaveFlowRoute
-    }
-    '/wave-flow/quality': {
-      id: '/wave-flow/quality'
-      path: '/quality'
-      fullPath: '/wave-flow/quality'
-      preLoaderRoute: typeof WaveFlowQualityRouteImport
       parentRoute: typeof WaveFlowRoute
     }
     '/wave-flow/reports': {
@@ -3615,13 +3498,6 @@ declare module '@tanstack/react-router' {
       path: '/staging'
       fullPath: '/wave-flow/staging'
       preLoaderRoute: typeof WaveFlowStagingRouteImport
-      parentRoute: typeof WaveFlowRoute
-    }
-    '/wave-flow/tracking': {
-      id: '/wave-flow/tracking'
-      path: '/tracking'
-      fullPath: '/wave-flow/tracking'
-      preLoaderRoute: typeof WaveFlowTrackingRouteImport
       parentRoute: typeof WaveFlowRoute
     }
     '/wave-flow/wave-planning': {
@@ -3994,34 +3870,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/warehouse-flow/requests/new'
       preLoaderRoute: typeof WarehouseFlowRequestsNewRouteImport
       parentRoute: typeof WarehouseFlowRoute
-    }
-    '/wave-flow/orders/': {
-      id: '/wave-flow/orders/'
-      path: '/orders'
-      fullPath: '/wave-flow/orders/'
-      preLoaderRoute: typeof WaveFlowOrdersIndexRouteImport
-      parentRoute: typeof WaveFlowRoute
-    }
-    '/wave-flow/orders/$orderId': {
-      id: '/wave-flow/orders/$orderId'
-      path: '/orders/$orderId'
-      fullPath: '/wave-flow/orders/$orderId'
-      preLoaderRoute: typeof WaveFlowOrdersOrderIdRouteImport
-      parentRoute: typeof WaveFlowRoute
-    }
-    '/wave-flow/waves/': {
-      id: '/wave-flow/waves/'
-      path: '/waves'
-      fullPath: '/wave-flow/waves/'
-      preLoaderRoute: typeof WaveFlowWavesIndexRouteImport
-      parentRoute: typeof WaveFlowRoute
-    }
-    '/wave-flow/waves/$waveId': {
-      id: '/wave-flow/waves/$waveId'
-      path: '/waves/$waveId'
-      fullPath: '/wave-flow/waves/$waveId'
-      preLoaderRoute: typeof WaveFlowWavesWaveIdRouteImport
-      parentRoute: typeof WaveFlowRoute
     }
     '/work-craft/certificates/': {
       id: '/work-craft/certificates/'
@@ -4488,58 +4336,42 @@ const WarehouseFlowRouteWithChildren = WarehouseFlowRoute._addFileChildren(
 
 interface WaveFlowRouteChildren {
   WaveFlowAllocationRoute: typeof WaveFlowAllocationRoute
-  WaveFlowAnalyticsRoute: typeof WaveFlowAnalyticsRoute
   WaveFlowBackordersRoute: typeof WaveFlowBackordersRoute
   WaveFlowDispatchRoute: typeof WaveFlowDispatchRoute
-  WaveFlowExceptionsRoute: typeof WaveFlowExceptionsRoute
   WaveFlowLoadVerificationRoute: typeof WaveFlowLoadVerificationRoute
   WaveFlowLoadingRoute: typeof WaveFlowLoadingRoute
   WaveFlowPackingRoute: typeof WaveFlowPackingRoute
   WaveFlowPickListsRoute: typeof WaveFlowPickListsRoute
   WaveFlowPickingRoute: typeof WaveFlowPickingRoute
-  WaveFlowQualityRoute: typeof WaveFlowQualityRoute
   WaveFlowReportsRoute: typeof WaveFlowReportsRoute
   WaveFlowSalesOrdersRoute: typeof WaveFlowSalesOrdersRoute
   WaveFlowSettingsRoute: typeof WaveFlowSettingsRoute
   WaveFlowShippingRoute: typeof WaveFlowShippingRoute
   WaveFlowShippingLabelsRoute: typeof WaveFlowShippingLabelsRoute
   WaveFlowStagingRoute: typeof WaveFlowStagingRoute
-  WaveFlowTrackingRoute: typeof WaveFlowTrackingRoute
   WaveFlowWavePlanningRoute: typeof WaveFlowWavePlanningRoute
   WaveFlowWaveReleaseRoute: typeof WaveFlowWaveReleaseRoute
   WaveFlowIndexRoute: typeof WaveFlowIndexRoute
-  WaveFlowOrdersOrderIdRoute: typeof WaveFlowOrdersOrderIdRoute
-  WaveFlowWavesWaveIdRoute: typeof WaveFlowWavesWaveIdRoute
-  WaveFlowOrdersIndexRoute: typeof WaveFlowOrdersIndexRoute
-  WaveFlowWavesIndexRoute: typeof WaveFlowWavesIndexRoute
 }
 
 const WaveFlowRouteChildren: WaveFlowRouteChildren = {
   WaveFlowAllocationRoute: WaveFlowAllocationRoute,
-  WaveFlowAnalyticsRoute: WaveFlowAnalyticsRoute,
   WaveFlowBackordersRoute: WaveFlowBackordersRoute,
   WaveFlowDispatchRoute: WaveFlowDispatchRoute,
-  WaveFlowExceptionsRoute: WaveFlowExceptionsRoute,
   WaveFlowLoadVerificationRoute: WaveFlowLoadVerificationRoute,
   WaveFlowLoadingRoute: WaveFlowLoadingRoute,
   WaveFlowPackingRoute: WaveFlowPackingRoute,
   WaveFlowPickListsRoute: WaveFlowPickListsRoute,
   WaveFlowPickingRoute: WaveFlowPickingRoute,
-  WaveFlowQualityRoute: WaveFlowQualityRoute,
   WaveFlowReportsRoute: WaveFlowReportsRoute,
   WaveFlowSalesOrdersRoute: WaveFlowSalesOrdersRoute,
   WaveFlowSettingsRoute: WaveFlowSettingsRoute,
   WaveFlowShippingRoute: WaveFlowShippingRoute,
   WaveFlowShippingLabelsRoute: WaveFlowShippingLabelsRoute,
   WaveFlowStagingRoute: WaveFlowStagingRoute,
-  WaveFlowTrackingRoute: WaveFlowTrackingRoute,
   WaveFlowWavePlanningRoute: WaveFlowWavePlanningRoute,
   WaveFlowWaveReleaseRoute: WaveFlowWaveReleaseRoute,
   WaveFlowIndexRoute: WaveFlowIndexRoute,
-  WaveFlowOrdersOrderIdRoute: WaveFlowOrdersOrderIdRoute,
-  WaveFlowWavesWaveIdRoute: WaveFlowWavesWaveIdRoute,
-  WaveFlowOrdersIndexRoute: WaveFlowOrdersIndexRoute,
-  WaveFlowWavesIndexRoute: WaveFlowWavesIndexRoute,
 }
 
 const WaveFlowRouteWithChildren = WaveFlowRoute._addFileChildren(

@@ -1,368 +1,428 @@
-﻿import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  Package,
-  CheckCircle2,
-  Waves as WavesIcon,
-  Users,
-  Boxes,
-  Truck,
-  Clock,
+  Activity,
   AlertTriangle,
-  Plus,
-  Zap,
-  ScanBarcode,
-  FileText,
-  ArrowRight,
+  Boxes,
+  ClipboardList,
+  Layers,
+  PackageCheck,
+  Printer,
+  Rocket,
+  ShoppingCart,
+  Timer,
+  Truck,
 } from "lucide-react";
 import {
   Area,
   AreaChart,
+  Bar,
+  BarChart,
   CartesianGrid,
+  Cell,
   Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
 import { toast } from "sonner";
-import {
-  KpiCard,
-  PageHeader,
-  SectionCard,
-  StatusBadge,
-  ProgressBar,
-} from "@/apps/wave-flow/components/wms/ui";
 import { Button } from "@/components/ui/button";
-import { activities, docks, hourlyThroughput, orders, waves } from "@/apps/wave-flow/lib/wms-data";
-import { cn } from "@/lib/utils";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeader } from "@/apps/wave-flow/integrated/components/page-header";
+import { StatCard } from "@/apps/wave-flow/integrated/components/stat-card";
+import { StatusBadge } from "@/apps/wave-flow/integrated/components/status-badge";
+import { WorkflowStepper } from "@/apps/wave-flow/integrated/components/workflow-stepper";
+import { workflowSteps } from "@/apps/wave-flow/integrated/data/mock-data";
+import {
+  activityQuery,
+  dashboardQuery,
+  notificationsQuery,
+  ordersQuery,
+  WORKFLOW_KEYS,
+} from "@/apps/wave-flow/integrated/lib/wms-queries";
+import type { DashboardStats } from "@/apps/wave-flow/integrated/lib/wms-types";
 
 export const Route = createFileRoute("/wave-flow/")({
   head: () => ({
     meta: [
-      { title: "Outbound Control Tower â€” NexusWMS" },
+      { title: "Outbound Fulfillment Dashboard | NEXUS WMS" },
       {
         name: "description",
         content:
-          "Live outbound fulfillment control tower: pending orders, wave status, picker activity, packing, dispatch queue and late orders.",
+          "Live KPIs for sales orders, waves, picking, packing, staging, loading and shipments across all warehouses.",
       },
-      { property: "og:title", content: "Outbound Control Tower â€” NexusWMS" },
+      { property: "og:title", content: "Outbound Fulfillment Dashboard | NEXUS WMS" },
       {
         property: "og:description",
-        content: "Real-time KPIs across waves, picking, packing, loading and dispatch.",
+        content: "Live outbound KPIs, wave status, shipment trends and fulfillment activity.",
       },
     ],
   }),
-  component: Dashboard,
+  component: DashboardPage,
 });
 
-const toneDot: Record<string, string> = {
-  info: "bg-primary",
-  success: "bg-success",
-  warning: "bg-warning",
-  danger: "bg-danger",
+const CHART_COLORS = [
+  "var(--chart-1)",
+  "var(--chart-2)",
+  "var(--chart-3)",
+  "var(--chart-4)",
+  "var(--chart-5)",
+];
+
+const EMPTY_DASHBOARD: DashboardStats = {
+  totalOrders: 0,
+  ordersToday: 0,
+  openWaves: 0,
+  releasedWaves: 0,
+  pickLinesPending: 0,
+  packagesPacked: 0,
+  shipmentsInTransit: 0,
+  awaitingDispatch: 0,
+  openBackorders: 0,
+  unitsShipped: 0,
+  fulfilmentRate: 0,
+  onTimeRate: 0,
+  waveStatusChart: [],
+  ordersByPriorityChart: [],
+  shipmentTrendChart: [],
+  dailyFulfillmentChart: [],
+  orderStatusChart: [],
+  carrierChart: [],
 };
 
-function Dashboard() {
-  const navigate = useNavigate();
-  const pending = orders.filter((o) => ["Created", "Inventory Reserved"].includes(o.status)).length;
-  const ready = orders.filter((o) => o.status === "Ready").length;
-  const activeWaves = waves.filter((w) => ["Released", "In Progress"].includes(w.status)).length;
+function DashboardPage() {
+  const queryClient = useQueryClient();
+  const { data: dashboard = EMPTY_DASHBOARD } = useQuery(dashboardQuery());
+  const { data: activities = [] } = useQuery(activityQuery());
+  const { data: notifications = [] } = useQuery(notificationsQuery());
+  const { data: ordersResult } = useQuery(ordersQuery());
+  const orders = ordersResult?.rows ?? [];
+
+  function count(fn: (s: (typeof orders)[number]) => boolean) {
+    return orders.filter(fn).length;
+  }
+
+  const today = new Date().toISOString().slice(0, 10);
+  const lateOrders = orders.filter((o) => o.deliveryDate < today && o.status !== "Shipped").length;
+
+  const kpis = [
+    {
+      label: "Total Sales Orders",
+      value: dashboard.totalOrders,
+      icon: <ShoppingCart className="h-4 w-4" />,
+      tone: "primary" as const,
+    },
+    {
+      label: "Pending Planning",
+      value: count((o) => ["Received", "Validated", "Allocated"].includes(o.status)),
+      icon: <ClipboardList className="h-4 w-4" />,
+    },
+    {
+      label: "Orders Reserved",
+      value: count((o) => o.status === "Reserved"),
+      icon: <Boxes className="h-4 w-4" />,
+      tone: "primary" as const,
+    },
+    { label: "Active Waves", value: dashboard.openWaves, icon: <Layers className="h-4 w-4" /> },
+    {
+      label: "Released Waves",
+      value: dashboard.releasedWaves,
+      icon: <Rocket className="h-4 w-4" />,
+      tone: "primary" as const,
+    },
+    {
+      label: "Orders Picking",
+      value: count((o) => o.status === "Picking"),
+      icon: <Activity className="h-4 w-4" />,
+      tone: "warning" as const,
+    },
+    {
+      label: "Orders Packed",
+      value: count((o) => o.status === "Packed"),
+      icon: <PackageCheck className="h-4 w-4" />,
+      tone: "success" as const,
+    },
+    {
+      label: "Orders Staged",
+      value: count((o) => o.status === "Staged"),
+      icon: <ClipboardList className="h-4 w-4" />,
+    },
+    {
+      label: "Ready for Shipment",
+      value: count((o) => o.status === "Ready for Shipment"),
+      icon: <Truck className="h-4 w-4" />,
+      tone: "primary" as const,
+    },
+    {
+      label: "Orders Shipped",
+      value: count((o) => o.status === "Shipped"),
+      icon: <Truck className="h-4 w-4" />,
+      tone: "success" as const,
+    },
+    {
+      label: "Late Orders",
+      value: lateOrders,
+      icon: <Timer className="h-4 w-4" />,
+      tone: "danger" as const,
+    },
+    {
+      label: "Backorders",
+      value: dashboard.openBackorders,
+      icon: <AlertTriangle className="h-4 w-4" />,
+      tone: "danger" as const,
+    },
+  ];
+
+  const quickActions = [
+    { label: "Create Wave", icon: Layers, to: "/wave-flow/wave-planning" },
+    { label: "Release Wave", icon: Rocket, to: "/wave-flow/wave-release" },
+    { label: "Generate Pick List", icon: ClipboardList, to: "/wave-flow/pick-lists" },
+    { label: "Print Shipping Labels", icon: Printer, to: "/wave-flow/shipping-labels" },
+  ];
+
+  function handleRefresh() {
+    for (const key of WORKFLOW_KEYS) void queryClient.invalidateQueries({ queryKey: [key] });
+    toast.success("Dashboard refreshed");
+  }
 
   return (
-    <div className="space-y-4">
+    <div>
       <PageHeader
-        title="Outbound Control Tower"
-        description="Wednesday, 18 March 2026 Â· DC-01 Rotterdam Â· Shift A (06:00â€“14:00)"
-        breadcrumb={["Outbound", "Dashboard"]}
+        title="Outbound Fulfillment Dashboard"
+        description="Real-time control tower for order fulfillment, wave execution and dispatch."
+        breadcrumbs={[{ label: "Dashboard" }]}
         actions={
           <>
-            <Button variant="outline" onClick={() => navigate({ to: "/wave-flow/reports" })}>
-              <FileText className="size-4" /> Shift report
+            <Button variant="outline" onClick={handleRefresh}>
+              Refresh
             </Button>
-            <Button onClick={() => navigate({ to: "/wave-flow/orders" })}>
-              <Plus className="size-4" /> Create outbound order
+            <Button asChild>
+              <Link to="/wave-flow/wave-planning">
+                <Layers className="h-4 w-4" />
+                Create Wave
+              </Link>
             </Button>
           </>
         }
       />
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
-        <KpiCard
-          label="Pending Orders"
-          value={pending + 16}
-          sub="Awaiting inventory allocation"
-          delta="+4 vs yesterday"
-          icon={<Package className="size-4" />}
-          tone="primary"
-          onClick={() => navigate({ to: "/wave-flow/orders" })}
-        />
-        <KpiCard
-          label="Ready Orders"
-          value={ready + 11}
-          sub="Eligible for wave planning"
-          delta="+9%"
-          icon={<CheckCircle2 className="size-4" />}
-          tone="secondary"
-          onClick={() => navigate({ to: "/wave-flow/orders" })}
-        />
-        <KpiCard
-          label="Active Waves"
-          value={activeWaves}
-          sub="2 released Â· 1 in progress"
-          icon={<WavesIcon className="size-4" />}
-          tone="primary"
-          onClick={() => navigate({ to: "/wave-flow/waves" })}
-        />
-        <KpiCard
-          label="Active Pickers"
-          value={14}
-          sub="of 18 on shift Â· 132 lines/hr avg"
-          delta="+6%"
-          icon={<Users className="size-4" />}
-          tone="success"
-          onClick={() => navigate({ to: "/wave-flow/picking" })}
-        />
-        <KpiCard
-          label="Packing Queue"
-          value={37}
-          sub="3 stations Â· 12 cartons open"
-          icon={<Boxes className="size-4" />}
-          tone="warning"
-          onClick={() => navigate({ to: "/wave-flow/packing" })}
-        />
-        <KpiCard
-          label="Dispatch Queue"
-          value={9}
-          sub="4 staged Â· 3 loading Â· 2 verified"
-          icon={<Truck className="size-4" />}
-          tone="primary"
-          onClick={() => navigate({ to: "/wave-flow/dispatch" })}
-        />
-        <KpiCard
-          label="Truck Loading"
-          value="62%"
-          sub="3 docks active Â· avg 41 min/truck"
-          icon={<Truck className="size-4" />}
-          tone="secondary"
-          onClick={() => navigate({ to: "/wave-flow/loading" })}
-        />
-        <KpiCard
-          label="Today's Dispatches"
-          value={28}
-          sub="Target 34 Â· 82% attainment"
-          delta="+12%"
-          icon={<CheckCircle2 className="size-4" />}
-          tone="success"
-          onClick={() => navigate({ to: "/wave-flow/tracking" })}
-        />
-        <KpiCard
-          label="Late Orders"
-          value={3}
-          sub="1 critical Â· SLA breach risk"
-          delta="-2 vs yesterday"
-          icon={<Clock className="size-4" />}
-          tone="danger"
-          onClick={() => navigate({ to: "/wave-flow/orders" })}
-        />
-        <KpiCard
-          label="Open Exceptions"
-          value={2}
-          sub="1 shortage Â· 1 damage"
-          icon={<AlertTriangle className="size-4" />}
-          tone="danger"
-          onClick={() => navigate({ to: "/wave-flow/exceptions" })}
-        />
+      <Card className="mb-5 border-border shadow-[var(--shadow-card)]">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm">Outbound Workflow</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <WorkflowStepper steps={workflowSteps} currentIndex={7} />
+        </CardContent>
+      </Card>
+
+      <div className="mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {kpis.map((k) => (
+          <StatCard
+            key={k.label}
+            label={k.label}
+            value={k.value}
+            icon={k.icon}
+            tone={k.tone ?? "default"}
+          />
+        ))}
       </div>
 
-      <SectionCard title="Quick actions" description="Most used supervisor operations">
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            { label: "Run auto wave planning", icon: Zap, to: "/wave-flow/waves" as const },
-            { label: "Release pending wave", icon: WavesIcon, to: "/wave-flow/waves" as const },
-            { label: "Open pick queue", icon: ScanBarcode, to: "/wave-flow/picking" as const },
-            { label: "Verify dispatch", icon: Truck, to: "/wave-flow/dispatch" as const },
-          ].map((a) => (
-            <Link
-              key={a.label}
-              to={a.to}
-              className="glass-panel flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition-colors hover:bg-accent"
-            >
-              <a.icon className="size-4 text-primary" />
-              <span className="truncate">{a.label}</span>
-              <ArrowRight className="ml-auto size-4 text-muted-foreground" />
-            </Link>
-          ))}
-        </div>
-      </SectionCard>
-
-      <div className="grid gap-4 xl:grid-cols-3">
-        <SectionCard
-          className="xl:col-span-2"
-          title="Fulfillment throughput"
-          description="Units picked, packed and dispatched per hour"
-          actions={<StatusBadge status="In Progress" />}
-        >
-          <div className="h-72 w-full">
+      <div className="mb-5 grid gap-4 xl:grid-cols-3">
+        <Card className="border-border shadow-[var(--shadow-card)] xl:col-span-2">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Shipment Trend (7 days)</CardTitle>
+          </CardHeader>
+          <CardContent className="h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={hourlyThroughput} margin={{ left: -18, right: 8, top: 8 }}>
-                <defs>
-                  {["picked", "packed", "dispatched"].map((k, i) => (
-                    <linearGradient key={k} id={`g-${k}`} x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={`var(--chart-${i + 1})`} stopOpacity={0.35} />
-                      <stop offset="100%" stopColor={`var(--chart-${i + 1})`} stopOpacity={0.02} />
-                    </linearGradient>
-                  ))}
-                </defs>
+              <AreaChart data={dashboard.shipmentTrendChart}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                <XAxis
-                  dataKey="hour"
-                  tickLine={false}
-                  axisLine={false}
-                  fontSize={12}
-                  stroke="var(--muted-foreground)"
-                />
-                <YAxis
-                  tickLine={false}
-                  axisLine={false}
-                  fontSize={12}
-                  stroke="var(--muted-foreground)"
-                />
+                <XAxis dataKey="day" tick={{ fontSize: 12 }} stroke="var(--muted-foreground)" />
+                <YAxis tick={{ fontSize: 12 }} stroke="var(--muted-foreground)" />
                 <Tooltip
-                  contentStyle={{
-                    borderRadius: 12,
-                    border: "1px solid var(--border)",
-                    background: "var(--surface)",
-                    fontSize: 12,
-                  }}
+                  contentStyle={{ borderRadius: 8, borderColor: "var(--border)", fontSize: 12 }}
                 />
-                <Legend iconType="circle" wrapperStyle={{ fontSize: 12 }} />
+                <Legend wrapperStyle={{ fontSize: 12 }} />
                 <Area
                   type="monotone"
-                  dataKey="picked"
-                  stroke="var(--chart-1)"
-                  fill="url(#g-picked)"
-                  strokeWidth={2}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="packed"
+                  dataKey="planned"
                   stroke="var(--chart-2)"
-                  fill="url(#g-packed)"
-                  strokeWidth={2}
+                  fill="var(--chart-2)"
+                  fillOpacity={0.18}
                 />
                 <Area
                   type="monotone"
-                  dataKey="dispatched"
-                  stroke="var(--chart-3)"
-                  fill="url(#g-dispatched)"
-                  strokeWidth={2}
+                  dataKey="shipped"
+                  stroke="var(--chart-1)"
+                  fill="var(--chart-1)"
+                  fillOpacity={0.25}
                 />
               </AreaChart>
             </ResponsiveContainer>
-          </div>
-        </SectionCard>
+          </CardContent>
+        </Card>
 
-        <SectionCard
-          title="Recent activity"
-          description="Live operational feed"
-          bodyClassName="p-0"
-          actions={
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => toast.success("Activity feed refreshed")}
-            >
-              Refresh
-            </Button>
-          }
-        >
-          <ul className="max-h-72 divide-y divide-border overflow-y-auto">
-            {activities.map((a) => (
-              <li key={a.at + a.text} className="flex gap-3 px-4 py-3">
-                <span className={cn("mt-1.5 size-2 shrink-0 rounded-full", toneDot[a.tone])} />
-                <div className="min-w-0">
-                  <p className="text-sm">{a.text}</p>
-                  <p className="num text-xs text-muted-foreground">
-                    {a.at} Â· {a.actor}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </SectionCard>
+        <Card className="border-border shadow-[var(--shadow-card)]">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Wave Status</CardTitle>
+          </CardHeader>
+          <CardContent className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={dashboard.waveStatusChart}
+                  dataKey="value"
+                  nameKey="name"
+                  innerRadius={50}
+                  outerRadius={80}
+                  paddingAngle={3}
+                >
+                  {dashboard.waveStatusChart.map((_, i) => (
+                    <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  contentStyle={{ borderRadius: 8, borderColor: "var(--border)", fontSize: 12 }}
+                />
+                <Legend wrapperStyle={{ fontSize: 12 }} />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border shadow-[var(--shadow-card)]">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Orders by Priority</CardTitle>
+          </CardHeader>
+          <CardContent className="h-56">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={dashboard.ordersByPriorityChart}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                <XAxis
+                  dataKey="priority"
+                  tick={{ fontSize: 12 }}
+                  stroke="var(--muted-foreground)"
+                />
+                <YAxis tick={{ fontSize: 12 }} stroke="var(--muted-foreground)" />
+                <Tooltip
+                  contentStyle={{ borderRadius: 8, borderColor: "var(--border)", fontSize: 12 }}
+                />
+                <Bar dataKey="orders" fill="var(--chart-1)" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border shadow-[var(--shadow-card)] xl:col-span-2">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Daily Fulfillment Throughput</CardTitle>
+          </CardHeader>
+          <CardContent className="h-56">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={dashboard.dailyFulfillmentChart}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                <XAxis dataKey="hour" tick={{ fontSize: 12 }} stroke="var(--muted-foreground)" />
+                <YAxis tick={{ fontSize: 12 }} stroke="var(--muted-foreground)" />
+                <Tooltip
+                  contentStyle={{ borderRadius: 8, borderColor: "var(--border)", fontSize: 12 }}
+                />
+                <Legend wrapperStyle={{ fontSize: 12 }} />
+                <Line
+                  type="monotone"
+                  dataKey="picked"
+                  stroke="var(--chart-1)"
+                  strokeWidth={2}
+                  dot={false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="packed"
+                  stroke="var(--chart-3)"
+                  strokeWidth={2}
+                  dot={false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="shipped"
+                  stroke="var(--chart-4)"
+                  strokeWidth={2}
+                  dot={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-3">
-        <SectionCard className="xl:col-span-2" title="Wave status board" bodyClassName="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px] text-sm">
-              <thead className="bg-surface-muted text-xs text-muted-foreground">
-                <tr>
-                  {["Wave", "Strategy", "Orders", "Items", "Progress", "Status", ""].map((h) => (
-                    <th key={h} className="px-4 py-2.5 text-left font-medium">
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {waves.slice(0, 5).map((w) => (
-                  <tr key={w.id} className="hover:bg-muted/50">
-                    <td className="num px-4 py-3 font-medium">{w.id}</td>
-                    <td className="px-4 py-3 text-muted-foreground">{w.strategy}</td>
-                    <td className="num px-4 py-3">{w.orders.length}</td>
-                    <td className="num px-4 py-3">{w.totalItems}</td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <ProgressBar
-                          value={w.progress}
-                          tone={w.progress === 100 ? "success" : "primary"}
-                        />
-                        <span className="num w-9 text-xs text-muted-foreground">{w.progress}%</span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <StatusBadge status={w.status} />
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <Link
-                        to="/wave-flow/waves/$waveId"
-                        params={{ waveId: w.id }}
-                        className="text-xs font-medium text-primary"
-                      >
-                        Open
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </SectionCard>
+      <div className="grid gap-4 lg:grid-cols-3">
+        <Card className="border-border shadow-[var(--shadow-card)]">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Quick Actions</CardTitle>
+          </CardHeader>
+          <CardContent className="grid grid-cols-2 gap-2">
+            {quickActions.map((a) => (
+              <Button
+                key={a.label}
+                asChild
+                variant="outline"
+                className="h-auto flex-col items-start gap-1.5 py-3 text-left"
+              >
+                <Link to={a.to}>
+                  <a.icon className="h-4 w-4 text-primary" />
+                  <span className="text-xs font-medium whitespace-normal">{a.label}</span>
+                </Link>
+              </Button>
+            ))}
+          </CardContent>
+        </Card>
 
-        <SectionCard title="Dock & loading status" description="Live dock occupancy">
-          <ul className="space-y-2.5">
-            {docks.map((d) => (
-              <li key={d.id} className="glass-panel rounded-xl p-3">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="num text-sm font-medium">{d.id}</span>
-                  <StatusBadge status={d.status} />
-                </div>
-                <p className="mt-1 truncate text-xs text-muted-foreground">
-                  {d.truck !== "â€”"
-                    ? `${d.truck} Â· ${d.order} Â· ETA ${d.eta}`
-                    : "No truck assigned"}
+        <Card className="border-border shadow-[var(--shadow-card)]">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Recent Activities</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {activities.slice(0, 6).map((a) => (
+              <div key={a.id} className="flex gap-3 text-sm">
+                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                <p className="min-w-0 text-muted-foreground">
+                  <span className="font-medium text-foreground">{a.actor}</span> {a.action}{" "}
+                  <span className="font-medium text-primary">{a.target}</span>
+                  <span className="block text-xs">{a.time}</span>
                 </p>
-                <div className="mt-2">
-                  <ProgressBar
-                    value={d.utilization}
-                    tone={d.utilization > 75 ? "success" : "warning"}
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        <Card className="border-border shadow-[var(--shadow-card)]">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Notifications</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {notifications.slice(0, 5).map((n) => (
+              <div key={n.id} className="rounded-md border border-border p-2.5">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="truncate text-sm font-medium text-foreground">{n.title}</p>
+                  <StatusBadge
+                    value={
+                      n.severity === "danger"
+                        ? "Critical"
+                        : n.severity === "warning"
+                          ? "High"
+                          : "Completed"
+                    }
                   />
                 </div>
-              </li>
+                <p className="mt-1 text-xs text-muted-foreground">{n.message}</p>
+              </div>
             ))}
-          </ul>
-        </SectionCard>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

@@ -1,9 +1,6 @@
-/**
- * Client-side query/mutation helpers around the WMS server functions.
- */
+﻿/** Client-side query/mutation helpers around the WMS server functions. */
 import { queryOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-
 import {
   fetchActivity,
   fetchBackorders,
@@ -18,37 +15,85 @@ import {
   fetchShipments,
   fetchWaves,
 } from "./wms.functions";
+import {
+  hasWmsBackend,
+  localDashboard,
+  localData,
+  localList,
+  localOrders,
+  localReference,
+} from "./wms-local";
 import type { ListParams } from "./wms-types";
 
 export const ALL = { pageSize: 200 } satisfies ListParams;
-
 export const ordersQuery = (p: ListParams = ALL) =>
-  queryOptions({ queryKey: ["orders", p], queryFn: () => fetchOrders({ data: p }) });
+  queryOptions({
+    queryKey: ["orders", p],
+    queryFn: () => (hasWmsBackend() ? fetchOrders({ data: p }) : localList(localOrders(), p)),
+  });
 export const inventoryQuery = (p: ListParams = ALL) =>
-  queryOptions({ queryKey: ["inventory", p], queryFn: () => fetchInventory({ data: p }) });
+  queryOptions({
+    queryKey: ["inventory", p],
+    queryFn: () =>
+      hasWmsBackend() ? fetchInventory({ data: p }) : localList(localData.inventory, p),
+  });
 export const wavesQuery = (p: ListParams = ALL) =>
-  queryOptions({ queryKey: ["waves", p], queryFn: () => fetchWaves({ data: p }) });
+  queryOptions({
+    queryKey: ["waves", p],
+    queryFn: () => (hasWmsBackend() ? fetchWaves({ data: p }) : localList(localData.waves, p)),
+  });
 export const pickLinesQuery = (p: ListParams = ALL) =>
-  queryOptions({ queryKey: ["pickLines", p], queryFn: () => fetchPickLines({ data: p }) });
+  queryOptions({
+    queryKey: ["pickLines", p],
+    queryFn: () =>
+      hasWmsBackend() ? fetchPickLines({ data: p }) : localList(localData.pickLines, p),
+  });
 export const packingQuery = (p: ListParams = ALL) =>
-  queryOptions({ queryKey: ["packing", p], queryFn: () => fetchPacking({ data: p }) });
+  queryOptions({
+    queryKey: ["packing", p],
+    queryFn: () =>
+      hasWmsBackend() ? fetchPacking({ data: p }) : localList(localData.packingRecords, p),
+  });
 export const shipmentsQuery = (p: ListParams = ALL) =>
-  queryOptions({ queryKey: ["shipments", p], queryFn: () => fetchShipments({ data: p }) });
+  queryOptions({
+    queryKey: ["shipments", p],
+    queryFn: () =>
+      hasWmsBackend() ? fetchShipments({ data: p }) : localList(localData.shipments, p),
+  });
 export const backordersQuery = (p: ListParams = ALL) =>
-  queryOptions({ queryKey: ["backorders", p], queryFn: () => fetchBackorders({ data: p }) });
-
+  queryOptions({
+    queryKey: ["backorders", p],
+    queryFn: () =>
+      hasWmsBackend() ? fetchBackorders({ data: p }) : localList(localData.backorders, p),
+  });
 export const referenceQuery = () =>
-  queryOptions({ queryKey: ["reference"], queryFn: () => fetchReference(), staleTime: 5 * 60_000 });
+  queryOptions({
+    queryKey: ["reference"],
+    queryFn: () => (hasWmsBackend() ? fetchReference() : Promise.resolve(localReference)),
+    staleTime: 5 * 60_000,
+  });
 export const dashboardQuery = () =>
-  queryOptions({ queryKey: ["dashboard"], queryFn: () => fetchDashboard() });
+  queryOptions({
+    queryKey: ["dashboard"],
+    queryFn: () => (hasWmsBackend() ? fetchDashboard() : Promise.resolve(localDashboard())),
+  });
 export const activityQuery = () =>
-  queryOptions({ queryKey: ["activity"], queryFn: () => fetchActivity() });
+  queryOptions({
+    queryKey: ["activity"],
+    queryFn: () => (hasWmsBackend() ? fetchActivity() : Promise.resolve(localData.activities)),
+  });
 export const notificationsQuery = () =>
-  queryOptions({ queryKey: ["notifications"], queryFn: () => fetchNotifications() });
+  queryOptions({
+    queryKey: ["notifications"],
+    queryFn: () =>
+      hasWmsBackend() ? fetchNotifications() : Promise.resolve(localData.notifications),
+  });
 export const settingsQuery = () =>
-  queryOptions({ queryKey: ["settings"], queryFn: () => fetchSettings() });
+  queryOptions({
+    queryKey: ["settings"],
+    queryFn: () => (hasWmsBackend() ? fetchSettings() : Promise.resolve([])),
+  });
 
-/** Keys refreshed after any workflow mutation — every step feeds the next one. */
 export const WORKFLOW_KEYS = [
   "orders",
   "inventory",
@@ -61,16 +106,10 @@ export const WORKFLOW_KEYS = [
   "activity",
   "notifications",
 ] as const;
-
 export function errorMessage(error: unknown): string {
   if (error instanceof Error && error.message) return error.message;
   return "Something went wrong. Please try again.";
 }
-
-/**
- * Wraps a server function in a mutation that refreshes the whole workflow
- * cache and reports success/failure through the existing toast UI.
- */
 export function useWmsMutation<TArgs, TResult>(
   fn: (args: TArgs) => Promise<TResult>,
   options: {

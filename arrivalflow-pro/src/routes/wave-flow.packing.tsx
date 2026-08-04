@@ -1,183 +1,389 @@
-﻿import { createFileRoute } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { CheckCircle2, FileText, Printer, Save } from "lucide-react";
 import { toast } from "sonner";
-import {
-  KpiCard,
-  PageHeader,
-  ProgressBar,
-  SectionCard,
-  StatusBadge,
-  Metric,
-  Timeline,
-} from "@/apps/wave-flow/components/wms/ui";
 import { Button } from "@/components/ui/button";
-import { Boxes, Printer, Scale, Camera, CheckCircle2 } from "lucide-react";
-import { packStations } from "@/apps/wave-flow/lib/wms-data";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { DataTable, type Column } from "@/apps/wave-flow/integrated/components/data-table";
+import { PageHeader } from "@/apps/wave-flow/integrated/components/page-header";
+import { StatCard } from "@/apps/wave-flow/integrated/components/stat-card";
+import { StatusBadge } from "@/apps/wave-flow/integrated/components/status-badge";
+import { useRole } from "@/apps/wave-flow/integrated/context/role-context";
+import {
+  ordersQuery,
+  packingQuery,
+  wavesQuery,
+  useWmsMutation,
+  errorMessage,
+} from "@/apps/wave-flow/integrated/lib/wms-queries";
+import { savePackingFn, deletePackingFn } from "@/apps/wave-flow/integrated/lib/wms.functions";
+import {
+  PACKAGE_TYPES,
+  packingInput,
+  type PackingRecord,
+} from "@/apps/wave-flow/integrated/lib/wms-types";
 
 export const Route = createFileRoute("/wave-flow/packing")({
   head: () => ({
     meta: [
-      { title: "Packing Management â€” NexusWMS" },
+      { title: "Packing Station | NEXUS WMS" },
       {
         name: "description",
         content:
-          "Packing queue, station checklists, carton weight and dimension capture and shipping label printing.",
+          "BR-153 packing station: package type, carton, weight, dimensions, materials and label numbers.",
       },
-      { property: "og:title", content: "Packing Management â€” NexusWMS" },
+      { property: "og:title", content: "Packing Station | NEXUS WMS" },
       {
         property: "og:description",
-        content:
-          "Packing queue, station checklists, carton weight and dimension capture and shipping label printing.",
+        content: "Pack picked orders, record package details and print carton labels.",
       },
     ],
   }),
-  component: Page,
+  component: PackingPage,
 });
 
-function Page() {
+const emptyForm = {
+  order: "",
+  wave: "",
+  packageType: "Carton" as (typeof PACKAGE_TYPES)[number],
+  carton: "",
+  weightKg: "",
+  dimensions: "",
+  material: "",
+  labelNumber: `LBL-${Math.floor(90000 + Math.random() * 9000)}`,
+  station: "",
+  operator: "",
+};
+
+function PackingPage() {
+  const { can } = useRole();
+  const { data: packingResult } = useQuery(packingQuery());
+  const { data: ordersResult } = useQuery(ordersQuery());
+  const { data: wavesResult } = useQuery(wavesQuery());
+  const rows: PackingRecord[] = packingResult?.rows ?? [];
+  const orders = ordersResult?.rows ?? [];
+  const waves = wavesResult?.rows ?? [];
+
+  const [form, setForm] = useState(emptyForm);
+
+  const saveFn = useServerFn(savePackingFn);
+  const saveMutation = useWmsMutation(
+    (args: Record<string, unknown>) => saveFn({ data: args as never }),
+    {
+      success: () => ({ title: "Package saved" }),
+    },
+  );
+
+  const completeMutation = useWmsMutation(
+    (args: Record<string, unknown>) => saveFn({ data: args as never }),
+    {
+      success: (_r, args) => ({
+        title: "Packing completed",
+        description: `${args["order"]} ready for staging.`,
+      }),
+    },
+  );
+
+  const set = (k: keyof typeof emptyForm, v: string) => setForm((s) => ({ ...s, [k]: v }));
+
+  const submitNewPackage = () => {
+    const parsed = packingInput.safeParse({
+      order: form.order,
+      wave: form.wave || undefined,
+      packageType: form.packageType,
+      carton: form.carton,
+      weightKg: Number(form.weightKg || 0),
+      dimensions: form.dimensions,
+      material: form.material,
+      labelNumber: form.labelNumber,
+      station: form.station,
+      operator: form.operator,
+      status: "Pending",
+    });
+    if (!parsed.success) {
+      toast.error("Invalid package details", { description: parsed.error.issues[0]?.message });
+      return;
+    }
+    saveMutation.mutate(parsed.data, {
+      onSuccess: () =>
+        setForm({ ...emptyForm, labelNumber: `LBL-${Math.floor(90000 + Math.random() * 9000)}` }),
+    });
+  };
+
+  const columns: Column<PackingRecord>[] = [
+    {
+      key: "id",
+      header: "Packing ID",
+      value: (r) => r.id,
+      render: (r) => <span className="font-medium text-primary">{r.id}</span>,
+    },
+    { key: "order", header: "Sales Order", value: (r) => r.order },
+    { key: "wave", header: "Wave", value: (r) => r.wave },
+    { key: "packageType", header: "Package Type", value: (r) => r.packageType },
+    { key: "carton", header: "Carton", value: (r) => r.carton },
+    {
+      key: "weightKg",
+      header: "Weight (kg)",
+      value: (r) => r.weightKg,
+      className: "num text-right",
+    },
+    { key: "dimensions", header: "Dimensions", value: (r) => r.dimensions },
+    { key: "material", header: "Packing Materials", value: (r) => r.material },
+    { key: "labelNumber", header: "Label Number", value: (r) => r.labelNumber },
+    { key: "station", header: "Station", value: (r) => r.station },
+    {
+      key: "status",
+      header: "Status",
+      value: (r) => r.status,
+      render: (r) => <StatusBadge value={r.status} />,
+    },
+    {
+      key: "actions",
+      header: "Actions",
+      sortable: false,
+      render: (r) => (
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={r.status === "Completed" || !can("pack.execute") || completeMutation.isPending}
+          onClick={() =>
+            completeMutation.mutate({
+              id: r.id,
+              order: r.order,
+              wave: r.wave || undefined,
+              packageType: r.packageType,
+              carton: r.carton,
+              weightKg: r.weightKg,
+              dimensions: r.dimensions,
+              material: r.material,
+              labelNumber: r.labelNumber,
+              station: r.station,
+              operator: r.operator,
+              status: "Completed",
+            })
+          }
+        >
+          <CheckCircle2 className="h-4 w-4" />
+          Complete
+        </Button>
+      ),
+    },
+  ];
+
   return (
-    <div className="space-y-4">
+    <div>
       <PageHeader
-        title="Packing Management"
-        description="3 stations Â· 37 orders in queue Â· avg 6m 12s per carton"
-        breadcrumb={["Outbound", "Packing"]}
+        title="Packing Station"
+        description="BR-153 · Packing cannot begin until picking is completed for the order."
+        breadcrumbs={[{ label: "Warehouse Execution" }, { label: "Packing" }]}
         actions={
-          <Button onClick={() => toast.success("Shipping labels sent to printer LP-02")}>
-            <Printer className="size-4" /> Print labels
-          </Button>
+          <>
+            <Button
+              variant="outline"
+              disabled={!can("label.print")}
+              onClick={() => toast.success("Packing list generated")}
+            >
+              <FileText className="h-4 w-4" />
+              Generate Packing List
+            </Button>
+            <Button
+              disabled={!can("label.print")}
+              onClick={() =>
+                toast.success("Labels sent to printer", {
+                  description: "TODO: Label printing service.",
+                })
+              }
+            >
+              <Printer className="h-4 w-4" />
+              Print Labels
+            </Button>
+          </>
         }
       />
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <KpiCard
-          label="Packing queue"
-          value={37}
-          sub="12 cartons open"
-          icon={<Boxes className="size-4" />}
-        />
-        <KpiCard
-          label="Packed today"
-          value={128}
-          sub="Target 150"
+
+      <div className="mb-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard label="Packages" value={rows.length} tone="primary" />
+        <StatCard
+          label="Completed"
+          value={rows.filter((r) => r.status === "Completed").length}
           tone="success"
-          delta="+14%"
-          icon={<CheckCircle2 className="size-4" />}
         />
-        <KpiCard
-          label="Avg carton weight"
-          value="21.4 kg"
-          sub="Across 3 stations"
-          tone="secondary"
-          icon={<Scale className="size-4" />}
-        />
-        <KpiCard
-          label="Photos captured"
-          value={64}
-          sub="Damage evidence"
+        <StatCard
+          label="In Progress"
+          value={rows.filter((r) => r.status === "In Progress").length}
           tone="warning"
-          icon={<Camera className="size-4" />}
+        />
+        <StatCard
+          label="Total Weight"
+          value={`${rows.reduce((s, r) => s + r.weightKg, 0).toFixed(1)} kg`}
         />
       </div>
-      <div className="grid gap-4 lg:grid-cols-3">
-        {packStations.map((s) => (
-          <SectionCard
-            key={s.id}
-            title={s.id}
-            description={s.packer}
-            actions={<StatusBadge status={s.status} />}
-          >
-            {s.order === "â€”" ? (
-              <p className="py-8 text-center text-sm text-muted-foreground">
-                Station idle â€” waiting for picked orders.
-              </p>
-            ) : (
-              <div className="space-y-3">
-                <div className="grid grid-cols-2 gap-3">
-                  <Metric label="Order" value={s.order} />
-                  <Metric label="Cartons" value={s.cartons} />
-                  <Metric label="Weight" value={`${s.weightKg} kg`} />
-                  <Metric label="Dimensions" value={s.dims} />
-                </div>
-                <ProgressBar value={s.progress} tone={s.progress === 100 ? "success" : "warning"} />
-                <ul className="space-y-1.5">
-                  {s.checklist.map((c) => (
-                    <li key={c.label} className="flex items-start gap-2 text-xs">
-                      <span
-                        className={`mt-0.5 grid size-4 shrink-0 place-items-center rounded-full border ${c.done ? "border-success bg-success text-success-foreground" : "border-border"}`}
-                      >
-                        {c.done ? "âœ“" : ""}
-                      </span>
-                      <span className={c.done ? "" : "text-muted-foreground"}>{c.label}</span>
-                    </li>
+
+      <div className="mb-4 grid gap-4 lg:grid-cols-3">
+        <Card className="border-border shadow-[var(--shadow-card)] lg:col-span-2">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">New Package</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-4 sm:grid-cols-3">
+            <Field label="Sales Order">
+              <Select value={form.order} onValueChange={(v) => set("order", v)}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select order" />
+                </SelectTrigger>
+                <SelectContent>
+                  {orders.map((o) => (
+                    <SelectItem key={o.id} value={o.id}>
+                      {o.id}
+                    </SelectItem>
                   ))}
-                </ul>
-                <div className="grid grid-cols-2 gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => toast.success("Packing photo captured")}
-                  >
-                    <Camera className="size-4" /> Photo
-                  </Button>
-                  <Button
-                    size="sm"
-                    onClick={() => toast.success(`${s.order} packed Â· label printed`)}
-                  >
-                    Complete
-                  </Button>
-                </div>
-              </div>
-            )}
-          </SectionCard>
-        ))}
-      </div>
-      <SectionCard title="Label management" description="Shipping, barcode, QR and pallet labels">
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          {[
-            { t: "Shipping label", d: "4x6 thermal Â· DHL Freight", s: "Printed" },
-            { t: "Barcode label", d: "Code-128 Â· carton ID", s: "Printed" },
-            { t: "QR label", d: "Track & trace deep link", s: "Queued" },
-            { t: "Pallet label", d: "SSCC-18 Â· GS1 compliant", s: "Queued" },
-          ].map((l) => (
-            <div key={l.t} className="glass-panel rounded-xl p-3">
-              <div className="flex items-center justify-between gap-2">
-                <p className="text-sm font-medium">{l.t}</p>
-                <StatusBadge status={l.s === "Printed" ? "Completed" : "Queued"} />
-              </div>
-              <p className="mt-1 text-xs text-muted-foreground">{l.d}</p>
-              <div className="mt-3 rounded-lg border border-dashed border-border p-3">
-                <div className="flex h-10 items-end gap-[2px]">
-                  {Array.from({ length: 34 }).map((_, i) => (
-                    <span
-                      key={i}
-                      className="flex-1 bg-foreground"
-                      style={{ height: `${40 + ((i * 37) % 60)}%` }}
-                    />
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Wave">
+              <Select value={form.wave} onValueChange={(v) => set("wave", v)}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select wave" />
+                </SelectTrigger>
+                <SelectContent>
+                  {waves.map((w) => (
+                    <SelectItem key={w.id} value={w.id}>
+                      {w.id}
+                    </SelectItem>
                   ))}
-                </div>
-                <p className="num mt-1 text-center text-[10px] text-muted-foreground">
-                  8712345678904
-                </p>
-              </div>
-              <div className="mt-2 flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex-1"
-                  onClick={() => toast.success(`${l.t} preview opened`)}
-                >
-                  Preview
-                </Button>
-                <Button
-                  size="sm"
-                  className="flex-1"
-                  onClick={() => toast.success(`${l.t} reprinted`)}
-                >
-                  Reprint
-                </Button>
-              </div>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Package Type">
+              <Select value={form.packageType} onValueChange={(v) => set("packageType", v)}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {PACKAGE_TYPES.map((t) => (
+                    <SelectItem key={t} value={t}>
+                      {t}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Carton Code">
+              <Input
+                placeholder="CTN-60x40x40"
+                value={form.carton}
+                onChange={(e) => set("carton", e.target.value)}
+              />
+            </Field>
+            <Field label="Weight (kg)">
+              <Input
+                type="number"
+                placeholder="18.4"
+                value={form.weightKg}
+                onChange={(e) => set("weightKg", e.target.value)}
+              />
+            </Field>
+            <Field label="Dimensions (cm)">
+              <Input
+                placeholder="60 x 40 x 40"
+                value={form.dimensions}
+                onChange={(e) => set("dimensions", e.target.value)}
+              />
+            </Field>
+            <Field label="Packing Materials">
+              <Input
+                placeholder="Double-wall + bubble wrap"
+                value={form.material}
+                onChange={(e) => set("material", e.target.value)}
+              />
+            </Field>
+            <Field label="Station">
+              <Input
+                placeholder="PACK-01"
+                value={form.station}
+                onChange={(e) => set("station", e.target.value)}
+              />
+            </Field>
+            <Field label="Label Number">
+              <Input value={form.labelNumber} readOnly />
+            </Field>
+            <div className="sm:col-span-3 flex justify-end">
+              <Button
+                disabled={!can("pack.execute") || saveMutation.isPending}
+                onClick={submitNewPackage}
+              >
+                <Save className="h-4 w-4" />
+                Save Package
+              </Button>
             </div>
-          ))}
-        </div>
-      </SectionCard>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border shadow-[var(--shadow-card)]">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Package Summary</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm">
+            {PACKAGE_TYPES.map((t) => (
+              <div
+                key={t}
+                className="flex items-center justify-between rounded-md border border-border px-3 py-2"
+              >
+                <span className="text-muted-foreground">{t}</span>
+                <span className="num font-medium">
+                  {rows.filter((r) => r.packageType === t).length}
+                </span>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+
+      <DataTable
+        data={rows}
+        columns={columns}
+        searchKeys={(r) => `${r.id} ${r.order} ${r.wave} ${r.labelNumber} ${r.operator}`}
+        onExport={() => toast.success("Packing report queued")}
+        filters={[
+          {
+            key: "status",
+            label: "Status",
+            options: ["Pending", "In Progress", "Completed"],
+            match: (r, v) => r.status === v,
+          },
+          {
+            key: "packageType",
+            label: "Package Type",
+            options: [...PACKAGE_TYPES],
+            match: (r, v) => r.packageType === v,
+          },
+          {
+            key: "station",
+            label: "Station",
+            options: [...new Set(rows.map((r) => r.station).filter(Boolean))],
+            match: (r, v) => r.station === v,
+          },
+        ]}
+      />
+    </div>
+  );
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="min-w-0">
+      <Label className="mb-1.5 block text-xs text-muted-foreground">{label}</Label>
+      {children}
     </div>
   );
 }

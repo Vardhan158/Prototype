@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -59,6 +59,13 @@ import {
   referenceQuery,
   useWmsMutation,
 } from "@/apps/wave-flow/integrated/lib/wms-queries";
+import {
+  createLocalOrder,
+  deleteLocalOrder,
+  hasWmsBackend,
+  transitionLocalOrder,
+  updateLocalOrder,
+} from "@/apps/wave-flow/integrated/lib/wms-local";
 import {
   PRIORITIES,
   salesOrderInput,
@@ -190,7 +197,8 @@ function SalesOrdersPage() {
   const reserveFn = useServerFn(reserveOrderFn);
 
   const createMutation = useWmsMutation(
-    (args: Record<string, unknown>) => createFn({ data: args as any }),
+    (args: Record<string, unknown>) =>
+      hasWmsBackend() ? createFn({ data: args as any }) : createLocalOrder(args as any),
     {
       success: () => ({
         title: "Sales order created",
@@ -199,24 +207,45 @@ function SalesOrdersPage() {
     },
   );
   const updateMutation = useWmsMutation(
-    (args: { id: string; data: Record<string, unknown> }) => updateFn({ data: args as any }),
+    (args: { id: string; data: Record<string, unknown> }) =>
+      hasWmsBackend()
+        ? updateFn({ data: args as any })
+        : updateLocalOrder(args.id, args.data as any),
     { success: (_r, args) => ({ title: `${args.id} updated` }) },
   );
-  const deleteMutation = useWmsMutation((args: { id: string }) => deleteFn({ data: args }), {
-    success: (_r, args) => ({ title: `${args.id} deleted` }),
-  });
-  const validateMutation = useWmsMutation((args: { id: string }) => validateFn({ data: args }), {
-    success: (result: { reason?: string; validation?: string }, args) => ({
-      title: `${args.id} validation ${result?.validation ?? "checked"}`,
-      ...(result?.reason ? { description: result.reason } : {}),
-    }),
-  });
-  const allocateMutation = useWmsMutation((args: { id: string }) => allocateFn({ data: args }), {
-    success: (_r, args) => ({ title: `${args.id} allocated` }),
-  });
-  const reserveMutation = useWmsMutation((args: { id: string }) => reserveFn({ data: args }), {
-    success: (_r, args) => ({ title: `${args.id} reserved` }),
-  });
+  const deleteMutation = useWmsMutation(
+    (args: { id: string }) =>
+      hasWmsBackend() ? deleteFn({ data: args }) : deleteLocalOrder(args.id),
+    {
+      success: (_r, args) => ({ title: `${args.id} deleted` }),
+    },
+  );
+  const validateMutation = useWmsMutation(
+    (args: { id: string }) =>
+      hasWmsBackend()
+        ? validateFn({ data: args })
+        : transitionLocalOrder(args.id, "Validated", "Passed"),
+    {
+      success: (result: { reason?: string; validation?: string }, args) => ({
+        title: `${args.id} validation ${result?.validation ?? "checked"}`,
+        ...(result?.reason ? { description: result.reason } : {}),
+      }),
+    },
+  );
+  const allocateMutation = useWmsMutation(
+    (args: { id: string }) =>
+      hasWmsBackend() ? allocateFn({ data: args }) : transitionLocalOrder(args.id, "Allocated"),
+    {
+      success: (_r, args) => ({ title: `${args.id} allocated` }),
+    },
+  );
+  const reserveMutation = useWmsMutation(
+    (args: { id: string }) =>
+      hasWmsBackend() ? reserveFn({ data: args }) : transitionLocalOrder(args.id, "Reserved"),
+    {
+      success: (_r, args) => ({ title: `${args.id} reserved` }),
+    },
+  );
 
   useEffect(() => {
     if (editing) setForm(toForm(editing));
@@ -397,7 +426,7 @@ function SalesOrdersPage() {
     <div>
       <PageHeader
         title="Sales Orders"
-        description="BR-148 · Customer order integration and outbound order lifecycle."
+        description="BR-148 Â· Customer order integration and outbound order lifecycle."
         breadcrumbs={[{ label: "Order Management" }, { label: "Sales Orders" }]}
         actions={
           <Button onClick={openCreate} disabled={!can("order.create")}>
@@ -608,7 +637,8 @@ function SalesOrdersPage() {
               {selected && <StatusBadge value={selected.status} />}
             </DialogTitle>
             <DialogDescription>
-              {selected?.customer} · {selected?.warehouse} · {selected?.carrier} · {selected?.route}
+              {selected?.customer} Â· {selected?.warehouse} Â· {selected?.carrier} Â·{" "}
+              {selected?.route}
             </DialogDescription>
           </DialogHeader>
           <div className="overflow-x-auto rounded-md border border-border">
