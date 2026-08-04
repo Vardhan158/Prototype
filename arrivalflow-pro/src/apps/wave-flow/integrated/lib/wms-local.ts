@@ -24,10 +24,30 @@
 import type { ListParams, SalesOrder, SalesOrderInput } from "./wms-types";
 
 const ORDERS_KEY = "wave-flow.sales-orders";
+const WAVES_KEY = "wave-flow.waves";
 export function hasWmsBackend() {
   return Boolean(
     import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
   );
+}
+export function localWaves() {
+  if (typeof window === "undefined") return waves;
+  try {
+    const saved = window.localStorage.getItem(WAVES_KEY);
+    return saved ? (JSON.parse(saved) as typeof waves) : waves;
+  } catch {
+    return waves;
+  }
+}
+function saveWaves(rows: typeof waves) {
+  if (typeof window !== "undefined") window.localStorage.setItem(WAVES_KEY, JSON.stringify(rows));
+}
+export async function updateLocalWave(id: string, patch: Partial<(typeof waves)[number]>) {
+  const current = localWaves().find((wave) => wave.id === id);
+  if (!current) throw new Error(`Wave ${id} was not found.`);
+  const updated = { ...current, ...patch } as (typeof waves)[number];
+  saveWaves(localWaves().map((wave) => (wave.id === id ? updated : wave)) as typeof waves);
+  return updated;
 }
 export function localOrders(): SalesOrder[] {
   if (typeof window === "undefined") return salesOrders;
@@ -109,6 +129,7 @@ export const localData = {
 };
 export function localDashboard() {
   const orderRows = localOrders();
+  const waveRows = localWaves();
   const count = <T>(rows: T[], match: (row: T) => boolean) => rows.filter(match).length;
   const status = new Map<string, number>(),
     carrier = new Map<string, number>();
@@ -119,8 +140,8 @@ export function localDashboard() {
   return {
     totalOrders: orderRows.length,
     ordersToday: 0,
-    openWaves: count(waves, (row) => row.status === "Planned" || row.status === "Draft"),
-    releasedWaves: count(waves, (row) => row.status === "Released" || row.status === "Picking"),
+    openWaves: count(waveRows, (row) => row.status === "Planned" || row.status === "Draft"),
+    releasedWaves: count(waveRows, (row) => row.status === "Released" || row.status === "Picking"),
     pickLinesPending: count(
       pickLines,
       (row) => row.status === "Pending" || row.status === "In Progress",

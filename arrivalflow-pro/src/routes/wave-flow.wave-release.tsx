@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
@@ -21,6 +21,7 @@ import {
   confirmWaveReservationFn,
   releaseWaveFn,
 } from "@/apps/wave-flow/integrated/lib/wms.functions";
+import { hasWmsBackend, updateLocalWave } from "@/apps/wave-flow/integrated/lib/wms-local";
 import type { Wave } from "@/apps/wave-flow/integrated/lib/wms-types";
 
 export const Route = createFileRoute("/wave-flow/wave-release")({
@@ -57,7 +58,10 @@ function WaveReleasePage() {
   const confirmReservationServerFn = useServerFn(confirmWaveReservationFn);
 
   const releaseMutation = useWmsMutation(
-    (args: { id: string }) => releaseServerFn({ data: args }),
+    (args: { id: string }) =>
+      hasWmsBackend()
+        ? releaseServerFn({ data: args })
+        : updateLocalWave(args.id, { status: "Released" }),
     {
       success: (_r, args) => ({
         title: `${args.id} released`,
@@ -66,7 +70,9 @@ function WaveReleasePage() {
     },
   );
   const confirmReservationMutation = useWmsMutation((args: { id: string }) =>
-    confirmReservationServerFn({ data: args }),
+    hasWmsBackend()
+      ? confirmReservationServerFn({ data: args })
+      : updateLocalWave(args.id, { reservationConfirmed: true }),
   );
 
   const release = (w: Wave) => {
@@ -86,7 +92,9 @@ function WaveReleasePage() {
     }
     setRechecking(true);
     try {
-      await Promise.all(candidates.map((w) => confirmReservationServerFn({ data: { id: w.id } })));
+      await Promise.all(
+        candidates.map((w) => confirmReservationMutation.mutateAsync({ id: w.id })),
+      );
       toast.success("Reservation re-check complete", {
         description: `${candidates.length} wave(s) checked.`,
       });
@@ -153,7 +161,7 @@ function WaveReleasePage() {
     <div>
       <PageHeader
         title="Wave Release"
-        description="Validation rule · A wave cannot be released without confirmed inventory reservation."
+        description="Validation rule Â· A wave cannot be released without confirmed inventory reservation."
         breadcrumbs={[{ label: "Wave Management" }, { label: "Wave Release" }]}
         actions={
           <Button

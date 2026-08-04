@@ -21,6 +21,7 @@ import {
   localData,
   localList,
   localOrders,
+  localWaves,
   localReference,
 } from "./wms-local";
 import type { ListParams } from "./wms-types";
@@ -40,7 +41,7 @@ export const inventoryQuery = (p: ListParams = ALL) =>
 export const wavesQuery = (p: ListParams = ALL) =>
   queryOptions({
     queryKey: ["waves", p],
-    queryFn: () => (hasWmsBackend() ? fetchWaves({ data: p }) : localList(localData.waves, p)),
+    queryFn: () => (hasWmsBackend() ? fetchWaves({ data: p }) : localList(localWaves(), p)),
   });
 export const pickLinesQuery = (p: ListParams = ALL) =>
   queryOptions({
