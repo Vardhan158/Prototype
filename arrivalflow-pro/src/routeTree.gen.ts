@@ -114,7 +114,6 @@ import { Route as StorageGuardianAlertsRouteImport } from './routes/storage-guar
 import { Route as StorageGuardianAuditRouteImport } from './routes/storage-guardian.audit'
 import { Route as StorageGuardianLocationsRouteImport } from './routes/storage-guardian.locations'
 import { Route as StorageGuardianOverflowRouteImport } from './routes/storage-guardian.overflow'
-import { Route as StorageGuardianPutawayRouteImport } from './routes/storage-guardian.putaway'
 import { Route as StorageGuardianReceivingRouteImport } from './routes/storage-guardian.receiving'
 import { Route as StorageGuardianReportsRouteImport } from './routes/storage-guardian.reports'
 import { Route as SupplierFlowIndexRouteImport } from './routes/supplier-flow.index'
@@ -758,11 +757,6 @@ const StorageGuardianOverflowRoute = StorageGuardianOverflowRouteImport.update({
   path: '/overflow',
   getParentRoute: () => StorageGuardianRoute,
 } as any)
-const StorageGuardianPutawayRoute = StorageGuardianPutawayRouteImport.update({
-  id: '/putaway',
-  path: '/putaway',
-  getParentRoute: () => StorageGuardianRoute,
-} as any)
 const StorageGuardianReceivingRoute =
   StorageGuardianReceivingRouteImport.update({
     id: '/receiving',
@@ -1387,7 +1381,6 @@ export interface FileRoutesByFullPath {
   '/storage-guardian/audit': typeof StorageGuardianAuditRoute
   '/storage-guardian/locations': typeof StorageGuardianLocationsRoute
   '/storage-guardian/overflow': typeof StorageGuardianOverflowRoute
-  '/storage-guardian/putaway': typeof StorageGuardianPutawayRoute
   '/storage-guardian/receiving': typeof StorageGuardianReceivingRoute
   '/storage-guardian/reports': typeof StorageGuardianReportsRoute
   '/supplier-flow/reports': typeof SupplierFlowReportsRoute
@@ -1580,7 +1573,6 @@ export interface FileRoutesByTo {
   '/storage-guardian/audit': typeof StorageGuardianAuditRoute
   '/storage-guardian/locations': typeof StorageGuardianLocationsRoute
   '/storage-guardian/overflow': typeof StorageGuardianOverflowRoute
-  '/storage-guardian/putaway': typeof StorageGuardianPutawayRoute
   '/storage-guardian/receiving': typeof StorageGuardianReceivingRoute
   '/storage-guardian/reports': typeof StorageGuardianReportsRoute
   '/supplier-flow/reports': typeof SupplierFlowReportsRoute
@@ -1785,7 +1777,6 @@ export interface FileRoutesById {
   '/storage-guardian/audit': typeof StorageGuardianAuditRoute
   '/storage-guardian/locations': typeof StorageGuardianLocationsRoute
   '/storage-guardian/overflow': typeof StorageGuardianOverflowRoute
-  '/storage-guardian/putaway': typeof StorageGuardianPutawayRoute
   '/storage-guardian/receiving': typeof StorageGuardianReceivingRoute
   '/storage-guardian/reports': typeof StorageGuardianReportsRoute
   '/supplier-flow/reports': typeof SupplierFlowReportsRoute
@@ -1992,7 +1983,6 @@ export interface FileRouteTypes {
     | '/storage-guardian/audit'
     | '/storage-guardian/locations'
     | '/storage-guardian/overflow'
-    | '/storage-guardian/putaway'
     | '/storage-guardian/receiving'
     | '/storage-guardian/reports'
     | '/supplier-flow/reports'
@@ -2185,7 +2175,6 @@ export interface FileRouteTypes {
     | '/storage-guardian/audit'
     | '/storage-guardian/locations'
     | '/storage-guardian/overflow'
-    | '/storage-guardian/putaway'
     | '/storage-guardian/receiving'
     | '/storage-guardian/reports'
     | '/supplier-flow/reports'
@@ -2389,7 +2378,6 @@ export interface FileRouteTypes {
     | '/storage-guardian/audit'
     | '/storage-guardian/locations'
     | '/storage-guardian/overflow'
-    | '/storage-guardian/putaway'
     | '/storage-guardian/receiving'
     | '/storage-guardian/reports'
     | '/supplier-flow/reports'
@@ -3267,13 +3255,6 @@ declare module '@tanstack/react-router' {
       path: '/overflow'
       fullPath: '/storage-guardian/overflow'
       preLoaderRoute: typeof StorageGuardianOverflowRouteImport
-      parentRoute: typeof StorageGuardianRoute
-    }
-    '/storage-guardian/putaway': {
-      id: '/storage-guardian/putaway'
-      path: '/putaway'
-      fullPath: '/storage-guardian/putaway'
-      preLoaderRoute: typeof StorageGuardianPutawayRouteImport
       parentRoute: typeof StorageGuardianRoute
     }
     '/storage-guardian/receiving': {
@@ -4231,7 +4212,6 @@ interface StorageGuardianRouteChildren {
   StorageGuardianAuditRoute: typeof StorageGuardianAuditRoute
   StorageGuardianLocationsRoute: typeof StorageGuardianLocationsRoute
   StorageGuardianOverflowRoute: typeof StorageGuardianOverflowRoute
-  StorageGuardianPutawayRoute: typeof StorageGuardianPutawayRoute
   StorageGuardianReceivingRoute: typeof StorageGuardianReceivingRoute
   StorageGuardianReportsRoute: typeof StorageGuardianReportsRoute
   StorageGuardianIndexRoute: typeof StorageGuardianIndexRoute
@@ -4242,7 +4222,6 @@ const StorageGuardianRouteChildren: StorageGuardianRouteChildren = {
   StorageGuardianAuditRoute: StorageGuardianAuditRoute,
   StorageGuardianLocationsRoute: StorageGuardianLocationsRoute,
   StorageGuardianOverflowRoute: StorageGuardianOverflowRoute,
-  StorageGuardianPutawayRoute: StorageGuardianPutawayRoute,
   StorageGuardianReceivingRoute: StorageGuardianReceivingRoute,
   StorageGuardianReportsRoute: StorageGuardianReportsRoute,
   StorageGuardianIndexRoute: StorageGuardianIndexRoute,

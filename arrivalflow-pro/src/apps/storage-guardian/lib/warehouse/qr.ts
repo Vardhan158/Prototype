@@ -32,7 +32,10 @@ export function buildProductQrValue(item: {
   ];
 
   if (item.code) parts.push(`CODE:${item.code}`);
-  if (item.locationId) parts.push(`LOCATION:${item.locationId}`);
+  if (item.locationId) {
+    const rack = item.locationId.split("-")[1] ?? item.locationId;
+    parts.push(`LOCATION:${item.locationId}`, `RACK:${rack}`);
+  }
   return parts.join(" | ");
 }
 

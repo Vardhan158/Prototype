@@ -53,17 +53,7 @@ export type ItemCategory =
   | "Scrap/Damaged Items";
 
 export type StageId =
-  | "delivery"
-  | "receiving"
-  | "inspection"
-  | "qr"
-  | "rules"
-  | "capacity"
-  | "task"
-  | "scan"
-  | "inventory"
-  | "audit"
-  | "completed";
+  "receiving" | "inspection" | "qr" | "rules" | "capacity" | "task" | "completed";
 
 export type ItemStatus = "In Pipeline" | "Stored" | "Overflow" | "Quarantine" | "Rejected";
 

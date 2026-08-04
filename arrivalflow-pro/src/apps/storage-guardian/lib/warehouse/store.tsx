@@ -51,7 +51,11 @@ interface WarehouseState {
   generateCode: (itemId: string) => string;
   runValidation: (itemId: string) => void;
   runCapacity: (itemId: string) => AllocationResult;
-  confirmPutAway: (taskId: string, itemScan: string, locationScan: string) => { ok: boolean; message: string };
+  confirmPutAway: (
+    taskId: string,
+    itemScan: string,
+    locationScan: string,
+  ) => { ok: boolean; message: string };
   resolveAlert: (id: string) => void;
   reassignTask: (taskId: string, assignee: string) => void;
   log: (action: string, entity: string, before: string, after: string, actor?: string) => void;
@@ -136,7 +140,12 @@ export function WarehouseProvider({ children }: { children: ReactNode }) {
         createdAt: now(),
       };
       setItems((prev) => [item, ...prev]);
-      log("Document Management & OCR", id, `${input.asn} expected ${input.expectedQty}`, `Received ${input.receivedQty}`);
+      log(
+        "Document Management & OCR",
+        id,
+        `${input.asn} expected ${input.expectedQty}`,
+        `Received ${input.receivedQty}`,
+      );
       if (variance !== 0) {
         raise(
           "warning",
@@ -162,7 +171,12 @@ export function WarehouseProvider({ children }: { children: ReactNode }) {
         status: result === "Pass" ? "In Pipeline" : "Quarantine",
         locationId: result === "Fail" ? "RETURN-R1-S1" : item.locationId,
       });
-      log("Quality Inspection", itemId, "Awaiting inspection", `${result} — ${notes || "no notes"}`);
+      log(
+        "Quality Inspection",
+        itemId,
+        "Awaiting inspection",
+        `${result} — ${notes || "no notes"}`,
+      );
       if (result === "Fail") {
         raise(
           "critical",
@@ -186,7 +200,13 @@ export function WarehouseProvider({ children }: { children: ReactNode }) {
       let code = `DC-${itemId.replace("ITM-", "")}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
       if (existing.includes(code)) {
         code = `${code}-R`;
-        raise("info", "Duplicate QR", `Duplicate code detected for ${itemId}.`, "A new unique code was generated automatically.", itemId);
+        raise(
+          "info",
+          "Duplicate QR",
+          `Duplicate code detected for ${itemId}.`,
+          "A new unique code was generated automatically.",
+          itemId,
+        );
       }
       patchItem(itemId, { code: payload, stage: "rules" });
       log("QR / Barcode Generation", itemId, "no code", payload);
@@ -253,8 +273,19 @@ export function WarehouseProvider({ children }: { children: ReactNode }) {
         createdAt: now(),
       };
       setTasks((prev) => [task, ...prev]);
-      patchItem(itemId, { stage: "task", status: result.overflow ? "Overflow" : "In Pipeline" });
-      log("Put-Away Task Creation", itemId, "unassigned", `${task.id} → ${task.locationCode} (${task.assignee})`);
+      patchItem(itemId, {
+        stage: "task",
+        status: result.overflow ? "Overflow" : "In Pipeline",
+        code: item.code
+          ? buildProductQrValue({ ...item, locationId: result.locationCode })
+          : item.code,
+      });
+      log(
+        "Put-Away Task Creation",
+        itemId,
+        "unassigned",
+        `${task.id} → ${task.locationCode} (${task.assignee})`,
+      );
       if (result.overflow) {
         raise(
           "warning",
@@ -278,15 +309,33 @@ export function WarehouseProvider({ children }: { children: ReactNode }) {
       const loc = locations.find((l) => l.code === task.locationCode);
 
       if (itemScan.trim().toUpperCase() !== item.code.toUpperCase()) {
-        raise("warning", "Wrong QR Scan", `Scanned code ${itemScan} does not match ${item.code}.`, "Re-scan the item label or reprint the QR code.", item.id);
+        raise(
+          "warning",
+          "Wrong QR Scan",
+          `Scanned code ${itemScan} does not match ${item.code}.`,
+          "Re-scan the item label or reprint the QR code.",
+          item.id,
+        );
         return { ok: false, message: `Item QR mismatch — expected ${item.code}.` };
       }
       if (locationScan.trim().toUpperCase() !== task.locationCode.toUpperCase()) {
-        raise("warning", "Wrong Location Scan", `Scanned location ${locationScan} does not match task ${task.id}.`, `Move to ${task.locationCode} and re-scan the location label.`, item.id);
+        raise(
+          "warning",
+          "Wrong Location Scan",
+          `Scanned location ${locationScan} does not match task ${task.id}.`,
+          `Move to ${task.locationCode} and re-scan the location label.`,
+          item.id,
+        );
         return { ok: false, message: `Location mismatch — expected ${task.locationCode}.` };
       }
       if (loc && loc.used + item.qty > loc.capacity) {
-        raise("critical", "Capacity Exceeded", `${loc.code} cannot hold ${item.qty} more units.`, "Re-run the capacity check to obtain a new location.", item.id);
+        raise(
+          "critical",
+          "Capacity Exceeded",
+          `${loc.code} cannot hold ${item.qty} more units.`,
+          "Re-run the capacity check to obtain a new location.",
+          item.id,
+        );
         return { ok: false, message: "Capacity exceeded at scanned location." };
       }
 
@@ -307,8 +356,19 @@ export function WarehouseProvider({ children }: { children: ReactNode }) {
         status: item.status === "Overflow" ? "Overflow" : "Stored",
         locationId: task.locationCode,
       });
-      log("Scan & Confirm Put-Away", item.id, `Task ${task.id} pending`, `Confirmed @ ${task.locationCode}`, task.assignee);
-      log("Store & Update Inventory", item.id, "not in inventory", `+${item.qty} units @ ${task.locationCode}`);
+      log(
+        "Scan & Confirm Put-Away",
+        item.id,
+        `Task ${task.id} pending`,
+        `Confirmed @ ${task.locationCode}`,
+        task.assignee,
+      );
+      log(
+        "Store & Update Inventory",
+        item.id,
+        "not in inventory",
+        `+${item.qty} units @ ${task.locationCode}`,
+      );
       log("Storage Completed", item.id, "In Pipeline", `Stored @ ${task.locationCode}`);
       return { ok: true, message: `${item.id} stored at ${task.locationCode}.` };
     },
@@ -325,7 +385,9 @@ export function WarehouseProvider({ children }: { children: ReactNode }) {
 
   const reassignTask = useCallback(
     (taskId: string, assignee: string) => {
-      setTasks((prev) => prev.map((t) => (t.id === taskId ? { ...t, assignee, status: "In Progress" } : t)));
+      setTasks((prev) =>
+        prev.map((t) => (t.id === taskId ? { ...t, assignee, status: "In Progress" } : t)),
+      );
       log("Task Reassigned", taskId, "previous assignee", assignee);
     },
     [log],
@@ -349,7 +411,23 @@ export function WarehouseProvider({ children }: { children: ReactNode }) {
       log,
       raise,
     }),
-    [items, locations, tasks, alerts, audit, receive, inspect, generateCode, runValidation, runCapacity, confirmPutAway, resolveAlert, reassignTask, log, raise],
+    [
+      items,
+      locations,
+      tasks,
+      alerts,
+      audit,
+      receive,
+      inspect,
+      generateCode,
+      runValidation,
+      runCapacity,
+      confirmPutAway,
+      resolveAlert,
+      reassignTask,
+      log,
+      raise,
+    ],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

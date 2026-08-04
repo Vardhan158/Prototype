@@ -24,7 +24,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useWarehouse } from "@/apps/storage-guardian/lib/warehouse/store";
-import { rackStats, statusTone, utilTone, zoneStats } from "@/apps/storage-guardian/lib/warehouse/stats";
+import {
+  rackStats,
+  statusTone,
+  utilTone,
+  zoneStats,
+} from "@/apps/storage-guardian/lib/warehouse/stats";
 import { STAGES, stageIndex } from "@/apps/storage-guardian/lib/warehouse/rules";
 
 export const Route = createFileRoute("/storage-guardian/")({
@@ -99,21 +104,50 @@ function Dashboard() {
       />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Kpi icon={Boxes} label="Total slots" value={capacity.toLocaleString()} hint={`${locations.length} location codes`} />
-        <Kpi icon={Percent} label="Utilisation" value={`${util}%`} hint={`${(capacity - used).toLocaleString()} slots available`} />
-        <Kpi icon={PackageCheck} label="Open put-away" value={String(tasks.filter((t) => t.status !== "Done").length)} hint={`${inPipeline.length} items in pipeline`} />
-        <Kpi icon={AlertTriangle} label="Open exceptions" value={String(openAlerts.length)} hint="Requires manager review" />
+        <Kpi
+          icon={Boxes}
+          label="Total slots"
+          value={capacity.toLocaleString()}
+          hint={`${locations.length} location codes`}
+        />
+        <Kpi
+          icon={Percent}
+          label="Utilisation"
+          value={`${util}%`}
+          hint={`${(capacity - used).toLocaleString()} slots available`}
+        />
+        <Kpi
+          icon={PackageCheck}
+          label="Open put-away"
+          value={String(tasks.filter((t) => t.status !== "Done").length)}
+          hint={`${inPipeline.length} items in pipeline`}
+        />
+        <Kpi
+          icon={AlertTriangle}
+          label="Open exceptions"
+          value={String(openAlerts.length)}
+          hint="Requires manager review"
+        />
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
         <section className="panel p-5">
           <h2 className="text-lg font-semibold">Zone utilisation</h2>
-          <p className="mb-4 text-xs text-muted-foreground">Percentage of slots consumed per storage zone.</p>
+          <p className="mb-4 text-xs text-muted-foreground">
+            Percentage of slots consumed per storage zone.
+          </p>
           <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} margin={{ left: -20, right: 8 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                <XAxis dataKey="name" tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} interval={0} angle={-25} textAnchor="end" height={70} />
+                <XAxis
+                  dataKey="name"
+                  tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
+                  interval={0}
+                  angle={-25}
+                  textAnchor="end"
+                  height={70}
+                />
                 <YAxis tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} unit="%" />
                 <Tooltip
                   contentStyle={{
@@ -128,7 +162,13 @@ function Dashboard() {
                   {chartData.map((d) => (
                     <Cell
                       key={d.name}
-                      fill={d.utilisation >= 95 ? "var(--destructive)" : d.utilisation >= 80 ? "var(--warning)" : "var(--primary)"}
+                      fill={
+                        d.utilisation >= 95
+                          ? "var(--destructive)"
+                          : d.utilisation >= 80
+                            ? "var(--warning)"
+                            : "var(--primary)"
+                      }
                     />
                   ))}
                 </Bar>
@@ -139,12 +179,17 @@ function Dashboard() {
 
         <section className="panel p-5">
           <h2 className="text-lg font-semibold">Pipeline stages</h2>
-          <p className="mb-4 text-xs text-muted-foreground">Items currently sitting at each of the 11 workflow stages.</p>
+          <p className="mb-4 text-xs text-muted-foreground">
+            Items currently sitting at each of the {STAGES.length} workflow stages.
+          </p>
           <ol className="space-y-1.5">
             {STAGES.map((stage, idx) => {
               const count = items.filter((i) => stageIndex(i.stage) === idx).length;
               return (
-                <li key={stage.id} className="flex items-center gap-3 rounded-md px-2 py-1.5 text-sm odd:bg-muted/40">
+                <li
+                  key={stage.id}
+                  className="flex items-center gap-3 rounded-md px-2 py-1.5 text-sm odd:bg-muted/40"
+                >
                   <span className="w-5 font-mono text-xs text-muted-foreground">{idx + 1}</span>
                   <span className="flex-1">{stage.label}</span>
                   <Badge variant={count ? "default" : "secondary"}>{count}</Badge>
@@ -159,7 +204,9 @@ function Dashboard() {
         <div className="flex flex-wrap items-end justify-between gap-3 border-b border-border p-5">
           <div>
             <h2 className="text-lg font-semibold">Capacity by rack</h2>
-            <p className="text-xs text-muted-foreground">Location | Capacity | Used | Available | Status</p>
+            <p className="text-xs text-muted-foreground">
+              Location | Capacity | Used | Available | Status
+            </p>
           </div>
           <Button variant="outline" size="sm" asChild>
             <Link to="/storage-guardian/locations">Open location browser</Link>
@@ -181,18 +228,28 @@ function Dashboard() {
             <TableBody>
               {racks.map((r) => (
                 <TableRow key={r.key}>
-                  <TableCell className="font-mono text-xs">{r.key.replace(/^([A-Z]+)-/, "$1-")}</TableCell>
+                  <TableCell className="font-mono text-xs">
+                    {r.key.replace(/^([A-Z]+)-/, "$1-")}
+                  </TableCell>
                   <TableCell className="text-sm text-muted-foreground">{r.zoneName}</TableCell>
                   <TableCell className="text-right font-mono text-xs">{r.capacity}</TableCell>
                   <TableCell className="text-right font-mono text-xs">{r.used}</TableCell>
                   <TableCell className="text-right font-mono text-xs">{r.available}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <Progress value={r.utilisation} className="h-1.5" indicatorClassName={utilTone(r.utilisation)} />
-                      <span className="w-9 text-right font-mono text-[11px] text-muted-foreground">{r.utilisation}%</span>
+                      <Progress
+                        value={r.utilisation}
+                        className="h-1.5"
+                        indicatorClassName={utilTone(r.utilisation)}
+                      />
+                      <span className="w-9 text-right font-mono text-[11px] text-muted-foreground">
+                        {r.utilisation}%
+                      </span>
                     </div>
                   </TableCell>
-                  <TableCell className={`text-sm font-medium ${statusTone(r.status)}`}>{r.status}</TableCell>
+                  <TableCell className={`text-sm font-medium ${statusTone(r.status)}`}>
+                    {r.status}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

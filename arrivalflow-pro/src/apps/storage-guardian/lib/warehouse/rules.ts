@@ -127,7 +127,8 @@ export function allocate(
       : `All slots in ${firstRack ?? "rack"} are full or blocked.`,
     outcome: hit1 ? "pass" : "fail",
   });
-  if (hit1) return { steps, locationId: hit1.id, locationCode: hit1.code, overflow: false, failed: false };
+  if (hit1)
+    return { steps, locationId: hit1.id, locationCode: hit1.code, overflow: false, failed: false };
 
   const hit2 = preferredZoneLocations.find((l) => l.rack !== firstRack && usable(l, qty));
   steps.push({
@@ -138,12 +139,11 @@ export function allocate(
       : `Every rack in ${zoneById(primary).name} is saturated.`,
     outcome: hit2 ? "pass" : "fail",
   });
-  if (hit2) return { steps, locationId: hit2.id, locationCode: hit2.code, overflow: false, failed: false };
+  if (hit2)
+    return { steps, locationId: hit2.id, locationCode: hit2.code, overflow: false, failed: false };
 
   const alternates = zoneOrder.slice(1);
-  const hit3 = alternates
-    .flatMap((z) => inZone(z))
-    .find((l) => usable(l, qty));
+  const hit3 = alternates.flatMap((z) => inZone(z)).find((l) => usable(l, qty));
   steps.push({
     step: 3,
     label: "Compatible alternate zone",
@@ -154,7 +154,8 @@ export function allocate(
         : "No compatible alternate zone defined for this category.",
     outcome: hit3 ? "pass" : "fail",
   });
-  if (hit3) return { steps, locationId: hit3.id, locationCode: hit3.code, overflow: false, failed: false };
+  if (hit3)
+    return { steps, locationId: hit3.id, locationCode: hit3.code, overflow: false, failed: false };
 
   const hit4 = inZone("OVERFLOW").find((l) => usable(l, qty));
   steps.push({
@@ -165,29 +166,26 @@ export function allocate(
       : "Overflow area is also at capacity.",
     outcome: hit4 ? "escalate" : "fail",
   });
-  if (hit4) return { steps, locationId: hit4.id, locationCode: hit4.code, overflow: true, failed: false };
+  if (hit4)
+    return { steps, locationId: hit4.id, locationCode: hit4.code, overflow: true, failed: false };
 
   steps.push({
     step: 5,
     label: "Escalate to Warehouse Manager",
-    detail: "Suggested actions: Create New Rack · Create New Zone · Transfer Inventory · Expand Warehouse.",
+    detail:
+      "Suggested actions: Create New Rack · Create New Zone · Transfer Inventory · Expand Warehouse.",
     outcome: "fail",
   });
   return { steps, overflow: false, failed: true };
 }
 
 export const STAGES: { id: Item["stage"]; label: string }[] = [
-  { id: "delivery", label: "Supplier Delivery" },
   { id: "receiving", label: "Document Management & OCR" },
   { id: "inspection", label: "Quality Inspection" },
   { id: "qr", label: "QR / Barcode Generation" },
   { id: "rules", label: "Storage Rule Validation" },
   { id: "capacity", label: "Capacity Check" },
   { id: "task", label: "Put-Away Task Created" },
-  { id: "scan", label: "Scan & Confirm Put-Away" },
-  { id: "inventory", label: "Store & Update Inventory" },
-  { id: "audit", label: "Audit & History" },
-  { id: "completed", label: "Storage Completed" },
 ];
 
 export const stageIndex = (s: Item["stage"]) => STAGES.findIndex((x) => x.id === s);

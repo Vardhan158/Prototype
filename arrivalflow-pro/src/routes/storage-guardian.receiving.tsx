@@ -1,7 +1,14 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { ArrowRight, CheckCircle2, QrCode as QrIcon, ScanBarcode, ShieldCheck, XCircle } from "lucide-react";
+import {
+  ArrowRight,
+  CheckCircle2,
+  QrCode as QrIcon,
+  ScanBarcode,
+  ShieldCheck,
+  XCircle,
+} from "lucide-react";
 import { PageHeader } from "@/apps/storage-guardian/components/warehouse/app-shell";
 import { QrCode } from "@/apps/storage-guardian/components/warehouse/qr-code";
 import { Button } from "@/components/ui/button";
@@ -17,10 +24,23 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useWarehouse } from "@/apps/storage-guardian/lib/warehouse/store";
-import { CATEGORIES, HAZARDS, SUPPLIERS, zoneById } from "@/apps/storage-guardian/lib/warehouse/data";
-import { STAGES, stageIndex, validateStorageRules } from "@/apps/storage-guardian/lib/warehouse/rules";
+import {
+  CATEGORIES,
+  HAZARDS,
+  SUPPLIERS,
+  zoneById,
+} from "@/apps/storage-guardian/lib/warehouse/data";
+import {
+  STAGES,
+  stageIndex,
+  validateStorageRules,
+} from "@/apps/storage-guardian/lib/warehouse/rules";
 import { itemStatusTone } from "@/apps/storage-guardian/lib/warehouse/stats";
-import type { AllocationResult, Item, ItemCategory } from "@/apps/storage-guardian/lib/warehouse/types";
+import type {
+  AllocationResult,
+  Item,
+  ItemCategory,
+} from "@/apps/storage-guardian/lib/warehouse/types";
 
 export const Route = createFileRoute("/storage-guardian/receiving")({
   head: () => ({
@@ -29,7 +49,7 @@ export const Route = createFileRoute("/storage-guardian/receiving")({
       {
         name: "description",
         content:
-          "Log supplier deliveries against PO/ASN, inspect goods, generate QR labels and validate storage rules through the 11-stage pipeline.",
+          "Log supplier deliveries against PO/ASN, inspect goods, generate QR labels and validate storage rules through the 6-stage pipeline.",
       },
       { property: "og:title", content: "Receiving & Pipeline — NODE·WMS" },
       {
@@ -95,7 +115,7 @@ function ReceivingPage() {
     <div className="space-y-6">
       <PageHeader
         title="Receiving & Pipeline"
-        subtitle="Warehouse flow: receive item → inspect quality → create QR label → validate storage rules → assign storage → confirm put-away."
+        subtitle="Warehouse flow: receive item → inspect quality → create QR label → validate storage rules → assign storage."
       />
 
       <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
@@ -104,7 +124,12 @@ function ReceivingPage() {
 
           <div className="space-y-1.5">
             <Label htmlFor="name">Item description</Label>
-            <Input id="name" value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="e.g. PowerEdge R760 Rack Server" />
+            <Input
+              id="name"
+              value={form.name}
+              onChange={(e) => set("name", e.target.value)}
+              placeholder="e.g. PowerEdge R760 Rack Server"
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -121,13 +146,20 @@ function ReceivingPage() {
           <div className="space-y-1.5">
             <Label>Category</Label>
             <Select value={form.category} onValueChange={(v) => set("category", v)}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
-                {CATEGORIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                {CATEGORIES.map((c) => (
+                  <SelectItem key={c} value={c}>
+                    {c}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             <p className="text-[11px] text-muted-foreground">
-              Preferred zone: {zoneById(validateStorageRules({ ...(blankItem(form)) }).preferredZone).name}
+              Preferred zone:{" "}
+              {zoneById(validateStorageRules({ ...blankItem(form) }).preferredZone).name}
             </p>
           </div>
 
@@ -135,18 +167,30 @@ function ReceivingPage() {
             <div className="space-y-1.5">
               <Label>Hazard class</Label>
               <Select value={form.hazard} onValueChange={(v) => set("hazard", v)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
-                  {HAZARDS.map((h) => <SelectItem key={h} value={h}>{h}</SelectItem>)}
+                  {HAZARDS.map((h) => (
+                    <SelectItem key={h} value={h}>
+                      {h}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-1.5">
               <Label>Temperature</Label>
               <Select value={form.temp} onValueChange={(v) => set("temp", v)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
-                  {["Ambient", "Climate Controlled", "Cold"].map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                  {["Ambient", "Climate Controlled", "Cold"].map((t) => (
+                    <SelectItem key={t} value={t}>
+                      {t}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -156,19 +200,35 @@ function ReceivingPage() {
             <div className="space-y-1.5">
               <Label>Size</Label>
               <Select value={form.size} onValueChange={(v) => set("size", v)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
-                  {["Small", "Medium", "Large"].map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                  {["Small", "Medium", "Large"].map((s) => (
+                    <SelectItem key={s} value={s}>
+                      {s}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="w">Weight (kg)</Label>
-              <Input id="w" type="number" value={form.weightKg} onChange={(e) => set("weightKg", e.target.value)} />
+              <Input
+                id="w"
+                type="number"
+                value={form.weightKg}
+                onChange={(e) => set("weightKg", e.target.value)}
+              />
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="v">Value (USD)</Label>
-              <Input id="v" type="number" value={form.valueUsd} onChange={(e) => set("valueUsd", e.target.value)} />
+              <Input
+                id="v"
+                type="number"
+                value={form.valueUsd}
+                onChange={(e) => set("valueUsd", e.target.value)}
+              />
             </div>
           </div>
 
@@ -176,37 +236,60 @@ function ReceivingPage() {
             <div className="space-y-1.5">
               <Label>Supplier</Label>
               <Select value={form.supplier} onValueChange={(v) => set("supplier", v)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
-                  {SUPPLIERS.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                  {SUPPLIERS.map((s) => (
+                    <SelectItem key={s} value={s}>
+                      {s}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="eq">Expected qty</Label>
-              <Input id="eq" type="number" value={form.expectedQty} onChange={(e) => set("expectedQty", e.target.value)} />
+              <Input
+                id="eq"
+                type="number"
+                value={form.expectedQty}
+                onChange={(e) => set("expectedQty", e.target.value)}
+              />
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="rq">Received qty</Label>
-              <Input id="rq" type="number" value={form.receivedQty} onChange={(e) => set("receivedQty", e.target.value)} />
+              <Input
+                id="rq"
+                type="number"
+                value={form.receivedQty}
+                onChange={(e) => set("receivedQty", e.target.value)}
+              />
             </div>
           </div>
 
           {Number(form.receivedQty) !== Number(form.expectedQty) && (
             <p className="rounded-md border border-warning/40 bg-warning/10 px-3 py-2 text-xs text-warning">
-              Variance of {Number(form.receivedQty) - Number(form.expectedQty)} units will be recorded and an exception raised.
+              Variance of {Number(form.receivedQty) - Number(form.expectedQty)} units will be
+              recorded and an exception raised.
             </p>
           )}
 
-          <Button type="submit" className="w-full">Log receipt</Button>
+          <Button type="submit" className="w-full">
+            Log receipt
+          </Button>
         </form>
 
         <div className="space-y-4">
           <h2 className="text-lg font-semibold">Active pipeline ({pipeline.length})</h2>
           {pipeline.length === 0 && (
-            <p className="panel p-6 text-sm text-muted-foreground">No items in the pipeline. Log a receipt to start one.</p>
+            <p className="panel p-6 text-sm text-muted-foreground">
+              No items in the pipeline. Log a receipt to start one.
+            </p>
           )}
-          {pipeline.map((item) => <PipelineCard key={item.id} item={item} />)}
+          {pipeline.map((item) => (
+            <PipelineCard key={item.id} item={item} />
+          ))}
         </div>
       </div>
     </div>
@@ -228,7 +311,7 @@ function blankItem(form: typeof blank): Item {
     po: form.po,
     asn: form.asn,
     supplier: form.supplier,
-    stage: "delivery",
+    stage: "receiving",
     status: "In Pipeline",
     createdAt: "",
   };
@@ -247,14 +330,16 @@ function PipelineCard({ item }: { item: Item }) {
         <div>
           <div className="flex items-center gap-2">
             <h3 className="font-semibold">{item.name}</h3>
-            <Badge variant="outline" className={itemStatusTone(item.status)}>{item.status}</Badge>
+            <Badge variant="outline" className={itemStatusTone(item.status)}>
+              {item.status}
+            </Badge>
           </div>
           <p className="mt-0.5 font-mono text-xs text-muted-foreground">
             {item.id} · {item.po} / {item.asn} · {item.qty} units · {item.category}
           </p>
         </div>
         <Badge variant="secondary">
-          Stage {idx + 1}/11 · {STAGES[idx]?.label}
+          Stage {idx + 1}/{STAGES.length} · {STAGES[idx]?.label}
         </Badge>
       </div>
 
@@ -272,12 +357,31 @@ function PipelineCard({ item }: { item: Item }) {
         {item.stage === "inspection" && (
           <div className="space-y-2">
             <Label htmlFor={`n-${item.id}`}>Inspection notes</Label>
-            <Textarea id={`n-${item.id}`} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Packaging, seals, visible damage…" rows={2} />
+            <Textarea
+              id={`n-${item.id}`}
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Packaging, seals, visible damage…"
+              rows={2}
+            />
             <div className="flex gap-2">
-              <Button size="sm" onClick={() => { inspect(item.id, "Pass", notes); toast.success("Inspection passed."); }}>
+              <Button
+                size="sm"
+                onClick={() => {
+                  inspect(item.id, "Pass", notes);
+                  toast.success("Inspection passed.");
+                }}
+              >
                 <CheckCircle2 className="size-4" /> Pass
               </Button>
-              <Button size="sm" variant="destructive" onClick={() => { inspect(item.id, "Fail", notes); toast.error("Failed — routed to Return/Repair Zone."); }}>
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={() => {
+                  inspect(item.id, "Fail", notes);
+                  toast.error("Failed — routed to Return/Repair Zone.");
+                }}
+              >
                 <XCircle className="size-4" /> Fail
               </Button>
             </div>
@@ -286,8 +390,16 @@ function PipelineCard({ item }: { item: Item }) {
 
         {item.stage === "qr" && (
           <div className="space-y-2">
-            <p className="text-xs text-muted-foreground">Step 3: Create the combined QR label with the item details and storage destination.</p>
-            <Button size="sm" onClick={() => { const c = generateCode(item.id); toast.success(`Combined QR label generated: ${c}`); }}>
+            <p className="text-xs text-muted-foreground">
+              Step 3: Create the combined QR label with the item details and storage destination.
+            </p>
+            <Button
+              size="sm"
+              onClick={() => {
+                const c = generateCode(item.id);
+                toast.success(`Combined QR label generated: ${c}`);
+              }}
+            >
               <QrIcon className="size-4" /> Generate combined QR label
             </Button>
           </div>
@@ -298,12 +410,24 @@ function PipelineCard({ item }: { item: Item }) {
             <ul className="space-y-1 text-xs">
               {validation.checks.map((c) => (
                 <li key={c.rule} className="flex gap-2">
-                  {c.passed ? <CheckCircle2 className="mt-0.5 size-3.5 shrink-0 text-success" /> : <XCircle className="mt-0.5 size-3.5 shrink-0 text-warning" />}
-                  <span><strong className="font-medium">{c.rule}:</strong> {c.detail}</span>
+                  {c.passed ? (
+                    <CheckCircle2 className="mt-0.5 size-3.5 shrink-0 text-success" />
+                  ) : (
+                    <XCircle className="mt-0.5 size-3.5 shrink-0 text-warning" />
+                  )}
+                  <span>
+                    <strong className="font-medium">{c.rule}:</strong> {c.detail}
+                  </span>
                 </li>
               ))}
             </ul>
-            <Button size="sm" onClick={() => { runValidation(item.id); toast.success(`Validated → ${zoneById(validation.recommendedZone).name}`); }}>
+            <Button
+              size="sm"
+              onClick={() => {
+                runValidation(item.id);
+                toast.success(`Validated → ${zoneById(validation.recommendedZone).name}`);
+              }}
+            >
               <ShieldCheck className="size-4" /> Validate rules and continue
             </Button>
           </div>
@@ -311,17 +435,31 @@ function PipelineCard({ item }: { item: Item }) {
 
         {item.stage === "capacity" && (
           <div className="space-y-2">
-            <Button size="sm" onClick={() => {
-              const res = runCapacity(item.id);
-              setAllocation(res);
-              res.failed ? toast.error("No capacity — escalated to Warehouse Manager.") : toast.success(`Assigned ${res.locationCode}`);
-            }}>
+            <Button
+              size="sm"
+              onClick={() => {
+                const res = runCapacity(item.id);
+                setAllocation(res);
+                res.failed
+                  ? toast.error("No capacity — escalated to Warehouse Manager.")
+                  : toast.success(`Assigned ${res.locationCode}`);
+              }}
+            >
               <ArrowRight className="size-4" /> Run capacity check
             </Button>
             {allocation && (
               <ol className="space-y-1 text-xs">
                 {allocation.steps.map((s) => (
-                  <li key={s.step} className={s.outcome === "pass" ? "text-success" : s.outcome === "escalate" ? "text-warning" : "text-muted-foreground"}>
+                  <li
+                    key={s.step}
+                    className={
+                      s.outcome === "pass"
+                        ? "text-success"
+                        : s.outcome === "escalate"
+                          ? "text-warning"
+                          : "text-muted-foreground"
+                    }
+                  >
                     {s.step}. {s.label} — {s.detail}
                   </li>
                 ))}
@@ -333,14 +471,16 @@ function PipelineCard({ item }: { item: Item }) {
         {item.stage === "task" && (
           <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-3">
-              {item.code ? <QrCode value={item.code} size={96} /> : <p className="text-xs text-warning">Item label not generated yet.</p>}
+              {item.code ? (
+                <QrCode value={item.code} size={96} />
+              ) : (
+                <p className="text-xs text-warning">Item label not generated yet.</p>
+              )}
             </div>
             <div className="rounded-md border border-border bg-muted/30 p-3 text-xs text-muted-foreground">
-              Step 6: The item is now ready for put-away. Open the queue to verify the item and storage location before confirmation.
+              Step 6: The item is ready for put-away. Confirm task completion from the receiving
+              pipeline.
             </div>
-            <Button size="sm" variant="outline" asChild>
-              <Link to="/storage-guardian/putaway"><ScanBarcode className="size-4" /> Go to put-away queue</Link>
-            </Button>
           </div>
         )}
       </div>

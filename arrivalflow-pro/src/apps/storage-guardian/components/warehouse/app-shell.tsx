@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import {
   Boxes,
-  ClipboardList,
   Gauge,
   History,
   LayoutDashboard,
@@ -20,7 +19,6 @@ import { useAuth } from "@/lib/auth";
 const NAV = [
   { to: "/storage-guardian", label: "Dashboard", icon: LayoutDashboard },
   { to: "/storage-guardian/receiving", label: "Receiving & Pipeline", icon: PackagePlus },
-  { to: "/storage-guardian/putaway", label: "Put-Away Queue", icon: ClipboardList },
   { to: "/storage-guardian/locations", label: "Location Browser", icon: MapPinned },
   { to: "/storage-guardian/overflow", label: "Overflow Simulator", icon: Split },
   { to: "/storage-guardian/alerts", label: "Alerts", icon: ShieldAlert },
@@ -70,7 +68,11 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Boxes className="size-3.5" /> Site: DC-EU-WEST-01
           </p>
           <p className="mt-1 truncate">{user?.name ?? CURRENT_USER}</p>
-          <button type="button" onClick={logout} className="mt-3 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition hover:bg-destructive/10 hover:text-destructive">
+          <button
+            type="button"
+            onClick={logout}
+            className="mt-3 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition hover:bg-destructive/10 hover:text-destructive"
+          >
             <LogOut className="size-3.5" /> Sign out
           </button>
         </div>
@@ -89,7 +91,11 @@ export function AppShell({ children }: { children: ReactNode }) {
               {label}
             </Link>
           ))}
-          <button type="button" onClick={logout} className="ml-auto flex shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs text-muted-foreground hover:bg-destructive/10 hover:text-destructive">
+          <button
+            type="button"
+            onClick={logout}
+            className="ml-auto flex shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+          >
             <LogOut className="size-3.5" /> Sign out
           </button>
         </header>
