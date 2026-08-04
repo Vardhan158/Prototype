@@ -2,16 +2,24 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Warehouse as WarehouseIcon, ChevronRight, Boxes, Layers, Grid3x3 } from "lucide-react";
 import { useState } from "react";
 
-import { DataTable, type Column, type TableFilter } from "@master/components/masters/DataTable";
-import { PageHeader } from "@master/components/masters/PageHeader";
-import { RecordFormSheet, type FormStep } from "@master/components/masters/RecordFormSheet";
-import { StatusChip } from "@master/components/masters/StatusChip";
-import { Badge } from "@master/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@master/components/ui/card";
-import { Progress } from "@master/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@master/components/ui/tabs";
-import { cn } from "@master/lib/utils";
-import { warehouseTree, warehouses, type Warehouse } from "@master/data/masters";
+import {
+  DataTable,
+  type Column,
+  type TableFilter,
+} from "@/apps/master-core/integrated/components/DataTable";
+import { PageHeader } from "@/apps/master-core/integrated/components/PageHeader";
+import {
+  RecordFormSheet,
+  type FormStep,
+} from "@/apps/master-core/integrated/components/RecordFormSheet";
+import { StatusChip } from "@/apps/master-core/integrated/components/StatusChip";
+import { useMasterPage } from "@/apps/master-core/integrated/hooks/useMasters";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
+import { warehouseTree, type Warehouse } from "@/apps/master-core/integrated/data/masters";
 
 export const Route = createFileRoute("/master-core/warehouses")({
   head: () => ({
@@ -69,7 +77,7 @@ function occupancyTone(v: number) {
 }
 
 function WarehouseMaster() {
-  const [open, setOpen] = useState(false);
+  const m = useMasterPage<Warehouse>("warehouses", "Warehouse");
   const [expanded, setExpanded] = useState<string[]>([warehouseTree[0]?.code ?? ""]);
 
   const toggle = (code: string) =>
@@ -82,7 +90,12 @@ function WarehouseMaster() {
       value: (r) => r.code,
       render: (r) => <span className="num text-xs font-semibold text-primary">{r.code}</span>,
     },
-    { key: "name", header: "Warehouse", value: (r) => r.name, render: (r) => <span className="font-medium">{r.name}</span> },
+    {
+      key: "name",
+      header: "Warehouse",
+      value: (r) => r.name,
+      render: (r) => <span className="font-medium">{r.name}</span>,
+    },
     { key: "location", header: "Location", value: (r) => r.location },
     { key: "manager", header: "Manager", value: (r) => r.manager },
     {
@@ -115,13 +128,18 @@ function WarehouseMaster() {
   ];
 
   const filters: TableFilter<Warehouse>[] = [
-    { key: "status", label: "Status", options: ["Active", "Inactive"], match: (r, v) => r.status === v },
+    {
+      key: "status",
+      label: "Status",
+      options: ["Active", "Inactive"],
+      match: (r, v) => r.status === v,
+    },
   ];
 
   return (
     <div className="min-h-full">
       <PageHeader
-        crumbs={[{ label: "Master Data Management", to: "/master-core/" }, { label: "Warehouse Master" }]}
+        crumbs={[{ label: "Master Data Management", to: "/" }, { label: "Warehouse Master" }]}
         icon={<WarehouseIcon className="h-5 w-5" />}
         title="Warehouse / Rack / Shelf / Bin Master"
         description="Storage hierarchy and location mapping used by putaway, picking and cycle counting."
@@ -136,16 +154,19 @@ function WarehouseMaster() {
 
           <TabsContent value="list" className="mt-4">
             <DataTable
-              rows={warehouses}
+              rows={m.rows}
               columns={columns}
               filters={filters}
               entity="Warehouses"
+              isLoading={m.isLoading}
+              onRefresh={m.refetch}
+              onDelete={m.remove}
               createLabel="Add Warehouse"
               getId={(r) => r.id}
               getLabel={(r) => r.name}
               searchText={(r) => `${r.code} ${r.name} ${r.location} ${r.manager}`}
-              onCreate={() => setOpen(true)}
-              onEdit={() => setOpen(true)}
+              onCreate={m.startCreate}
+              onEdit={m.startEdit}
             />
           </TabsContent>
 
@@ -284,7 +305,17 @@ function WarehouseMaster() {
           </TabsContent>
         </Tabs>
       </div>
-      <RecordFormSheet open={open} onOpenChange={setOpen} entity="Warehouse" steps={steps} />
+      <RecordFormSheet
+        open={m.open}
+        onOpenChange={m.setOpen}
+        entity="Warehouse"
+        steps={steps}
+        mode={m.mode}
+        initial={m.initial}
+        recordId={m.recordId}
+        documentEntity="warehouses"
+        onSubmit={m.submit}
+      />
     </div>
   );
 }

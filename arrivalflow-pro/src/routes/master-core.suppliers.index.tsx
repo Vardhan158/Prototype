@@ -1,12 +1,19 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Truck } from "lucide-react";
-import { useState } from "react";
 
-import { DataTable, type Column, type TableFilter } from "@master/components/masters/DataTable";
-import { PageHeader } from "@master/components/masters/PageHeader";
-import { RecordFormSheet, type FormStep } from "@master/components/masters/RecordFormSheet";
-import { StatusChip } from "@master/components/masters/StatusChip";
-import { suppliers, type Supplier } from "@master/data/masters";
+import {
+  DataTable,
+  type Column,
+  type TableFilter,
+} from "@/apps/master-core/integrated/components/DataTable";
+import { PageHeader } from "@/apps/master-core/integrated/components/PageHeader";
+import {
+  RecordFormSheet,
+  type FormStep,
+} from "@/apps/master-core/integrated/components/RecordFormSheet";
+import { StatusChip } from "@/apps/master-core/integrated/components/StatusChip";
+import { useMasterPage } from "@/apps/master-core/integrated/hooks/useMasters";
+import { type Supplier } from "@/apps/master-core/integrated/data/masters";
 
 export const Route = createFileRoute("/master-core/suppliers/")({
   head: () => ({
@@ -68,7 +75,12 @@ const steps: FormStep[] = [
       { name: "address", label: "Address", colSpan: 2 },
       { name: "city", label: "City" },
       { name: "state", label: "State / Province" },
-      { name: "country", label: "Country", type: "select", options: ["Germany", "India", "United States", "Japan", "UAE", "United Kingdom"] },
+      {
+        name: "country",
+        label: "Country",
+        type: "select",
+        options: ["Germany", "India", "United States", "Japan", "UAE", "United Kingdom"],
+      },
       { name: "postalCode", label: "Postal Code" },
     ],
   },
@@ -92,7 +104,7 @@ const steps: FormStep[] = [
 
 function SupplierMaster() {
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
+  const m = useMasterPage<Supplier>("suppliers", "Supplier");
 
   const columns: Column<Supplier>[] = [
     {
@@ -159,7 +171,7 @@ function SupplierMaster() {
     {
       key: "country",
       label: "Country",
-      options: [...new Set(suppliers.map((s) => s.country))],
+      options: [...new Set(m.rows.map((s) => s.country))],
       match: (r, v) => r.country === v,
     },
     {
@@ -173,30 +185,42 @@ function SupplierMaster() {
   return (
     <div className="min-h-full">
       <PageHeader
-        crumbs={[
-          { label: "Master Data Management", to: "/master-core/" },
-          { label: "Supplier Master" },
-        ]}
+        crumbs={[{ label: "Master Data Management", to: "/" }, { label: "Supplier Master" }]}
         icon={<Truck className="h-5 w-5" />}
         title="Supplier Master"
         description="Approved vendor records shared with Procurement, Quality and Finance."
       />
       <div className="p-4 sm:p-6">
         <DataTable
-          rows={suppliers}
+          rows={m.rows}
           columns={columns}
           filters={filters}
           entity="Suppliers"
+          isLoading={m.isLoading}
+          onRefresh={m.refetch}
+          onDelete={m.remove}
           createLabel="Add Supplier"
           getId={(r) => r.id}
           getLabel={(r) => r.name}
-          searchText={(r) => `${r.code} ${r.name} ${r.contactPerson} ${r.email} ${r.city} ${r.country}`}
-          onCreate={() => setOpen(true)}
-          onEdit={() => setOpen(true)}
+          searchText={(r) =>
+            `${r.code} ${r.name} ${r.contactPerson} ${r.email} ${r.city} ${r.country}`
+          }
+          onCreate={m.startCreate}
+          onEdit={m.startEdit}
           onView={(r) => navigate({ to: "/master-core/suppliers/$id", params: { id: r.id } })}
         />
       </div>
-      <RecordFormSheet open={open} onOpenChange={setOpen} entity="Supplier" steps={steps} />
+      <RecordFormSheet
+        open={m.open}
+        onOpenChange={m.setOpen}
+        entity="Supplier"
+        steps={steps}
+        mode={m.mode}
+        initial={m.initial}
+        recordId={m.recordId}
+        documentEntity="suppliers"
+        onSubmit={m.submit}
+      />
     </div>
   );
 }

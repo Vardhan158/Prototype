@@ -1,4 +1,4 @@
-﻿import { useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard,
@@ -41,14 +41,23 @@ import {
 const nav = [
   { to: "/wave-flow", label: "Dashboard", icon: LayoutDashboard },
   { to: "/wave-flow/orders", label: "Outbound Orders", icon: PackageSearch, badge: "24" },
+  { to: "/wave-flow/sales-orders", label: "Sales Orders", icon: PackageSearch },
+  { to: "/wave-flow/allocation", label: "Inventory Allocation", icon: Boxes },
+  { to: "/wave-flow/backorders", label: "Backorders", icon: TriangleAlert },
   { to: "/wave-flow/waves", label: "Wave Management", icon: Waves, badge: "6" },
+  { to: "/wave-flow/wave-planning", label: "Wave Planning", icon: Waves },
+  { to: "/wave-flow/wave-release", label: "Wave Release", icon: ClipboardCheck },
+  { to: "/wave-flow/pick-lists", label: "Pick Lists", icon: ScanBarcode },
   { to: "/wave-flow/picking", label: "Picking", icon: ScanBarcode, badge: "18" },
   { to: "/wave-flow/packing", label: "Packing", icon: Boxes },
+  { to: "/wave-flow/shipping-labels", label: "Shipping Labels", icon: FileBarChart },
   { to: "/wave-flow/quality", label: "Quality Verification", icon: ShieldCheck },
   { to: "/wave-flow/staging", label: "Staging", icon: Warehouse },
   { to: "/wave-flow/loading", label: "Truck Loading", icon: Truck },
+  { to: "/wave-flow/load-verification", label: "Load Verification", icon: ShieldCheck },
   { to: "/wave-flow/dispatch", label: "Dispatch", icon: ClipboardCheck },
   { to: "/wave-flow/tracking", label: "Shipment Tracking", icon: Radar },
+  { to: "/wave-flow/shipping", label: "Shipping", icon: Truck },
   { to: "/wave-flow/exceptions", label: "Exceptions", icon: TriangleAlert, badge: "2" },
   { to: "/wave-flow/reports", label: "Reports", icon: FileBarChart },
   { to: "/wave-flow/analytics", label: "Analytics", icon: ChartNoAxesCombined },
@@ -192,7 +201,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
               <input
                 className="h-10 w-full rounded-xl border border-input bg-surface pr-3 pl-9 text-sm outline-none focus:ring-2 focus:ring-ring"
-                placeholder="Search orders, waves, materials, trucksâ€¦"
+                placeholder="Search orders, waves, materials, trucks…"
               />
             </div>
             <div className="md:hidden" />
@@ -265,7 +274,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <DropdownMenuContent align="end">
                   {["EN", "DE", "NL", "ES", "ZH"].map((l) => (
                     <DropdownMenuItem key={l} onClick={() => setLang(l)}>
-                      {l} {lang === l && "âœ“"}
+                      {l} {lang === l && "✓"}
                     </DropdownMenuItem>
                   ))}
                 </DropdownMenuContent>

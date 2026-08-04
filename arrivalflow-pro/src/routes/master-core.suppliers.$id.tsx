@@ -1,41 +1,39 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { useMasterList } from "@/apps/master-core/integrated/hooks/useMasters";
 import { Truck } from "lucide-react";
 
-import { DetailLayout } from "@master/components/masters/DetailLayout";
-import { Badge } from "@master/components/ui/badge";
-import { suppliers } from "@master/data/masters";
+import { DetailLayout } from "@/apps/master-core/integrated/components/DetailLayout";
+import { Badge } from "@/components/ui/badge";
+import { type Supplier } from "@/apps/master-core/integrated/data/masters";
 
 export const Route = createFileRoute("/master-core/suppliers/$id")({
-  loader: ({ params }) => {
-    const supplier = suppliers.find((s) => s.id === params.id);
-    if (!supplier) throw notFound();
-    return { supplier };
-  },
-  head: ({ loaderData }) => {
-    if (!loaderData) {
-      return { meta: [{ title: "Supplier not found" }, { name: "robots", content: "noindex" }] };
-    }
-    const title = `${loaderData.supplier.name} — Supplier Master`;
-    return {
-      meta: [
-        { title },
-        {
-          name: "description",
-          content: `Master data record for ${loaderData.supplier.name}, ${loaderData.supplier.city}, ${loaderData.supplier.country}.`,
-        },
-        { property: "og:title", content: title },
-        {
-          property: "og:description",
-          content: `Supplier golden record with certification, commercial and banking details.`,
-        },
-      ],
-    };
-  },
+  ssr: false,
+  head: () => ({
+    meta: [
+      { title: "Supplier record — Meridia ERP" },
+      {
+        name: "description",
+        content: "Supplier master record detail with full golden-record attributes.",
+      },
+      { property: "og:title", content: "Supplier record — Meridia ERP" },
+      { property: "og:description", content: "Supplier master data detail view." },
+    ],
+  }),
   component: SupplierDetail,
 });
 
 function SupplierDetail() {
-  const { supplier: s } = Route.useLoaderData();
+  const { id } = Route.useParams();
+  const { data, isLoading } = useMasterList("suppliers");
+  const s = ((data ?? []) as unknown as Supplier[]).find((r) => r.id === id);
+
+  if (!s) {
+    return (
+      <div className="p-10 text-sm text-muted-foreground">
+        {isLoading ? "Loading record…" : "Record not found."}
+      </div>
+    );
+  }
 
   return (
     <DetailLayout
@@ -44,7 +42,7 @@ function SupplierDetail() {
       status={s.status}
       icon={<Truck className="h-5 w-5" />}
       crumbs={[
-        { label: "Master Data Management", to: "/master-core/" },
+        { label: "Master Data Management", to: "/" },
         { label: "Supplier Master", to: "/master-core/suppliers" },
         { label: s.code },
       ]}

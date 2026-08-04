@@ -1,14 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { IdCard } from "lucide-react";
-import { useState } from "react";
 
-import { DataTable, type Column, type TableFilter } from "@master/components/masters/DataTable";
-import { PageHeader } from "@master/components/masters/PageHeader";
-import { RecordFormSheet, type FormStep } from "@master/components/masters/RecordFormSheet";
-import { StatusChip } from "@master/components/masters/StatusChip";
-import { Avatar, AvatarFallback } from "@master/components/ui/avatar";
-import { Badge } from "@master/components/ui/badge";
-import { employees, type Employee } from "@master/data/masters";
+import {
+  DataTable,
+  type Column,
+  type TableFilter,
+} from "@/apps/master-core/integrated/components/DataTable";
+import { PageHeader } from "@/apps/master-core/integrated/components/PageHeader";
+import {
+  RecordFormSheet,
+  type FormStep,
+} from "@/apps/master-core/integrated/components/RecordFormSheet";
+import { StatusChip } from "@/apps/master-core/integrated/components/StatusChip";
+import { useMasterPage } from "@/apps/master-core/integrated/hooks/useMasters";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { type Employee } from "@/apps/master-core/integrated/data/masters";
 
 export const Route = createFileRoute("/master-core/employees")({
   head: () => ({
@@ -41,7 +48,16 @@ const steps: FormStep[] = [
         label: "Department",
         type: "select",
         required: true,
-        options: ["Warehouse Operations", "Logistics", "Inventory", "Procurement", "Quality", "Finance", "Master Data", "Manufacturing"],
+        options: [
+          "Warehouse Operations",
+          "Logistics",
+          "Inventory",
+          "Procurement",
+          "Quality",
+          "Finance",
+          "Master Data",
+          "Manufacturing",
+        ],
       },
       { name: "designation", label: "Designation" },
       { name: "joiningDate", label: "Joining Date", type: "date" },
@@ -66,7 +82,7 @@ const steps: FormStep[] = [
         name: "role",
         label: "Role Based Access",
         type: "select",
-        options: ["Warehouse Gate Entry & Arrival Management", "Manager", "Editor", "Viewer"],
+        options: ["Administrator", "Manager", "Editor", "Viewer"],
       },
     ],
   },
@@ -85,7 +101,7 @@ const initials = (name: string) =>
     .join("");
 
 function EmployeeMaster() {
-  const [open, setOpen] = useState(false);
+  const m = useMasterPage<Employee>("employees", "Employee");
 
   const columns: Column<Employee>[] = [
     {
@@ -142,19 +158,19 @@ function EmployeeMaster() {
     {
       key: "department",
       label: "Department",
-      options: [...new Set(employees.map((e) => e.department))],
+      options: [...new Set(m.rows.map((e) => e.department))],
       match: (r, v) => r.department === v,
     },
     {
       key: "shift",
       label: "Shift",
-      options: [...new Set(employees.map((e) => e.shift))],
+      options: [...new Set(m.rows.map((e) => e.shift))],
       match: (r, v) => r.shift === v,
     },
     {
       key: "role",
       label: "Role",
-      options: ["Warehouse Gate Entry & Arrival Management", "Manager", "Editor", "Viewer"],
+      options: ["Administrator", "Manager", "Editor", "Viewer"],
       match: (r, v) => r.role === v,
     },
   ];
@@ -162,26 +178,39 @@ function EmployeeMaster() {
   return (
     <div className="min-h-full">
       <PageHeader
-        crumbs={[{ label: "Master Data Management", to: "/master-core/" }, { label: "Employee Master" }]}
+        crumbs={[{ label: "Master Data Management", to: "/" }, { label: "Employee Master" }]}
         icon={<IdCard className="h-5 w-5" />}
         title="Employee Master"
         description="Workforce records with shift, site assignment and role-based access control."
       />
       <div className="p-4 sm:p-6">
         <DataTable
-          rows={employees}
+          rows={m.rows}
           columns={columns}
           filters={filters}
           entity="Employees"
+          isLoading={m.isLoading}
+          onRefresh={m.refetch}
+          onDelete={m.remove}
           createLabel="Add Employee"
           getId={(r) => r.id}
           getLabel={(r) => r.name}
           searchText={(r) => `${r.code} ${r.name} ${r.department} ${r.designation} ${r.email}`}
-          onCreate={() => setOpen(true)}
-          onEdit={() => setOpen(true)}
+          onCreate={m.startCreate}
+          onEdit={m.startEdit}
         />
       </div>
-      <RecordFormSheet open={open} onOpenChange={setOpen} entity="Employee" steps={steps} />
+      <RecordFormSheet
+        open={m.open}
+        onOpenChange={m.setOpen}
+        entity="Employee"
+        steps={steps}
+        mode={m.mode}
+        initial={m.initial}
+        recordId={m.recordId}
+        documentEntity="employees"
+        onSubmit={m.submit}
+      />
     </div>
   );
 }

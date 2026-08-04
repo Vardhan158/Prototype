@@ -1,13 +1,20 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Package } from "lucide-react";
-import { useState } from "react";
 
-import { DataTable, type Column, type TableFilter } from "@master/components/masters/DataTable";
-import { PageHeader } from "@master/components/masters/PageHeader";
-import { RecordFormSheet, type FormStep } from "@master/components/masters/RecordFormSheet";
-import { StatusChip } from "@master/components/masters/StatusChip";
-import { Badge } from "@master/components/ui/badge";
-import { items, type Item } from "@master/data/masters";
+import {
+  DataTable,
+  type Column,
+  type TableFilter,
+} from "@/apps/master-core/integrated/components/DataTable";
+import { PageHeader } from "@/apps/master-core/integrated/components/PageHeader";
+import {
+  RecordFormSheet,
+  type FormStep,
+} from "@/apps/master-core/integrated/components/RecordFormSheet";
+import { StatusChip } from "@/apps/master-core/integrated/components/StatusChip";
+import { useMasterPage } from "@/apps/master-core/integrated/hooks/useMasters";
+import { Badge } from "@/components/ui/badge";
+import { type Item } from "@/apps/master-core/integrated/data/masters";
 
 export const Route = createFileRoute("/master-core/items/")({
   head: () => ({
@@ -70,7 +77,12 @@ const steps: FormStep[] = [
     title: "Documents",
     description: "Compliance, hazard classification and images",
     fields: [
-      { name: "hazard", label: "Hazard Classification", type: "select", options: ["None", "Flammable — Class 3", "Corrosive — Class 8", "Toxic — Class 6"] },
+      {
+        name: "hazard",
+        label: "Hazard Classification",
+        type: "select",
+        options: ["None", "Flammable — Class 3", "Corrosive — Class 8", "Toxic — Class 6"],
+      },
       { name: "storage", label: "Storage Conditions" },
       { name: "hsnCode", label: "HSN Code" },
     ],
@@ -79,7 +91,7 @@ const steps: FormStep[] = [
 
 function ItemMaster() {
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
+  const m = useMasterPage<Item>("items", "Item");
 
   const columns: Column<Item>[] = [
     {
@@ -107,7 +119,12 @@ function ItemMaster() {
     },
     { key: "sub", header: "Sub category", value: (r) => r.subCategory, hiddenByDefault: true },
     { key: "unit", header: "Unit", value: (r) => r.unit },
-    { key: "sku", header: "SKU", value: (r) => r.sku, render: (r) => <span className="num text-xs">{r.sku}</span> },
+    {
+      key: "sku",
+      header: "SKU",
+      value: (r) => r.sku,
+      render: (r) => <span className="num text-xs">{r.sku}</span>,
+    },
     {
       key: "cost",
       header: "Cost",
@@ -154,11 +171,16 @@ function ItemMaster() {
       options: ["Raw Material", "Component", "Sub Assembly", "Finished Goods"],
       match: (r, v) => r.category === v,
     },
-    { key: "status", label: "Status", options: ["Active", "Inactive", "Draft"], match: (r, v) => r.status === v },
+    {
+      key: "status",
+      label: "Status",
+      options: ["Active", "Inactive", "Draft"],
+      match: (r, v) => r.status === v,
+    },
     {
       key: "unit",
       label: "Unit",
-      options: [...new Set(items.map((i) => i.unit))],
+      options: [...new Set(m.rows.map((i) => i.unit))],
       match: (r, v) => r.unit === v,
     },
   ];
@@ -166,27 +188,40 @@ function ItemMaster() {
   return (
     <div className="min-h-full">
       <PageHeader
-        crumbs={[{ label: "Master Data Management", to: "/master-core/" }, { label: "Item Master" }]}
+        crumbs={[{ label: "Master Data Management", to: "/" }, { label: "Item Master" }]}
         icon={<Package className="h-5 w-5" />}
         title="Item Master"
         description="Material definitions driving BOMs, stock policy, procurement and costing."
       />
       <div className="p-4 sm:p-6">
         <DataTable
-          rows={items}
+          rows={m.rows}
           columns={columns}
           filters={filters}
           entity="Items"
+          isLoading={m.isLoading}
+          onRefresh={m.refetch}
+          onDelete={m.remove}
           createLabel="Add Item"
           getId={(r) => r.id}
           getLabel={(r) => r.name}
           searchText={(r) => `${r.code} ${r.name} ${r.sku} ${r.barcode} ${r.category} ${r.brand}`}
-          onCreate={() => setOpen(true)}
-          onEdit={() => setOpen(true)}
+          onCreate={m.startCreate}
+          onEdit={m.startEdit}
           onView={(r) => navigate({ to: "/master-core/items/$id", params: { id: r.id } })}
         />
       </div>
-      <RecordFormSheet open={open} onOpenChange={setOpen} entity="Item" steps={steps} />
+      <RecordFormSheet
+        open={m.open}
+        onOpenChange={m.setOpen}
+        entity="Item"
+        steps={steps}
+        mode={m.mode}
+        initial={m.initial}
+        recordId={m.recordId}
+        documentEntity="items"
+        onSubmit={m.submit}
+      />
     </div>
   );
 }

@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 
 export type AppRole =
   | "Warehouse Gate Entry & Arrival Management"
-  | "Data Steward"
+  | "Master Data Managemnet"
   | "Outbound Order Fulfillment & Wave Management"
   | "Production Manager"
   | "Inventory Controller"
@@ -65,7 +65,7 @@ export const SEEDED_USERS: SeededUser[] = [
     name: "Amara Okafor",
     email: "amara@nexuswms.com",
     password: "master@2026",
-    role: "Data Steward",
+    role: "Master Data Managemnet",
     modules: ["master"],
     dashboard: "/master-core",
   },

@@ -1,11 +1,11 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-export type User = { name: string; email: string; role: "Warehouse Gate Entry & Arrival Management" | "Data Steward" };
+export type User = { name: string; email: string; role: "Warehouse Gate Entry & Arrival Management" | "Master Data Managemnet" };
 const users = [
   { name: "Nexus Warehouse Gate Entry & Arrival Management", email: "admin@nexuswms.com", id: "ADM-0001", password: "Admin@2026", role: "Warehouse Gate Entry & Arrival Management" as const },
-  { name: "Amara Okafor", email: "amara@nexuswms.com", id: "DST-1001", password: "master@2026", role: "Data Steward" as const },
+  { name: "Amara Okafor", email: "amara@nexuswms.com", id: "DST-1001", password: "master@2026", role: "Master Data Managemnet" as const },
 ];
 const key = "nexuswms.master.session.v1";
-function sharedSession(): User | null { try { const raw = document.cookie.split("; ").find((part) => part.startsWith("nexuswms_sso="))?.split("=").slice(1).join("="); if (!raw) return null; const value = JSON.parse(decodeURIComponent(raw)) as User; return value.role === "Warehouse Gate Entry & Arrival Management" || value.role === "Data Steward" ? value : null; } catch { return null; } }
+function sharedSession(): User | null { try { const raw = document.cookie.split("; ").find((part) => part.startsWith("nexuswms_sso="))?.split("=").slice(1).join("="); if (!raw) return null; const value = JSON.parse(decodeURIComponent(raw)) as User; return value.role === "Warehouse Gate Entry & Arrival Management" || value.role === "Master Data Managemnet" ? value : null; } catch { return null; } }
 const Context = createContext<{ user: User | null; ready: boolean; login: (id: string, password: string) => User | null; logout: () => void } | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null); const [ready, setReady] = useState(false);

@@ -1,34 +1,38 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { useMasterList } from "@/apps/master-core/integrated/hooks/useMasters";
 import { Package } from "lucide-react";
 
-import { DetailLayout } from "@master/components/masters/DetailLayout";
-import { items } from "@master/data/masters";
+import { DetailLayout } from "@/apps/master-core/integrated/components/DetailLayout";
+import { type Item } from "@/apps/master-core/integrated/data/masters";
 
 export const Route = createFileRoute("/master-core/items/$id")({
-  loader: ({ params }) => {
-    const item = items.find((i) => i.id === params.id);
-    if (!item) throw notFound();
-    return { item };
-  },
-  head: ({ loaderData }) => {
-    if (!loaderData) {
-      return { meta: [{ title: "Item not found" }, { name: "robots", content: "noindex" }] };
-    }
-    const title = `${loaderData.item.name} — Item Master`;
-    return {
-      meta: [
-        { title },
-        { name: "description", content: loaderData.item.description },
-        { property: "og:title", content: title },
-        { property: "og:description", content: loaderData.item.description },
-      ],
-    };
-  },
+  ssr: false,
+  head: () => ({
+    meta: [
+      { title: "Item record — Meridia ERP" },
+      {
+        name: "description",
+        content: "Item master record detail with full golden-record attributes.",
+      },
+      { property: "og:title", content: "Item record — Meridia ERP" },
+      { property: "og:description", content: "Item master data detail view." },
+    ],
+  }),
   component: ItemDetail,
 });
 
 function ItemDetail() {
-  const { item: i } = Route.useLoaderData();
+  const { id } = Route.useParams();
+  const { data, isLoading } = useMasterList("items");
+  const i = ((data ?? []) as unknown as Item[]).find((r) => r.id === id);
+
+  if (!i) {
+    return (
+      <div className="p-10 text-sm text-muted-foreground">
+        {isLoading ? "Loading record…" : "Record not found."}
+      </div>
+    );
+  }
 
   return (
     <DetailLayout
@@ -37,7 +41,7 @@ function ItemDetail() {
       status={i.status}
       icon={<Package className="h-5 w-5" />}
       crumbs={[
-        { label: "Master Data Management", to: "/master-core/" },
+        { label: "Master Data Management", to: "/" },
         { label: "Item Master", to: "/master-core/items" },
         { label: i.code },
       ]}

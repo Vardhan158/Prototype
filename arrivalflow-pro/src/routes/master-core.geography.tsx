@@ -1,13 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Globe2 } from "lucide-react";
-import { useState } from "react";
 
-import { DataTable, type Column, type TableFilter } from "@master/components/masters/DataTable";
-import { PageHeader } from "@master/components/masters/PageHeader";
-import { RecordFormSheet, type FormStep } from "@master/components/masters/RecordFormSheet";
-import { StatusChip } from "@master/components/masters/StatusChip";
-import { Badge } from "@master/components/ui/badge";
-import { countries, type Country } from "@master/data/masters";
+import {
+  DataTable,
+  type Column,
+  type TableFilter,
+} from "@/apps/master-core/integrated/components/DataTable";
+import { PageHeader } from "@/apps/master-core/integrated/components/PageHeader";
+import {
+  RecordFormSheet,
+  type FormStep,
+} from "@/apps/master-core/integrated/components/RecordFormSheet";
+import { StatusChip } from "@/apps/master-core/integrated/components/StatusChip";
+import { useMasterPage } from "@/apps/master-core/integrated/hooks/useMasters";
+import { Badge } from "@/components/ui/badge";
+import { type Country } from "@/apps/master-core/integrated/data/masters";
 
 export const Route = createFileRoute("/master-core/geography")({
   head: () => ({
@@ -60,7 +67,7 @@ const steps: FormStep[] = [
 ];
 
 function GeographyMaster() {
-  const [open, setOpen] = useState(false);
+  const m = useMasterPage<Country>("countries", "Country");
 
   const columns: Column<Country>[] = [
     {
@@ -114,7 +121,7 @@ function GeographyMaster() {
     {
       key: "currency",
       label: "Currency",
-      options: [...new Set(countries.map((c) => c.currency))],
+      options: [...new Set(m.rows.map((c) => c.currency))],
       match: (r, v) => r.currency === v,
     },
     {
@@ -128,26 +135,39 @@ function GeographyMaster() {
   return (
     <div className="min-h-full">
       <PageHeader
-        crumbs={[{ label: "Master Data Management", to: "/master-core/" }, { label: "Country & Currency" }]}
+        crumbs={[{ label: "Master Data Management", to: "/" }, { label: "Country & Currency" }]}
         icon={<Globe2 className="h-5 w-5" />}
         title="Country & Currency Master"
         description="Geography reference data for tax rules, duties, exchange rates and localisation."
       />
       <div className="p-4 sm:p-6">
         <DataTable
-          rows={countries}
+          rows={m.rows}
           columns={columns}
           filters={filters}
           entity="Countries"
+          isLoading={m.isLoading}
+          onRefresh={m.refetch}
+          onDelete={m.remove}
           createLabel="Add Country"
           getId={(r) => r.id}
           getLabel={(r) => r.name}
           searchText={(r) => `${r.code} ${r.name} ${r.currency} ${r.language} ${r.timeZone}`}
-          onCreate={() => setOpen(true)}
-          onEdit={() => setOpen(true)}
+          onCreate={m.startCreate}
+          onEdit={m.startEdit}
         />
       </div>
-      <RecordFormSheet open={open} onOpenChange={setOpen} entity="Country" steps={steps} />
+      <RecordFormSheet
+        open={m.open}
+        onOpenChange={m.setOpen}
+        entity="Country"
+        steps={steps}
+        mode={m.mode}
+        initial={m.initial}
+        recordId={m.recordId}
+        documentEntity="countries"
+        onSubmit={m.submit}
+      />
     </div>
   );
 }

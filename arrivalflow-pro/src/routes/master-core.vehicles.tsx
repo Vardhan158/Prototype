@@ -1,14 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Truck } from "lucide-react";
-import { useState } from "react";
 
-import { DataTable, type Column, type TableFilter } from "@master/components/masters/DataTable";
-import { PageHeader } from "@master/components/masters/PageHeader";
-import { RecordFormSheet, type FormStep } from "@master/components/masters/RecordFormSheet";
-import { StatusChip } from "@master/components/masters/StatusChip";
-import { Badge } from "@master/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@master/components/ui/tabs";
-import { vehicles, carriers, type Vehicle, type Carrier } from "@master/data/masters";
+import {
+  DataTable,
+  type Column,
+  type TableFilter,
+} from "@/apps/master-core/integrated/components/DataTable";
+import { PageHeader } from "@/apps/master-core/integrated/components/PageHeader";
+import {
+  RecordFormSheet,
+  type FormStep,
+} from "@/apps/master-core/integrated/components/RecordFormSheet";
+import { StatusChip } from "@/apps/master-core/integrated/components/StatusChip";
+import { useMasterPage } from "@/apps/master-core/integrated/hooks/useMasters";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { type Vehicle, type Carrier } from "@/apps/master-core/integrated/data/masters";
 
 export const Route = createFileRoute("/master-core/vehicles")({
   head: () => ({
@@ -105,8 +112,8 @@ const carrierSteps: FormStep[] = [
 ];
 
 function VehicleMaster() {
-  const [vOpen, setVOpen] = useState(false);
-  const [cOpen, setCOpen] = useState(false);
+  const v = useMasterPage<Vehicle>("vehicles", "Vehicle");
+  const c = useMasterPage<Carrier>("carriers", "Carrier");
 
   const vehicleColumns: Column<Vehicle>[] = [
     {
@@ -149,9 +156,7 @@ function VehicleMaster() {
       key: "gps",
       header: "GPS",
       value: (r) => r.gps,
-      render: (r) => (
-        <Badge variant={r.gps === "Enabled" ? "secondary" : "outline"}>{r.gps}</Badge>
-      ),
+      render: (r) => <Badge variant={r.gps === "Enabled" ? "secondary" : "outline"}>{r.gps}</Badge>,
     },
     {
       key: "status",
@@ -165,13 +170,13 @@ function VehicleMaster() {
     {
       key: "type",
       label: "Type",
-      options: [...new Set(vehicles.map((v) => v.type))],
+      options: [...new Set(v.rows.map((v) => v.type))],
       match: (r, v) => r.type === v,
     },
     {
       key: "carrier",
       label: "Carrier",
-      options: [...new Set(vehicles.map((v) => v.carrier))],
+      options: [...new Set(v.rows.map((v) => v.carrier))],
       match: (r, v) => r.carrier === v,
     },
     {
@@ -243,7 +248,7 @@ function VehicleMaster() {
   return (
     <div className="min-h-full">
       <PageHeader
-        crumbs={[{ label: "Master Data Management", to: "/master-core/" }, { label: "Vehicle & Carrier" }]}
+        crumbs={[{ label: "Master Data Management", to: "/" }, { label: "Vehicle & Carrier" }]}
         icon={<Truck className="h-5 w-5" />}
         title="Vehicle & Carrier Master"
         description="Own fleet, contracted carriers, compliance windows and transport capabilities."
@@ -257,39 +262,63 @@ function VehicleMaster() {
 
           <TabsContent value="vehicles" className="mt-4">
             <DataTable
-              rows={vehicles}
+              rows={v.rows}
               columns={vehicleColumns}
               filters={vehicleFilters}
               entity="Vehicles"
+              isLoading={v.isLoading}
+              onRefresh={v.refetch}
+              onDelete={v.remove}
               createLabel="Add Vehicle"
               getId={(r) => r.id}
               getLabel={(r) => r.vehicleNumber}
-              searchText={(r) =>
-                `${r.code} ${r.vehicleNumber} ${r.type} ${r.driver} ${r.carrier}`
-              }
-              onCreate={() => setVOpen(true)}
-              onEdit={() => setVOpen(true)}
+              searchText={(r) => `${r.code} ${r.vehicleNumber} ${r.type} ${r.driver} ${r.carrier}`}
+              onCreate={v.startCreate}
+              onEdit={v.startEdit}
             />
           </TabsContent>
 
           <TabsContent value="carriers" className="mt-4">
             <DataTable
-              rows={carriers}
+              rows={c.rows}
               columns={carrierColumns}
               filters={carrierFilters}
               entity="Carriers"
+              isLoading={c.isLoading}
+              onRefresh={c.refetch}
+              onDelete={c.remove}
               createLabel="Add Carrier"
               getId={(r) => r.id}
               getLabel={(r) => r.name}
               searchText={(r) => `${r.code} ${r.name} ${r.contactPerson} ${r.email}`}
-              onCreate={() => setCOpen(true)}
-              onEdit={() => setCOpen(true)}
+              onCreate={c.startCreate}
+              onEdit={c.startEdit}
             />
           </TabsContent>
         </Tabs>
       </div>
-      <RecordFormSheet open={vOpen} onOpenChange={setVOpen} entity="Vehicle" steps={vehicleSteps} />
-      <RecordFormSheet open={cOpen} onOpenChange={setCOpen} entity="Carrier" steps={carrierSteps} />
+      <RecordFormSheet
+        open={v.open}
+        onOpenChange={v.setOpen}
+        entity="Vehicle"
+        steps={vehicleSteps}
+        mode={v.mode}
+        initial={v.initial}
+        recordId={v.recordId}
+        documentEntity="vehicles"
+        onSubmit={v.submit}
+      />
+      <RecordFormSheet
+        open={c.open}
+        onOpenChange={c.setOpen}
+        entity="Carrier"
+        steps={carrierSteps}
+        mode={c.mode}
+        initial={c.initial}
+        recordId={c.recordId}
+        documentEntity="carriers"
+        onSubmit={c.submit}
+      />
     </div>
   );
 }

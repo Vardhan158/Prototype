@@ -1,12 +1,19 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Users } from "lucide-react";
-import { useState } from "react";
 
-import { DataTable, type Column, type TableFilter } from "@master/components/masters/DataTable";
-import { PageHeader } from "@master/components/masters/PageHeader";
-import { RecordFormSheet, type FormStep } from "@master/components/masters/RecordFormSheet";
-import { StatusChip } from "@master/components/masters/StatusChip";
-import { customers, type Customer } from "@master/data/masters";
+import {
+  DataTable,
+  type Column,
+  type TableFilter,
+} from "@/apps/master-core/integrated/components/DataTable";
+import { PageHeader } from "@/apps/master-core/integrated/components/PageHeader";
+import {
+  RecordFormSheet,
+  type FormStep,
+} from "@/apps/master-core/integrated/components/RecordFormSheet";
+import { StatusChip } from "@/apps/master-core/integrated/components/StatusChip";
+import { useMasterPage } from "@/apps/master-core/integrated/hooks/useMasters";
+import { type Customer } from "@/apps/master-core/integrated/data/masters";
 
 export const Route = createFileRoute("/master-core/customers/")({
   head: () => ({
@@ -47,7 +54,12 @@ const steps: FormStep[] = [
         type: "select",
         options: ["Net 15", "Net 30", "Net 45", "Net 60"],
       },
-      { name: "currency", label: "Currency", type: "select", options: ["EUR", "USD", "INR", "AUD"] },
+      {
+        name: "currency",
+        label: "Currency",
+        type: "select",
+        options: ["EUR", "USD", "INR", "AUD"],
+      },
       { name: "status", label: "Status", type: "switch" },
       { name: "notes", label: "Notes", type: "textarea", colSpan: 2 },
     ],
@@ -59,14 +71,26 @@ const steps: FormStep[] = [
       { name: "contactPerson", label: "Contact Person", required: true },
       { name: "phone", label: "Phone", type: "tel", required: true },
       { name: "email", label: "Email", type: "email", required: true },
-      { name: "country", label: "Country", type: "select", options: ["Spain", "United States", "Japan", "India", "Australia", "Norway"] },
+      {
+        name: "country",
+        label: "Country",
+        type: "select",
+        options: ["Spain", "United States", "Japan", "India", "Australia", "Norway"],
+      },
       { name: "billingAddress", label: "Billing Address", colSpan: 2 },
       { name: "shippingAddress", label: "Shipping Address", colSpan: 2 },
       {
         name: "shipmentPreference",
         label: "Shipment Preference",
         type: "select",
-        options: ["Sea Freight", "Air Freight", "LTL Road", "Road Container", "Parcel", "Temperature Controlled"],
+        options: [
+          "Sea Freight",
+          "Air Freight",
+          "LTL Road",
+          "Road Container",
+          "Parcel",
+          "Temperature Controlled",
+        ],
       },
       { name: "deliveryLocations", label: "Delivery Locations", type: "number" },
     ],
@@ -80,7 +104,7 @@ const steps: FormStep[] = [
 
 function CustomerMaster() {
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
+  const m = useMasterPage<Customer>("customers", "Customer");
 
   const columns: Column<Customer>[] = [
     {
@@ -136,12 +160,22 @@ function CustomerMaster() {
   ];
 
   const filters: TableFilter<Customer>[] = [
-    { key: "status", label: "Status", options: ["Active", "Inactive", "Draft"], match: (r, v) => r.status === v },
-    { key: "priority", label: "Priority", options: ["High", "Medium", "Low"], match: (r, v) => r.priority === v },
+    {
+      key: "status",
+      label: "Status",
+      options: ["Active", "Inactive", "Draft"],
+      match: (r, v) => r.status === v,
+    },
+    {
+      key: "priority",
+      label: "Priority",
+      options: ["High", "Medium", "Low"],
+      match: (r, v) => r.priority === v,
+    },
     {
       key: "country",
       label: "Country",
-      options: [...new Set(customers.map((c) => c.country))],
+      options: [...new Set(m.rows.map((c) => c.country))],
       match: (r, v) => r.country === v,
     },
   ];
@@ -149,27 +183,40 @@ function CustomerMaster() {
   return (
     <div className="min-h-full">
       <PageHeader
-        crumbs={[{ label: "Master Data Management", to: "/master-core/" }, { label: "Customer Master" }]}
+        crumbs={[{ label: "Master Data Management", to: "/" }, { label: "Customer Master" }]}
         icon={<Users className="h-5 w-5" />}
         title="Customer Master"
         description="Sold-to and ship-to parties consumed by Sales, Distribution and Finance."
       />
       <div className="p-4 sm:p-6">
         <DataTable
-          rows={customers}
+          rows={m.rows}
           columns={columns}
           filters={filters}
           entity="Customers"
+          isLoading={m.isLoading}
+          onRefresh={m.refetch}
+          onDelete={m.remove}
           createLabel="Add Customer"
           getId={(r) => r.id}
           getLabel={(r) => r.name}
           searchText={(r) => `${r.code} ${r.name} ${r.contactPerson} ${r.email} ${r.country}`}
-          onCreate={() => setOpen(true)}
-          onEdit={() => setOpen(true)}
+          onCreate={m.startCreate}
+          onEdit={m.startEdit}
           onView={(r) => navigate({ to: "/master-core/customers/$id", params: { id: r.id } })}
         />
       </div>
-      <RecordFormSheet open={open} onOpenChange={setOpen} entity="Customer" steps={steps} />
+      <RecordFormSheet
+        open={m.open}
+        onOpenChange={m.setOpen}
+        entity="Customer"
+        steps={steps}
+        mode={m.mode}
+        initial={m.initial}
+        recordId={m.recordId}
+        documentEntity="customers"
+        onSubmit={m.submit}
+      />
     </div>
   );
 }
