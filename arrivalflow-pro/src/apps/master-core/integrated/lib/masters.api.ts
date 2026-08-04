@@ -1,4 +1,14 @@
 import { supabase } from "@/apps/master-core/integrated/integrations/supabase/client";
+import {
+  carriers,
+  countries,
+  customers,
+  employees,
+  items,
+  suppliers,
+  vehicles,
+  warehouses,
+} from "@/apps/master-core/integrated/data/masters";
 
 export type MasterTable =
   | "suppliers"
@@ -48,6 +58,42 @@ const SCHEMA: Record<MasterTable, { prefix: string; fields: Record<string, Field
 
 export type MasterRecord = Record<string, unknown> & { id: string; code: string };
 
+const LOCAL_KEY = "nexuswms.master-records.v1";
+const localDocuments = new Map<string, { row: DocumentRow; url: string }>();
+
+function hasSupabaseConfig() {
+  return Boolean(
+    (import.meta.env["VITE_SUPABASE_URL"] || process.env["SUPABASE_URL"]) &&
+    (import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] || process.env["SUPABASE_PUBLISHABLE_KEY"]),
+  );
+}
+
+function seedRecords(): Record<MasterTable, MasterRecord[]> {
+  return {
+    suppliers,
+    customers,
+    items,
+    warehouses,
+    employees,
+    carriers,
+    vehicles,
+    countries,
+  } as unknown as Record<MasterTable, MasterRecord[]>;
+}
+
+function readLocal(): Record<MasterTable, MasterRecord[]> {
+  if (typeof localStorage === "undefined") return structuredClone(seedRecords());
+  const saved = localStorage.getItem(LOCAL_KEY);
+  if (saved) return JSON.parse(saved) as Record<MasterTable, MasterRecord[]>;
+  const seeded = structuredClone(seedRecords());
+  localStorage.setItem(LOCAL_KEY, JSON.stringify(seeded));
+  return seeded;
+}
+
+function writeLocal(records: Record<MasterTable, MasterRecord[]>) {
+  if (typeof localStorage !== "undefined") localStorage.setItem(LOCAL_KEY, JSON.stringify(records));
+}
+
 function coerce(table: MasterTable, values: Record<string, string>) {
   const kinds = SCHEMA[table].fields;
   const out: Record<string, unknown> = {};
@@ -83,18 +129,30 @@ function coerce(table: MasterTable, values: Record<string, string>) {
 }
 
 export async function listRecords(table: MasterTable): Promise<MasterRecord[]> {
+  if (!hasSupabaseConfig())
+    return readLocal()[table].toSorted((a, b) => a.code.localeCompare(b.code));
   const { data, error } = await supabase.from(table).select("*").order("code", { ascending: true });
   if (error) throw error;
   return (data ?? []) as unknown as MasterRecord[];
 }
 
 export async function getRecord(table: MasterTable, id: string): Promise<MasterRecord | null> {
+  if (!hasSupabaseConfig()) return readLocal()[table].find((row) => row.id === id) ?? null;
   const { data, error } = await supabase.from(table).select("*").eq("id", id).maybeSingle();
   if (error) throw error;
   return (data as unknown as MasterRecord) ?? null;
 }
 
 export async function nextCode(table: MasterTable) {
+  if (!hasSupabaseConfig()) {
+    const last =
+      readLocal()
+        [table].map((row) => row.code)
+        .toSorted()
+        .at(-1) ?? "";
+    const n = Number(last.replace(/D/g, "")) || 1000;
+    return `${SCHEMA[table].prefix}-${n + 1}`;
+  }
   const { data } = await supabase
     .from(table)
     .select("code")
@@ -108,6 +166,20 @@ export async function nextCode(table: MasterTable) {
 export async function createRecord(table: MasterTable, values: Record<string, string>) {
   const payload = coerce(table, values);
   if (!payload["code"]) payload["code"] = await nextCode(table);
+  if (!hasSupabaseConfig()) {
+    const records = readLocal();
+    if (records[table].some((row) => row.code === payload["code"]))
+      throw friendly({ code: "23505", message: "Duplicate code" });
+    const row = {
+      ...payload,
+      id: crypto.randomUUID(),
+      code: String(payload["code"]),
+      created_at: new Date().toISOString(),
+    } as MasterRecord;
+    records[table].push(row);
+    writeLocal(records);
+    return row;
+  }
   const { data: auth } = await supabase.auth.getUser();
   payload["created_by"] = auth.user?.id ?? null;
   const { data, error } = await supabase
@@ -122,6 +194,15 @@ export async function createRecord(table: MasterTable, values: Record<string, st
 export async function updateRecord(table: MasterTable, id: string, values: Record<string, string>) {
   const payload = coerce(table, values);
   delete payload["created_by"];
+  if (!hasSupabaseConfig()) {
+    const records = readLocal();
+    const index = records[table].findIndex((row) => row.id === id);
+    if (index < 0) throw new Error("Record not found");
+    const row = { ...records[table][index], ...payload, id } as MasterRecord;
+    records[table][index] = row;
+    writeLocal(records);
+    return row;
+  }
   const { data, error } = await supabase
     .from(table)
     .update(payload as never)
@@ -133,6 +214,12 @@ export async function updateRecord(table: MasterTable, id: string, values: Recor
 }
 
 export async function deleteRecords(table: MasterTable, ids: string[]) {
+  if (!hasSupabaseConfig()) {
+    const records = readLocal();
+    records[table] = records[table].filter((row) => !ids.includes(row.id));
+    writeLocal(records);
+    return;
+  }
   const { error } = await supabase.from(table).delete().in("id", ids);
   if (error) throw friendly(error);
 }
@@ -166,6 +253,23 @@ export async function uploadDocument(opts: {
   recordCode?: string | null;
   file: File;
 }) {
+  if (!hasSupabaseConfig()) {
+    if (opts.file.size > 25 * 1024 * 1024) throw new Error("Files must be 25 MB or smaller.");
+    const id = crypto.randomUUID();
+    const row: DocumentRow = {
+      id,
+      entity: opts.entity,
+      recordId: opts.recordId ?? null,
+      recordCode: opts.recordCode ?? null,
+      fileName: opts.file.name,
+      filePath: id,
+      fileSize: opts.file.size,
+      mimeType: opts.file.type,
+      created_at: new Date().toISOString(),
+    };
+    localDocuments.set(id, { row, url: URL.createObjectURL(opts.file) });
+    return row;
+  }
   const { data: auth } = await supabase.auth.getUser();
   const userId = auth.user?.id;
   if (!userId) throw new Error("You must be signed in to upload documents.");
@@ -198,6 +302,10 @@ export async function uploadDocument(opts: {
 }
 
 export async function listDocuments(entity: string, recordId?: string | null) {
+  if (!hasSupabaseConfig())
+    return [...localDocuments.values()]
+      .map((entry) => entry.row)
+      .filter((doc) => doc.entity === entity && (!recordId || doc.recordId === recordId));
   let q = supabase
     .from("documents")
     .select("*")
@@ -211,6 +319,13 @@ export async function listDocuments(entity: string, recordId?: string | null) {
 
 export async function attachDocumentsToRecord(ids: string[], recordId: string, recordCode: string) {
   if (!ids.length) return;
+  if (!hasSupabaseConfig()) {
+    for (const id of ids) {
+      const entry = localDocuments.get(id);
+      if (entry) entry.row = { ...entry.row, recordId, recordCode };
+    }
+    return;
+  }
   const { error } = await supabase
     .from("documents")
     .update({ recordId, recordCode } as never)
@@ -219,12 +334,19 @@ export async function attachDocumentsToRecord(ids: string[], recordId: string, r
 }
 
 export async function documentUrl(path: string) {
+  if (!hasSupabaseConfig()) return localDocuments.get(path)?.url ?? "";
   const { data, error } = await supabase.storage.from(BUCKET).createSignedUrl(path, 60 * 10);
   if (error) throw new Error(error.message);
   return data.signedUrl;
 }
 
 export async function deleteDocument(doc: { id: string; filePath: string }) {
+  if (!hasSupabaseConfig()) {
+    const entry = localDocuments.get(doc.id);
+    if (entry) URL.revokeObjectURL(entry.url);
+    localDocuments.delete(doc.id);
+    return;
+  }
   await supabase.storage.from(BUCKET).remove([doc.filePath]);
   const { error } = await supabase.from("documents").delete().eq("id", doc.id);
   if (error) throw friendly(error);
@@ -242,6 +364,7 @@ export type AuditRow = {
 };
 
 export async function listAudit(entity?: string, recordId?: string) {
+  if (!hasSupabaseConfig()) return [];
   let q = supabase
     .from("audit_logs")
     .select("id, entity, recordId, recordCode, action, created_at")
@@ -255,6 +378,12 @@ export async function listAudit(entity?: string, recordId?: string) {
 }
 
 export async function counts() {
+  if (!hasSupabaseConfig()) {
+    const records = readLocal();
+    return Object.fromEntries(
+      (Object.keys(records) as MasterTable[]).map((table) => [table, records[table].length]),
+    ) as Record<MasterTable, number>;
+  }
   const tables: MasterTable[] = [
     "suppliers",
     "customers",
