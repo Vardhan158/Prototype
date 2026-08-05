@@ -10,7 +10,6 @@ import {
   Search,
   SlidersHorizontal,
   Star,
-  Upload,
   Users,
   X,
 } from "lucide-react";
@@ -57,7 +56,6 @@ function SupplierList() {
   const [risk, setRisk] = useState("all");
   const [selected, setSelected] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-  const [importOpen, setImportOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
   const [showFilters, setShowFilters] = useState(true);
 
@@ -101,9 +99,6 @@ function SupplierList() {
         subtitle="Single source of truth for vendor onboarding, compliance, risk and commercial terms"
         actions={
           <>
-            <Button variant="outline" onClick={() => setImportOpen(true)}>
-              <Upload className="size-4" /> Import
-            </Button>
             <Button variant="outline" onClick={() => setExportOpen(true)}>
               <Download className="size-4" /> Export
             </Button>
@@ -299,31 +294,6 @@ function SupplierList() {
           )}
         </SectionCard>
       </div>
-
-      <Dialog open={importOpen} onOpenChange={setImportOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Import suppliers</DialogTitle>
-            <DialogDescription>Upload an XLSX or CSV file using the AxisWMS supplier master template v4.2.</DialogDescription>
-          </DialogHeader>
-          <div className="rounded-lg border border-dashed p-8 text-center">
-            <Upload className="mx-auto size-7 text-muted-foreground" />
-            <p className="mt-2 text-sm font-medium">Drop file here or browse</p>
-            <p className="text-xs text-muted-foreground">Maximum 5,000 rows · 20 MB</p>
-          </div>
-          <ul className="space-y-1 text-xs text-muted-foreground">
-            <li>• Mandatory columns: Supplier Name, Vendor Type, Category, Country, GSTIN/Tax ID, Payment Terms</li>
-            <li>• Duplicate GSTIN rows are rejected and reported in the validation log</li>
-            <li>• Imported records land in “Pending Verification” status</li>
-          </ul>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setImportOpen(false)}>Cancel</Button>
-            <Button onClick={() => { setImportOpen(false); toast.success("Import job queued", { description: "Validation report will be emailed in ~3 minutes." }); }}>
-              Start import
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       <Dialog open={exportOpen} onOpenChange={setExportOpen}>
         <DialogContent>

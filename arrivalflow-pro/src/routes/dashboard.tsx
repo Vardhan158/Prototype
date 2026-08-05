@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Dashboard as GatePassDashboard } from "./gate-pass-pro.index";
+import { Route as GatePassRoute } from "./gate-pass-pro.index";
+
+const GatePassDashboard = GatePassRoute.options.component;
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({

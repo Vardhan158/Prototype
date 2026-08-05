@@ -2,7 +2,9 @@ import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { AppShell } from "@/apps/inventory-flow-pro/components/wms/app-shell";
 import { WmsProvider } from "@/apps/inventory-flow-pro/lib/wms/store";
 import { useAuth } from "@/lib/auth";
-import { DashboardScreen } from "./inventory-flow-pro.index";
+import { Route as InventoryFlowRoute } from "./inventory-flow-pro.index";
+
+const DashboardScreen = InventoryFlowRoute.options.component;
 
 export const Route = createFileRoute("/dashboard_/inventory")({
   head: () => ({

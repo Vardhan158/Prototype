@@ -32,14 +32,14 @@ const kpiTone: Record<string, string> = {
   success: "bg-success/12 text-success",
 };
 
-export function Dashboard() {
+function Dashboard() {
   const queue = gateEntries.filter((e) =>
     ["Draft", "Pending Approval", "On Hold", "Waiting Warehouse", "Vehicle Verified"].includes(e.status),
   );
 
   return (
     <AppShell
-      title="Gate Control Tower"
+      title="Gate Control Dashboard"
       subtitle="Saturday, 01 August 2026 · Shift A · Bhiwandi DC · Gates 01–03"
       actions={
         <>

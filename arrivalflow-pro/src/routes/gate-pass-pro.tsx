@@ -6,10 +6,10 @@ export const Route = createFileRoute("/gate-pass-pro")({
 });
 
 function GatePassProLayout() {
-  const { ready, user } = useAuth();
+  const { ready, canAccess } = useAuth();
 
   if (!ready) return null;
-  if (user?.role !== "Warehouse Gate Entry & Arrival Management") return <Navigate to="/dashboard" replace />;
+  if (!canAccess("arrival")) return <Navigate to="/dashboard" replace />;
 
   return <Outlet />;
 }

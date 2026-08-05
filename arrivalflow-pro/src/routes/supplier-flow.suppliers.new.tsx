@@ -45,7 +45,6 @@ function CreateSupplier() {
     category: "",
     industry: "",
     gst: "",
-    pan: "",
     msme: "",
     address: "",
     city: "",
@@ -75,7 +74,6 @@ function CreateSupplier() {
   const set = (k: keyof typeof form, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
   const gstValid = form.gst === "" || /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][0-9A-Z]{3}$/.test(form.gst.toUpperCase());
-  const panValid = form.pan === "" || /^[A-Z]{5}[0-9]{4}[A-Z]$/.test(form.pan.toUpperCase());
   const emailValid = form.email === "" || /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(form.email);
 
   const stepErrors: Record<number, string[]> = {
@@ -84,7 +82,6 @@ function CreateSupplier() {
       !form.vendorType && "Vendor type is required",
       !form.category && "Category is required",
       !gstValid && "GSTIN format is invalid (e.g. 27AAFCB9312K1ZQ)",
-      !panValid && "PAN format is invalid (e.g. AAFCB9312K)",
     ].filter(Boolean) as string[],
     1: [
       !form.address && "Registered address is required",
@@ -129,7 +126,7 @@ function CreateSupplier() {
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">What happens next</p>
           <ol className="mt-3 space-y-2 text-sm">
             <li className="flex gap-2"><span className="text-success">✓</span> Record created in supplier master (Draft)</li>
-            <li className="flex gap-2"><span className="text-primary">→</span> Compliance desk verifies GSTIN, PAN and banking within 24 hrs</li>
+            <li className="flex gap-2"><span className="text-primary">→</span> Compliance desk verifies GSTIN and banking within 24 hrs</li>
             <li className="flex gap-2"><span className="text-muted-foreground">•</span> Category Head approval</li>
             <li className="flex gap-2"><span className="text-muted-foreground">•</span> Vendor code released and replicated to ERP</li>
           </ol>
@@ -201,7 +198,6 @@ function CreateSupplier() {
             <Sel label="Category *" value={form.category} onChange={(v) => set("category", v)} options={["Machined Components", "Raw Material — Steel", "Hydraulic Systems", "Electrical & Control Panels", "Bearings & Power Transmission", "Packaging & Consumables", "Logistics & Freight"]} invalid={touched && !form.category} />
             <Sel label="Industry" value={form.industry} onChange={(v) => set("industry", v)} options={["Automotive Manufacturing", "Metals & Mining", "Industrial Equipment", "Electronics", "Packaging", "Transportation"]} />
             <Fld label="GSTIN" value={form.gst} onChange={(v) => set("gst", v.toUpperCase())} placeholder="27AAFCB9312K1ZQ" invalid={!gstValid} hint={!gstValid ? "15-character GSTIN required" : "Validated against GSTN portal on submit"} />
-            <Fld label="PAN" value={form.pan} onChange={(v) => set("pan", v.toUpperCase())} placeholder="AAFCB9312K" invalid={!panValid} />
             <Fld label="MSME / Udyam registration" value={form.msme} onChange={(v) => set("msme", v)} placeholder="UDYAM-MH-19-0042318" hint="Leave blank if not applicable" />
           </div>
         )}
@@ -264,7 +260,7 @@ function CreateSupplier() {
         {step === 4 && (
           <div className="space-y-4">
             <div className="grid gap-3 sm:grid-cols-2">
-              {["GST Registration Certificate", "PAN Card", "Cancelled Cheque", "MSME / Udyam Certificate", "ISO 9001 Certificate", "Signed Vendor Code of Conduct"].map((d) => (
+              {["GST Registration Certificate", "Cancelled Cheque", "MSME / Udyam Certificate", "ISO 9001 Certificate", "Signed Vendor Code of Conduct"].map((d) => (
                 <div key={d} className="flex items-center gap-3 rounded-lg border border-dashed p-3">
                   <Upload className="size-4 shrink-0 text-muted-foreground" />
                   <div className="min-w-0">

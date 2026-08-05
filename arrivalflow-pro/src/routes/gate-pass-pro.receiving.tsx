@@ -29,7 +29,7 @@ function Receiving() {
         </p>
         <div className="mt-6 flex justify-center gap-2">
           <Button variant="outline" asChild><Link to="/gate-pass-pro/queue">Back to yard queue</Link></Button>
-          <Button asChild><Link to="/gate-pass-pro">Gate control tower <ArrowRight className="ml-2 h-4 w-4" /></Link></Button>
+          <Button asChild><Link to="/gate-pass-pro">Gate Control Dashboard <ArrowRight className="ml-2 h-4 w-4" /></Link></Button>
         </div>
       </div>
     </AppShell>

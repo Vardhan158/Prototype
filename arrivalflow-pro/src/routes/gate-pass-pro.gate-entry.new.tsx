@@ -305,7 +305,7 @@ function ReviewGateEntry({ driverVerified, poVerified, submitting, onSubmit }: {
     { label: "Vehicle", description: "Vehicle information and photo", status: "Optional details accepted", verified: false },
     { label: "Driver", description: "Identity, licence and blacklist", status: driverVerified ? "Verified" : "Not verified (optional)", verified: driverVerified },
     { label: "Purchase order", description: "Supplier, ASN and quantities", status: poVerified ? "Verified" : "Not verified (optional)", verified: poVerified },
-    { label: "Documents", description: "Invoice, challan, e-way bill and insurance", status: "Optional documents accepted", verified: false },
+    { label: "Documents", description: "Invoice, challan and e-way bill", status: "Optional documents accepted", verified: false },
     { label: "Safety", description: "Vehicle, PPE and site-safety inspection", status: "Optional inspection accepted", verified: false },
   ];
 
@@ -438,7 +438,7 @@ function SafetyInspection() {
   );
 }
 
-type GateDocumentType = "invoice" | "delivery-challan" | "eway-bill" | "insurance";
+type GateDocumentType = "invoice" | "delivery-challan" | "eway-bill";
 type GateDocument = {
   type: GateDocumentType;
   name: string;
@@ -454,7 +454,6 @@ const documentRequirements: Array<{ type: GateDocumentType; label: string; requi
   { type: "invoice", label: "Tax invoice", required: false, needsExpiry: false },
   { type: "delivery-challan", label: "Delivery challan", required: false, needsExpiry: false },
   { type: "eway-bill", label: "E-way bill", required: false, needsExpiry: true },
-  { type: "insurance", label: "Vehicle insurance", required: false, needsExpiry: true },
 ];
 
 function DocumentsVerification() {
@@ -484,7 +483,7 @@ function DocumentsVerification() {
     }
     const url = URL.createObjectURL(file);
     const seed = Math.floor(100000 + Math.random() * 899999);
-    const generatedNumber = type === "invoice" ? `INV-2026-${seed}` : type === "delivery-challan" ? `DC-${seed}` : type === "eway-bill" ? `EWB-${seed}` : `INS-${seed}`;
+    const generatedNumber = type === "invoice" ? `INV-2026-${seed}` : type === "delivery-challan" ? `DC-${seed}` : `EWB-${seed}`;
     const doc: GateDocument = { type, name: file.name, size: file.size, url, number: "", expiry: "", confidence: 0, status: "processing" };
     setDocuments((current) => ({ ...current, [type]: doc }));
     invalidate();
@@ -513,7 +512,7 @@ function DocumentsVerification() {
 
   const addPrototypeDocument = (type: GateDocumentType) => {
     const requirement = documentRequirements.find((item) => item.type === type)!;
-    const numbers: Record<GateDocumentType, string> = { invoice: "INV-2026-884217", "delivery-challan": "DC-774201", "eway-bill": "EWB-181009442771", insurance: "INS-MH12-440821" };
+    const numbers: Record<GateDocumentType, string> = { invoice: "INV-2026-884217", "delivery-challan": "DC-774201", "eway-bill": "EWB-181009442771" };
     setDocuments((current) => ({ ...current, [type]: { type, name: `${requirement.label.toLowerCase().replaceAll(" ", "-")}.pdf`, size: 248000, url: "", number: numbers[type], expiry: requirement.needsExpiry ? "2027-08-03" : "", confidence: 98, status: "ready" } }));
     invalidate();
     toast.success(`${requirement.label} added`);

@@ -77,7 +77,7 @@ const FUNNEL: InventoryStatus[] = [
   "DELIVERED",
 ];
 
-export function DashboardScreen() {
+function DashboardScreen() {
   const { items, countByStatus, warehouse } = useWms();
   const loading = useSimulatedLoad(500);
 
